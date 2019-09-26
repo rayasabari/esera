@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel Auth</title>
+        <title>RHR Auction</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -84,9 +84,9 @@
             @endif
             <div class="content">
                 <div class="title m-b-md">
-                    {!! trans('titles.app') !!}<br />
+                  RHR AUCTION<br />
                     <small>
-                        {{ trans('titles.app2', ['version' => config('settings.app_project_version')]) }}
+                     V.1
                     </small>
                 </div>
                 <div class="links">
