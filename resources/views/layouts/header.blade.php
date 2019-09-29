@@ -10,20 +10,9 @@
         <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile  kt-header-menu--layout-default ">
             <ul class="kt-menu__nav ">
                 <li class="kt-menu__item">
-                    <a href="{{ url('/home') }}" class="kt-menu__link"><span class="kt-menu__link-text">Home</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
+                <a href="{{ url('/home') }}" class="kt-menu__link"><span class="kt-menu__link-text">Home</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
                 </li>
-                <li class="kt-menu__item">
-                    <a href="{{ url('/data_objek') }}" class="kt-menu__link"><span class="kt-menu__link-text">Data Objek Lelang</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
-                </li>
-                <li class="kt-menu__item">
-                    <a href="{{ url('/data_listing') }}" class="kt-menu__link"><span class="kt-menu__link-text">Data Listing</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
-                </li>
-                <li class="kt-menu__item">
-                    <a href="{{ url('/data_pemilik') }}" class="kt-menu__link"><span class="kt-menu__link-text">Data Pemilik Aset</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
-                </li>
-                <li class="kt-menu__item">
-                    <a href="{{ url('/data_bidder') }}" class="kt-menu__link"><span class="kt-menu__link-text">Data Bidder</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
-                </li>
+                @yield('menu')
             </ul>
         </div>
     </div>

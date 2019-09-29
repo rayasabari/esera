@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use App\Models\RoleUser;
 
 class UserController extends Controller
 {
+    public $roleuser;
+
     /**
      * Create a new controller instance.
      *
@@ -13,6 +16,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
+        $this->roleuser = New RoleUser();
         $this->middleware('auth');
     }
 
@@ -24,11 +28,13 @@ class UserController extends Controller
     public function index()
     {
         $user = Auth::user();
-
+        
         if ($user->isAdmin()) {
-            return view('pages.admin.home');
+            return view('pages.admin.home',compact('user'));
         }
 
-        return view('pages.user.home');
+        return view('pages.user.home',compact('user'));
+
+        // return response()->json($role->role_id);
     }
 }

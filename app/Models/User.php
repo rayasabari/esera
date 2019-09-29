@@ -76,6 +76,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Build Role Relationships.
+     *
+     * @var array
+     */
+    public function roleuser()
+    {
+        return $this->hasOne('App\Models\RoleUser','user_id','id');
+    }
+
+    /**
      * User Profile Relationships.
      *
      * @var array

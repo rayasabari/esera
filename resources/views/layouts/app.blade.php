@@ -85,7 +85,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <link href="assets/css/skins/aside/dark.css" rel="stylesheet" type="text/css" />
     <!--end::Layout Skins -->
     <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
-    <title>@yield('head')</title>
+    @yield('head')
 </head>
 <!-- end::Head -->
 
@@ -115,22 +115,16 @@ License: You must have a valid license purchased only from themeforest(the above
             @include('layouts.header')
             <!-- end:: Header -->
 
-            <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+            <div class="kt-content kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 
                 <!-- begin:: Subheader -->
                 @include('layouts.subheader')
                 <!-- end:: Subheader -->
 
                 <!-- begin:: Content -->
-                <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                <div class="kt-container kt-container--fluid kt-grid__item kt-grid__item--fluid">
                     <!--Begin::Dashboard 4-->
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12 col-lg-10 offset-lg-1">
-                                @yield('content')
-                            </div>
-                        </div>
-                    </div>
+                        @yield('content')
                     <!--End::Dashboard 4-->
                 </div>
                 <!-- end:: Content -->

@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Objek;
 use Illuminate\Http\Request;
 use Psy\Util\Json;
+use Auth;
 
 class ObjekController extends Controller
 {
+    public $objek;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->objek = New Objek();
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,8 +29,12 @@ class ObjekController extends Controller
      */
     public function index()
     {
-        $objek = Objek::all();
-        return view('pages.admin.list-objek', compact('objek'));
+        $user = Auth::user();
+
+        $objek = $this->objek
+        ->get();
+
+        return view('pages.admin.objek.index', compact('objek','user'));
     }
 
     /**
@@ -26,7 +44,9 @@ class ObjekController extends Controller
      */
     public function create()
     {
-        //
+        $user = Auth::user();
+
+        return view('pages.admin.objek.add', compact('objek','user'));
     }
 
     /**
@@ -37,7 +57,18 @@ class ObjekController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $objek = $this->objek;
+        $objek->nama = $request->nama;
+        $objek->id_kategori = $request->kategori;
+        $objek->luas_tanah = $request->luas_tanah;
+        $objek->luas_bangunan = $request->luas_bangunan;
+        $objek->harga_limit = $request->harga_limit;
+        $objek->jaminan = $request->jaminan;
+        $objek->deskripsi = $request->deskripsi;
+        $objek->id_pemilik = $request->pemilik;
+        $objek->save();
+
+        return redirect('/data_objek');
     }
 
     /**
@@ -46,9 +77,15 @@ class ObjekController extends Controller
      * @param  \App\Models\Objek  $objek
      * @return \Illuminate\Http\Response
      */
-    public function show(Objek $objek)
+    public function show($id)
     {
-        //
+        $user = Auth::user();
+
+        $objek = $this->objek
+        ->where('id', $id)
+        ->first();
+
+        return view('pages.admin.objek.details', compact('objek','user'));
     }
 
     /**
