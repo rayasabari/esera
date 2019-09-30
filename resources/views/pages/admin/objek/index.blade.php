@@ -30,6 +30,11 @@
                 <span class="mb-3 mt-n3">
                     <a href="{{ url('/data_objek/create') }}" class="btn btn-primary btn-sm">Tambah Objek</a>
                 </span>
+                @if (session('status'))
+                    <div class="alert alert-success">
+                        {{ session('status') }}
+                    </div>
+                @endif
                 <table class="table">
                     <thead class="thead-dark">
                         <tr>

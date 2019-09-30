@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ErrorMessageRequest;
 use App\Models\Objek;
 use Illuminate\Http\Request;
 use Psy\Util\Json;
@@ -30,7 +31,7 @@ class ObjekController extends Controller
     public function index()
     {
         $user = Auth::user();
-
+        
         $objek = $this->objek
         ->get();
 
@@ -46,7 +47,7 @@ class ObjekController extends Controller
     {
         $user = Auth::user();
 
-        return view('pages.admin.objek.add', compact('objek','user'));
+        return view('pages.admin.objek.add', compact('user'));
     }
 
     /**
@@ -55,20 +56,27 @@ class ObjekController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ErrorMessageRequest $request)
     {
-        $objek = $this->objek;
-        $objek->nama = $request->nama;
-        $objek->id_kategori = $request->kategori;
-        $objek->luas_tanah = $request->luas_tanah;
-        $objek->luas_bangunan = $request->luas_bangunan;
-        $objek->harga_limit = $request->harga_limit;
-        $objek->jaminan = $request->jaminan;
-        $objek->deskripsi = $request->deskripsi;
-        $objek->id_pemilik = $request->pemilik;
-        $objek->save();
+        $request->validate([
+            'nama' => 'required',
+            'id_kategori' => 'required',
+        ]);
 
-        return redirect('/data_objek');
+        // $objek = $this->objek;
+        // $objek->nama = $request->nama;
+        // $objek->id_kategori = $request->kategori;
+        // $objek->luas_tanah = $request->luas_tanah;
+        // $objek->luas_bangunan = $request->luas_bangunan;
+        // $objek->harga_limit = $request->harga_limit;
+        // $objek->jaminan = $request->jaminan;
+        // $objek->deskripsi = $request->deskripsi;
+        // $objek->id_pemilik = $request->pemilik;
+        // $objek->save();
+
+        Objek::create($request->all());
+
+        return redirect('/data_objek')->with('status','Data Objek berhasil ditambah!');
     }
 
     /**
@@ -94,9 +102,15 @@ class ObjekController extends Controller
      * @param  \App\Models\Objek  $objek
      * @return \Illuminate\Http\Response
      */
-    public function edit(Objek $objek)
+    public function edit($id)
     {
-        //
+        $user = Auth::user();
+
+        $objek = $this->objek
+        ->where('id', $id)
+        ->first();
+
+        return view('pages.admin.objek.edit', compact('objek','user'));
     }
 
     /**
@@ -106,9 +120,21 @@ class ObjekController extends Controller
      * @param  \App\Models\Objek  $objek
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Objek $objek)
-    {
-        //
+    public function update(ErrorMessageRequest $request, $id)
+    {   
+        Objek::where('id', $id)
+        ->update([
+            'nama' => $request->nama,
+            'id_kategori' => $request->id_kategori,
+            'id_pemilik' => $request->id_pemilik,
+            'luas_tanah' => $request->luas_tanah,
+            'luas_bangunan' => $request->luas_bangunan,
+            'harga_limit' => $request->harga_limit,
+            'deskripsi' => $request->deskripsi,
+            'jaminan' => $request->jaminan
+            ]);
+
+        return redirect('/data_objek')->with('status','Data Objek berhasil diubah!');
     }
 
     /**
@@ -117,8 +143,9 @@ class ObjekController extends Controller
      * @param  \App\Models\Objek  $objek
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Objek $objek)
+    public function destroy($id)
     {
-        //
+        Objek::destroy($id);
+        return redirect('/data_objek')->with('status','Data Objek berhasil dihapus!');
     }
 }

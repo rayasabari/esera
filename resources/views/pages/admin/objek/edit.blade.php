@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('head')
-    <title>Tambah Data Objek - SRA</title>
+    <title>Edit Data Objek - SRA</title>
 @endsection
 
 @section('menu')
@@ -10,12 +10,12 @@
 
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/data_objek') }}" class="kt-subheader__breadcrumbs-link">Data Objek Lelang</a>
+    <a href="{{ url('/data_objek') }}" class="kt-subheader__breadcrumbs-link">Edit Data Objek Lelang</a>
 @endsection
 
 @section('sub_sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/data_objek/create') }}" class="kt-subheader__breadcrumbs-link">Tambah</a>
+    <a href="{{ url('/data_objek/edit') }}" class="kt-subheader__breadcrumbs-link">Edit</a>
 @endsection
 
 @section('content')
@@ -27,18 +27,19 @@
                         <i class="la la-gear"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        Tambah Data Objek
+                        Edit Data Objek
                     </h3>
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <form method="post" action="/data_objek">
+                <form method="post" action="/data_objek/{{ $objek->id }}">
+                    @method('patch')
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Nama Objek</label>
-                                <input type="text" class="form-control @error('nama') is-invalid @enderror" placeholder="" name="nama" value="{{ old('nama') }}" >
+                                <input type="text" class="form-control @error('nama') is-invalid @enderror" placeholder="" name="nama" value="{{ $objek->nama }}" >
                                 @error('nama')
                                     <div class="invalid-feedback">{{ $message  }}</div>
                                 @enderror
@@ -47,7 +48,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Kategori</label>
-                                <input type="text" class="form-control @error('id_kategori') is-invalid @enderror" placeholder="" name="id_kategori">
+                                    <input type="text" class="form-control @error('id_kategori') is-invalid @enderror" placeholder="" name="id_kategori" value="{{ $objek->id_kategori}}">
                                 @error('id_kategori')
                                     <div class="invalid-feedback">{{ $message  }}</div>
                                 @enderror
@@ -58,13 +59,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Luas Tanah</label>
-                                <input type="text" class="form-control" placeholder="" name="luas_tanah">
+                                <input type="text" class="form-control" placeholder="" name="luas_tanah" value="{{ $objek->luas_tanah }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Luas Bangunan</label>
-                                <input type="text" class="form-control" placeholder="" name="luas_bangunan">
+                                <input type="text" class="form-control" placeholder="" name="luas_bangunan" value="{{ $objek->luas_bangunan }}">
                             </div>
                         </div>
                     </div>
@@ -72,13 +73,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Harga Limit</label>
-                                <input type="text" class="form-control" placeholder="" name="harga_limit">
+                                <input type="text" class="form-control" placeholder="" name="harga_limit" value="{{ $objek->harga_limit }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Jaminan</label>
-                                <input type="text" class="form-control" placeholder="" name="jaminan">
+                                <input type="text" class="form-control" placeholder="" name="jaminan" value="{{ $objek->jaminan }}">
                             </div>
                         </div>
                     </div>
@@ -86,13 +87,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Pemilik</label>
-                                <input type="text" class="form-control" placeholder="" name="id_pemilik">
+                                <input type="text" class="form-control" placeholder="" name="id_pemilik" value="{{ $objek->id_pemilik }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Deskripsi</label>
-                                <input type="text" class="form-control" placeholder="" name="deskripsi">
+                                {{-- <input type="text" class="form-control" placeholder="" name="deskripsi" value="{{ $objek->deskripsi }}"> --}}
+                                <textarea class="form-control" rows="3" name="deskripsi">{{ $objek->deskripsi }}</textarea>
                             </div>
                         </div>
                     </div>

@@ -60,6 +60,9 @@ Route::group(['middleware' => ['auth', 'activated', 'activity', 'twostep', 'chec
     Route::get('/data_objek/create', 'ObjekController@create');
     Route::get('/data_objek/{id}', 'ObjekController@show');
     Route::post('/data_objek', 'ObjekController@store');
+    Route::delete('/data_objek/{id}', 'ObjekController@destroy');
+    Route::get('/data_objek/{id}/edit', 'ObjekController@edit');
+    Route::patch('/data_objek/{id}', 'ObjekController@update');
 
     // Show users profile - viewable by other users.
     Route::get('profile/{username}', [

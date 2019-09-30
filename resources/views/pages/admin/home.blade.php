@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="kt-portlet__body kt-portlet__body--fit-y">
-    
+                
                 <!--begin::Widget -->
                 <div class="kt-widget kt-widget--user-profile-1">
                     <div class="kt-widget__head">
@@ -70,8 +70,8 @@
                         </div>
                     </div>
                 </div>
-    
                 <!--end::Widget -->
+
             </div>
         </div>
     </div>

@@ -94,12 +94,16 @@
                             Jaminan:
                         </span>
                         <span class="kt-widget13__text kt-font-brand kt-widget13__text--bold">
-                           Rp {{ number_format($objek->jaminan,"0",",",".") }},-						 
+                            Rp {{ number_format($objek->jaminan,"0",",",".") }},-						 
                         </span>
                     </div>
                     <div class="mb-n4 kt-align-center">
-                        <button type="submit" class="btn btn-primary">Edit</button>
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <a href="{{ url('/data_objek/'.$objek->id).'/edit' }}" type="submit" class="btn btn-primary">Edit</a>
+                        <form action="{{ '/data_objek/'.$objek->id }}" method="POST" class="d-inline">
+                            @method('delete')
+                            @csrf
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                         <a href="{{ url('/data_objek') }}" class="btn btn-success">Back</a>
                     </div>
                 </div>		

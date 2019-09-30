@@ -124,7 +124,7 @@ License: You must have a valid license purchased only from themeforest(the above
                 <!-- begin:: Content -->
                 <div class="kt-container kt-container--fluid kt-grid__item kt-grid__item--fluid">
                     <!--Begin::Dashboard 4-->
-                        @yield('content')
+                    @yield('content')
                     <!--End::Dashboard 4-->
                 </div>
                 <!-- end:: Content -->
