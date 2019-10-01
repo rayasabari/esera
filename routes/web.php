@@ -64,6 +64,9 @@ Route::group(['middleware' => ['auth', 'activated', 'activity', 'twostep', 'chec
     Route::get('/data_objek/{id}/edit', 'ObjekController@edit');
     Route::patch('/data_objek/{id}', 'ObjekController@update');
 
+    // Route::get('/objek', 'MasterObjekController@index');
+
+
     // Show users profile - viewable by other users.
     Route::get('profile/{username}', [
         'as'   => '{username}',

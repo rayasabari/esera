@@ -18,9 +18,10 @@ class CreateUserInfoTable extends Migration
             $table->integer('id_status_user');
             $table->integer('id_user');
             $table->longtext('alamat');
+            $table->integer('id_kelurahan');
             $table->integer('id_kecamatan');
             $table->integer('id_kota');
-            $table->integer('id_propinsi');
+            $table->integer('id_provinsi');
             $table->string('kode_pos', 6);
             $table->string('no_telepon', 15);
             $table->string('no_fax', 15);

@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(KategoriSeeder::class);
         $this->call(SubKategoriSeeder::class);
+        $this->call(StatusUser::class);
+        $this->call(JenisSertifikat::class);
+        $this->call(ObjekPropertiSeeder::class);
 
         Model::reguard();
     }
