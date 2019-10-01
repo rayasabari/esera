@@ -26,8 +26,14 @@ class CreateObjekKendaraanTable extends Migration
             $table->string('kode_pos', 8)->nullable();
             $table->integer('id_jenis_kendaraan')->nullable();
             $table->string('merk', 50)->nullable();
-            $table->string('tipe', 50)->nullable();
-            $table->string('tahun_pembuatan', 4)->nullable();
+            $table->string('model', 50)->nullable();
+            $table->string('varian', 50)->nullable();
+            $table->string('tahun', 4)->nullable();
+            $table->string('transmisi', 30)->nullable();
+            $table->integer('cakupan_mesin')->nullable();
+            $table->integer('penumpang')->nullable();
+            $table->string('kilometer', 30)->nullable();
+            $table->string('warna', 30)->nullable();
             $table->integer('id_pemilik')->nullable();
             $table->string('deskripsi')->nullable();
             $table->double('harga_limit')->nullable();

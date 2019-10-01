@@ -48,18 +48,18 @@ class ObjekPropertiSeeder extends Seeder
                     'id_kota'           => 3171,
                     'id_provinsi'       => 31,
                     'kode_pos'          => '12920',
-                    'tipe'              => 'Tipe 36',
-                    'luas_tanah'        => 72,
-                    'luas_bangunan'     => 36,
+                    'tipe'              => 'Tipe 46',
+                    'luas_tanah'        => 84,
+                    'luas_bangunan'     => 46,
                     'luas_unit'         => null,
                     'jumlah_lantai'     => 1,
                     'kamar_tidur'       => 2,
                     'kamar_mandi'       => 1,
                     'id_sertifikat'     => 1,
-                    'id_pemilik'        => 1,
+                    'id_pemilik'        => 2,
                     'deskripsi'         => '',
-                    'harga_limit'       => 280000000,
-                    'jaminan'           => 56000000
+                    'harga_limit'       => 370000000,
+                    'jaminan'           => 74000000
                 ]
             );
         }

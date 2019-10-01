@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('head')
-    <title>Data Objek Lelang - SRA</title>
+    <title>Master Objek Lelang - SRA</title>
 @endsection
 
 @section('menu')
@@ -10,7 +10,7 @@
 
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/data_objek') }}" class="kt-subheader__breadcrumbs-link">Data Objek Lelang</a>
+    <a href="{{ url('/data_objek') }}" class="kt-subheader__breadcrumbs-link">Master Objek Lelang</a>
 @endsection
 
 @section('content')
@@ -22,7 +22,7 @@
                         <i class="la la-gear"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        List Objek Lelang
+                        Master Objek Lelang
                     </h3>
                 </div>
             </div>
@@ -40,9 +40,11 @@
                         <tr>
                             <th>#</th>
                             <th>Nama Objek</th>
-                            <th class="kt-align-center">Kategori</th>
+                            <th class="kt-align-left">Kategori</th>
+                            <th class="kt-align-left">Sub Kategori</th>
+                            <th class="kt-align-left">Pemilik</th>
                             <th class="kt-align-center">Harga Limit</th>
-                            <th class="kt-align-center">Jaminan</th>
+                            <th class="kt-align-center ">Jaminan</th>
                             <th class="kt-align-center" style="width: 5%"></th>
                         </tr>
                     </thead>
@@ -51,10 +53,12 @@
                         <tr>
                             <th scope="row">{{ $loop->iteration	 }}</th>
                             <td>{{ $obj->nama }}</td>
-                            <td class="kt-align-center">{{ $obj->id_kategori }}</td>
-                            <td class="kt-align-center"><b>Rp {{ number_format($obj->harga_limit,0,",",".") }},-</b></td>
-                            <td class="kt-align-center"><b>Rp {{ number_format($obj->jaminan,0,",",".") }},-</b></td>
-                            <td><a href="/data_objek/{{ $obj->id }}" class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Detail</a></td>
+                            <td class="kt-align-left">{{ $obj->kategori->nama }}</td>
+                            <td class="kt-align-left">{{ $obj->sub_kategori->nama }}</td>
+                            <td class="kt-align-left">{{ $obj->pemilik->first_name. " ".$obj->pemilik->last_name }}</td>
+                            <td class="kt-align-right"><b>Rp {{ number_format($obj->harga_limit,0,",",".") }},-</b></td>
+                            <td class="kt-align-right"><b>Rp {{ number_format($obj->jaminan,0,",",".") }},-</b></td>
+                            <td><a href="/objek/properti/{{ $obj->id }}" class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Detail</a></td>
                         </tr>
                         @endforeach
                     </tbody>

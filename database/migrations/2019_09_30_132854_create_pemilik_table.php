@@ -16,8 +16,8 @@ class CreatePemilikTable extends Migration
         Schema::create('pemilik', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('first_name', 50);
-            $table->string('last_name', 50);
-            $table->string('email', 50);
+            $table->string('last_name', 50)->nullable();
+            $table->string('email', 50)->nullable();
             $table->timestamps();
         });
     }

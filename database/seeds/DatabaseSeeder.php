@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
         $this->call(StatusUser::class);
         $this->call(JenisSertifikat::class);
         $this->call(ObjekPropertiSeeder::class);
+        $this->call(PemilikSeeder::class);
+        $this->call(ObjekKendaraan::class);
 
         Model::reguard();
     }
