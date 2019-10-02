@@ -18,18 +18,23 @@
         <div class="kt-portlet kt-portlet--tab">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
-                    <span class="kt-portlet__head-icon kt-hide">
-                        <i class="la la-gear"></i>
-                    </span>
-                    <h3 class="kt-portlet__head-title">
+                    <div class="kt-portlet__head-title">
                         Master Objek Lelang
-                    </h3>
+                    </div>                    
+                </div>
+                <div class="kt-portlet__head-toolbar">
+                    <div class="dropdown show">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <i class="flaticon2-plus-1"></i> Tambah
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+                            <a class="dropdown-item" href="{{ url('/objek/properti/add') }}"><i class="fa fa-home"></i> Properti</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-car"></i> Kendaraan</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <span class="mb-3 mt-n3">
-                    <a href="{{ url('/data_objek/create') }}" class="btn btn-primary btn-sm">Tambah Objek</a>
-                </span>
                 @if (session('status'))
                     <div class="alert alert-success">
                         {{ session('status') }}
