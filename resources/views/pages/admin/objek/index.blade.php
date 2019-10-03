@@ -28,8 +28,11 @@
                             <i class="flaticon2-plus-1"></i> Tambah
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
-                            <a class="dropdown-item" href="{{ url('/objek/properti/add') }}"><i class="fa fa-home"></i> Properti</a>
-                            <a class="dropdown-item" href="#"><i class="fa fa-car"></i> Kendaraan</a>
+                            {{-- <a class="dropdown-item" href="{{ url('/objek/properti/add') }}"><i class="fa fa-home"></i> Properti</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-car"></i> Kendaraan</a> --}}
+                            @foreach($subkategori as $item)
+                                <a class="dropdown-item mt-1" href="/add/{{ strtolower($item->kategori->nama)."/".strtolower($item->nama) }}"><i class="flaticon-add"></i><span class="mt-1" > {{ $item->nama }}</span></a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -71,4 +74,5 @@
             </div>
         </div>
     </div>
+    {{-- @include('pages.admin.objek.tes') --}}
 @endsection

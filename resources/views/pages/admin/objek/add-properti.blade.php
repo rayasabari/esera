@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('head')
-    <title>Tambah Properti - SRA</title>
+    <title>Tambah Objek {{ $kategori->nama }} - SRA</title>
 @endsection
 
 @section('menu')
@@ -10,12 +10,14 @@
 
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/objek') }}" class="kt-subheader__breadcrumbs-link">Objek Properti</a>
+    <a href="{{ url('/objek') }}" class="kt-subheader__breadcrumbs-link">Master Objek Lelang</a>
 @endsection
 
 @section('sub_sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/objek/properti/add') }}" class="kt-subheader__breadcrumbs-link">Tambah</a>
+    <a href="#" class="kt-subheader__breadcrumbs-link">{{ $kategori->nama  }}</a>
+    <span class="kt-subheader__breadcrumbs-separator"></span>
+    <a href="{{ url('/add/'.Request::segment(2).'/'.Request::segment(3)) }}" class="kt-subheader__breadcrumbs-link">Tambah {{ $subkategori->nama }}</a>
 @endsection
 
 @section('content')
@@ -27,212 +29,28 @@
                         <i class="la la-gear"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        Tambah Objek Properti
+                        Form Tambah {{ $subkategori->nama }}
                     </h3>
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <form method="post" action="/objek/properti">
+                <form method="post" action="/add/{{ Request::segment(2)}}/{{ Request::segment(3) }}">
                     @csrf
+                    <input type="hidden" name="id_kategori" value="{{ $kategori->id }}">
+                    <input type="hidden" name="id_sub_kategori" value="{{ $subkategori->id }}">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="id_sub_kategori">Jenis Properti</label>
-                                <select class="form-control @error('id_sub_kategori') is-invalid @enderror" id="id_sub_kategori" name="id_sub_kategori">
-                                    <option value="">- Pilih -</option>
-                                    @foreach ($subkategori as $item)
-                                        <option value="{{ $item->id }}" @if( old('id_sub_kategori') == '{{ $item->id }}' ) selected @endif >{{ $item->nama }}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_sub_kategori')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label>Nama Objek</label>
+                                <label>Nama Objek <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('nama') is-invalid @enderror" placeholder="" name="nama" value="{{ old('nama') }}">
                                 @error('nama')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="form-group">
-                                <label>Alamat</label>
-                                <textarea name="alamat" class="form-control @error('alamat') is-invalid @enderror" placeholder="nama jalan" rows="1">{{ old('alamat') }}</textarea>
-                                @error('alamat')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="provinsi">Provinsi</label>
-                                        <select class="form-control @error('provinsi') is-invalid @enderror" id="provinsi" name="provinsi">
-                                            <option value="0">- Pilih -</option>
-                                            @foreach ($provinsi as $item)
-                                                <option value="{{ $item->id }}" @if( old('provinsi') == '{{ $item->id }}' ) selected @endif >{{ $item->text }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('provinsi')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="kota">Kota/Kabupaten</label>
-                                        <select class="form-control @error('kota') is-invalid @enderror" id="kota" name="kota">
-                                            <option value="">- Pilih -</option>
-                                        </select>
-                                        @error('kota')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="kecamatan">Kecamatan</label>
-                                        <select class="form-control @error('kecamatan') is-invalid @enderror" id="kecamatan" name="kecamatan">
-                                            <option value="">- Pilih -</option>
-                                        </select>
-                                        @error('kecamatan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="kelurahan">Kelurahan/Desa</label>
-                                        <select class="form-control @error('kecamatan') is-invalid @enderror" id="kelurahan" name="kelurahan">
-                                            <option value="">- Pilih -</option>
-                                        </select>
-                                        @error('kelurahan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Kode Pos</label>
-                                        <input type="text" class="form-control @error('kode_pos') is-invalid @enderror" placeholder="" name="kode_pos" value="{{ old('kode_pos') }}">
-                                    </div>
-                                    @error('kode_pos')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-lg-6">
-                                </div>
-                            </div>
+                            @include('layouts.alamat')
                         </div>
                         <div class="col-lg-6">
-                            <div class="form-group">
-                                <label for="pemilik">Pemilik</label>
-                                <select class="form-control @error('pemilik') is-invalid @enderror" id="pemilik" name="pemilik">
-                                    <option value="">- Pilih -</option>
-                                    @foreach ($pemilik as $plk)
-                                        <option value="{{ $plk->id }}" @if( old('pemilik') == '{{ $plk->id }}' ) selected @endif >{{ $plk->first_name." ".$plk->last_name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('pemilik')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Tipe</label>
-                                        <input type="text" class="form-control @error('tipe') is-invalid @enderror" placeholder="" name="tipe" value="{{ old('tipe') }}">
-                                    </div>
-                                    @error('tipe')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror   
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Jumlah Lantai</label>
-                                        <input type="number" class="form-control @error('jumlah_lantai') is-invalid @enderror" placeholder="" name="jumlah_lantai" value="{{ old('jumlah_lantai') }}">
-                                    </div>
-                                </div>
-                                @error('jumlah_lantai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror  
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Luas Tanah</label>
-                                        <div class="input-group">
-                                            <input type="number" class="form-control @error('luas_tanah') is-invalid @enderror" placeholder="" name="luas_tanah" value="{{ old('luas_tanah') }}">
-                                            <div class="input-group-prepend"><span class="input-group-text">m<sup>2</sup></span></div>
-                                        </div>
-                                    </div>
-                                    @error('luas_tanah')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror  
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Luas Bangunan</label>
-                                        <div class="input-group">
-                                            <input type="number" class="form-control @error('luas_bangunan') is-invalid @enderror" placeholder="" name="luas_bangunan" value="{{ old('luas_bangunan') }}">
-                                            <div class="input-group-prepend"><span class="input-group-text">m<sup>2</sup></span></div>
-                                        </div>
-                                    </div>
-                                    @error('luas_bangunan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Kamar Tidur</label>
-                                        <input type="number" class="form-control @error('kamar_tidur') is-invalid @enderror" placeholder="" name="kamar_tidur" value="{{ old('kamar_tidur') }}">
-                                    </div>
-                                    @error('kamar_tidur')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Kamar Mandi</label>
-                                        <input type="number" class="form-control @error('kamar_mandi') is-invalid @enderror" placeholder="" name="kamar_mandi" value="{{ old('kamar_mandi') }}">
-                                    </div>
-                                </div>
-                                @error('kamar_mandi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Harga Limit</label>
-                                        <input type="text" class="form-control @error('harga_limit') is-invalid @enderror" placeholder="" name="harga_limit" value="{{ old('harga_limit') }}">
-                                    </div>
-                                    @error('harga_limit')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Jaminan</label>
-                                        <input type="text" class="form-control @error('jaminan') is-invalid @enderror" placeholder="" name="jaminan" value="{{ old('jaminan') }}">
-                                    </div>
-                                    @error('jaminan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Deskripsi</label>
-                                <textarea class="form-control" @error('deskripsi') is-invalid @enderror name="deskripsi" rows="3">{{ old('deskripsi') }}</textarea>
-                            </div>
-                            @error('deskripsi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            @include('pages.admin.objek.add-'.Request::segment(3) )
                         </div>
                     </div>
                     <div class="row">
@@ -248,77 +66,123 @@
 
 @section('footer_script')
     <script>
-        $('#provinsi').change(function(){
-            var $id = $(this).val();
-            kota_by_propinsi($id);
-            $('#kecamatan').val(0);
-            kecamatan_by_kota($id);
-            $('#kelurahan').val(0);
-            kelurahan_by_kecamatan($id);
-        });
+        $(document).ready(function(){
 
-        function kota_by_propinsi(id){     
-            $.ajax({
-                url         : "ajax/dropdown/kota/"+id,
-                data        : {id : id},
-                type        : "GET",
-                dataType    : "html",
-                cache       : false,
-                success   : function(response){
-                    $('#kota').html(response);
-                    // console.log(response);
-                }, 
-                error: function (x, e){
-                alert("Server side failed. " + x.responseText);
+            if($('#provinsi').val() != 0 || $('#provinsi').val() != '') {
+                var id_provinsi = $('#provinsi').val();
+                kota_by_propinsi(id_provinsi);
+            }else if($('kota').val() != 0 || $('#kota').val() != ''){
+                var id_kota = $('kota').val();
+                $('#kecamatan').val(id_kota);
+                kecamatan_by_kota(id_kota);
+            }else if($('kecamatan').val() !=  0 || $('kecamatan').val() != '' ){
+                var id_kecamatan = $('kota').val();
+                $('#kecamatan').val(id_kecamatan);
+                kecamatan_by_kota(id_kecamatan);
+            };
+
+            $('#provinsi').change(function(){
+                var id = $(this).val();
+                if($(this).val() == ''){
+                    $('#kota').html();
+                    $('#kecamatan').val(0);
+                    $('#kelurahan').val(0);
+                }else{
+                    kota_by_propinsi(id);
+                    $('#kecamatan').val(0);
+                    kecamatan_by_kota(id);
+                    $('#kelurahan').val(0);
+                    kelurahan_by_kecamatan(id);
                 }
             });
-        }
 
-        $('#kota').change(function(){
-            var $id = $(this).val();
-            kecamatan_by_kota($id);
-            $('#kelurahan').val(0);
-            kelurahan_by_kecamatan($id);
+            function kota_by_propinsi(id){     
+                $.ajax({
+                    url         : "ajax/dropdown/kota/"+id,
+                    data        : {id : id},
+                    type        : "GET",
+                    dataType    : "html",
+                    cache       : false,
+                    success   : function(response){
+                        $('#kota').html(response);
+                        // console.log(response);
+                    }, 
+                    error: function (x, e){
+                    alert("Server side failed. " + x.responseText);
+                    }
+                });
+            }
+
+            $('#kota').change(function(){
+                var $id = $(this).val();
+                kecamatan_by_kota($id);
+                $('#kelurahan').val(0);
+                kelurahan_by_kecamatan($id);
+            });
+
+            function kecamatan_by_kota(id){     
+                $.ajax({
+                    url         : "ajax/dropdown/kecamatan/"+id,
+                    data        : {id : id},
+                    type        : "GET",
+                    dataType    : "html",
+                    cache       : false,
+                    success   : function(response){
+                        $('#kecamatan').html(response);
+                        // console.log(response);
+                    }, 
+                    error: function (x, e){
+                    alert("Server side failed. " + x.responseText);
+                    }
+                });
+            }
+
+            $('#kecamatan').change(function(){
+                var $id = $(this).val();
+                kelurahan_by_kecamatan($id);
+            });
+
+            function kelurahan_by_kecamatan(id){     
+                $.ajax({
+                    url         : "ajax/dropdown/kelurahan/"+id,
+                    data        : {id : id},
+                    type        : "GET",
+                    dataType    : "html",
+                    cache       : false,
+                    success   : function(response){
+                        $('#kelurahan').html(response);
+                        // console.log(response);
+                    }, 
+                    error: function (x, e){
+                    alert("Server side failed. " + x.responseText);
+                    }
+                });
+            }
+
+            $('#luas_tanah, #luas_bangunan').on('change, keyup', function() {
+                var currentInput = $(this).val();
+                var fixedInput = currentInput.replace(/[A-Za-z!,@#$%^&*(;:'"<>?{})|]/g, '');
+                $(this).val(fixedInput);
+            });
         });
 
-        function kecamatan_by_kota(id){     
-            $.ajax({
-                url         : "ajax/dropdown/kecamatan/"+id,
-                data        : {id : id},
-                type        : "GET",
-                dataType    : "html",
-                cache       : false,
-                success   : function(response){
-                    $('#kecamatan').html(response);
-                    // console.log(response);
-                }, 
-                error: function (x, e){
-                alert("Server side failed. " + x.responseText);
+        /* FORMAT ANGKA 3 titik*/
+        function angka(objek) {
+            objek = typeof(objek) != 'undefined' ? objek : 0;
+            a = objek.value;
+            b = a.replace(/[^\d]/g, "");
+            c = "";
+            panjang = b.length;
+            j = 0;
+            for (i = panjang; i > 0; i--) {
+                j = j + 1;
+                if (((j % 3) == 1) && (j != 1)) {
+                    c = b.substr(i - 1, 1) + "." + c;
+                } else {
+                    c = b.substr(i - 1, 1) + c;
                 }
-            });
+            }
+            objek.value = c;
         }
-
-        $('#kecamatan').change(function(){
-            var $id = $(this).val();
-            kelurahan_by_kecamatan($id);
-        });
-
-        function kelurahan_by_kecamatan(id){     
-            $.ajax({
-                url         : "ajax/dropdown/kelurahan/"+id,
-                data        : {id : id},
-                type        : "GET",
-                dataType    : "html",
-                cache       : false,
-                success   : function(response){
-                    $('#kelurahan').html(response);
-                    // console.log(response);
-                }, 
-                error: function (x, e){
-                alert("Server side failed. " + x.responseText);
-                }
-            });
-        }
-
     </script>
 @endsection

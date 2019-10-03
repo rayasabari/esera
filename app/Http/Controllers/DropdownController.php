@@ -33,10 +33,10 @@ class DropdownController extends Controller
         ->orderBy('text', 'ASC')
         ->get();
 
-        echo "<option value='0'>- Pilih -</option>";
+        echo "<option value=''>- Pilih -</option>";
         if($kota != NULL) {
 			foreach($kota as $item) {
-				echo "<option value='{$item->id}'>{$item->text}</option>";
+				echo "<option value='{$item->id}' {{ old('kota') == {$item->id} ? 'selected' : '' }}>{$item->text}</option>";
 			}
 		}
     }
@@ -48,10 +48,10 @@ class DropdownController extends Controller
         ->orderBy('text', 'ASC')
         ->get();
 
-        echo "<option value='0'>- Pilih -</option>";
+        echo "<option value=''>- Pilih -</option>";
         if($kecamatan != NULL) {
 			foreach($kecamatan as $item) {
-				echo "<option value='{$item->id}'>{$item->text}</option>";
+				echo "<option value='{$item->id}' {{ old('kecamatan') == {$item->id} ? 'selected' : '' }}>{$item->text}</option>";
 			}
 		}
     }
@@ -63,10 +63,10 @@ class DropdownController extends Controller
         ->orderBy('text', 'ASC')
         ->get();
 
-        echo "<option value='0'>- Pilih -</option>";
+        echo "<option value=''>- Pilih -</option>";
         if($kelurahan != NULL) {
 			foreach($kelurahan as $item) {
-				echo "<option value='{$item->id}'>{$item->text}</option>";
+				echo "<option value='{$item->id}' {{ old('kelurahan') == {$item->id} ? 'selected' : '' }}>{$item->text}</option>";
 			}
 		}
     }

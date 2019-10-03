@@ -69,8 +69,8 @@ Route::group(['middleware' => ['auth', 'activated', 'activity', 'twostep', 'chec
     // Route::patch('/data_objek/{id}', 'ObjekController@update');
 
     Route::get('/objek', 'MasterObjekController@index');
-    Route::get('/objek/properti/add', 'ObjekPropertiController@create');
-    Route::post('/objek/properti', 'ObjekPropertiController@store');
+    Route::get('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@create');
+    Route::post('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@store');
 
     // Show users profile - viewable by other users.
     Route::get('profile/{username}', [
