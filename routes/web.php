@@ -16,10 +16,6 @@
 // Homepage Route
 Route::group(['middleware' => ['web', 'checkblocked']], function () {
     Route::get('/', 'WelcomeController@welcome')->name('welcome');
-
-    Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
-    Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');
-    Route::get('ajax/dropdown/kelurahan/{id_kecamatan}', 'DropdownController@kelurahan');
 });
 
 // Authentication Routes
@@ -71,6 +67,12 @@ Route::group(['middleware' => ['auth', 'activated', 'activity', 'twostep', 'chec
     Route::get('/objek', 'MasterObjekController@index');
     Route::get('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@create');
     Route::post('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@store');
+    Route::get('/edit/properti/{nm_subkategori}/{id}', 'ObjekPropertiController@edit');
+
+
+    Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
+    Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');
+    Route::get('ajax/dropdown/kelurahan/{id_kecamatan}', 'DropdownController@kelurahan');
 
     // Show users profile - viewable by other users.
     Route::get('profile/{username}', [

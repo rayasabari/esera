@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('head')
-    <title>Tambah Objek {{ $kategori->nama }} - SRA</title>
+    <title>Edit Objek {{ $kategori->nama }} - SRA</title>
 @endsection
 
 @section('menu')
@@ -17,7 +17,7 @@
     <span class="kt-subheader__breadcrumbs-separator"></span>
     <a href="#" class="kt-subheader__breadcrumbs-link">{{ $kategori->nama  }}</a>
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/add/'.Request::segment(2).'/'.Request::segment(3)) }}" class="kt-subheader__breadcrumbs-link">Tambah</a>
+    <a href="{{ url('/edit/'.Request::segment(2).'/'.Request::segment(3)) }}" class="kt-subheader__breadcrumbs-link">Edit</a>
 @endsection
 
 @section('content')
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <form method="post" action="/add/{{ Request::segment(2)}}/{{ Request::segment(3) }}">
+                <form method="post" action="/edit/{{ Request::segment(2)}}/{{ Request::segment(3) }}'/'{{ $properti->id }}">
                     @csrf
                     <input type="hidden" name="id_kategori" value="{{ $kategori->id }}">
                     <input type="hidden" name="id_sub_kategori" value="{{ $subkategori->id }}">
@@ -42,7 +42,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Nama Objek <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('nama') is-invalid @enderror" placeholder="" name="nama" value="{{ old('nama') }}">
+                                <input type="text" class="form-control @error('nama') is-invalid @enderror" placeholder="" name="nama" value="{{ old('nama',$properti->nama ) }}">
                                 @error('nama')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -67,19 +67,6 @@
 @section('footer_script')
     <script>
         $(document).ready(function(){
-
-            if($('#provinsi').val() != 0 || $('#provinsi').val() != '') {
-                var id_provinsi = $('#provinsi').val();
-                kota_by_propinsi(id_provinsi);
-            }else if($('kota').val() != 0 || $('#kota').val() != ''){
-                var id_kota = $('kota').val();
-                $('#kecamatan').val(id_kota);
-                kecamatan_by_kota(id_kota);
-            }else if($('kecamatan').val() !=  0 || $('kecamatan').val() != '' ){
-                var id_kecamatan = $('kota').val();
-                $('#kecamatan').val(id_kecamatan);
-                kecamatan_by_kota(id_kecamatan);
-            };
 
             $('#provinsi').change(function(){
                 var id = $(this).val();

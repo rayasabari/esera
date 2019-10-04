@@ -15,7 +15,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
 <!-- begin::Head -->
 <head>
-    <base href="../../">
+    <base href="../../../">
     <meta charset="utf-8" />
     <meta name="description" content="No aside layout examples">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

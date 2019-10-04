@@ -8,6 +8,9 @@ use App\Models\Kategori;
 use App\Models\SubKategori;
 use App\Models\Pemilik;
 use App\Models\IndonesiaProvinsi;
+use App\Models\IndonesiaKota;
+use App\Models\IndonesiaKecamatan;
+use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertfikat;
 use Illuminate\Http\Request;
 use Auth;
@@ -19,6 +22,9 @@ class ObjekPropertiController extends Controller
             $sub_kategori,
             $pemilik,
             $master_provinsi,
+            $master_kota,
+            $master_kecamatan,
+            $master_kelurahan,
             $jenis_sertifikat;
 
         /**
@@ -28,12 +34,15 @@ class ObjekPropertiController extends Controller
      */
     public function __construct()
     {
-        $this->objek_properti = New ObjekProperti;
-        $this->kategori = New Kategori;
-        $this->sub_kategori = New SubKategori;
-        $this->pemilik = New Pemilik;
-        $this->master_provinsi = New IndonesiaProvinsi;
-        $this->jenis_sertifikat = New JenisSertfikat;
+        $this->objek_properti       = New ObjekProperti;
+        $this->kategori             = New Kategori;
+        $this->sub_kategori         = New SubKategori;
+        $this->pemilik              = New Pemilik;
+        $this->master_provinsi      = New IndonesiaProvinsi;
+        $this->master_kota          = New IndonesiaKota;
+        $this->master_kecamatan     = New IndonesiaKecamatan;
+        $this->master_kelurahan     = New IndonesiaKelurahan;
+        $this->jenis_sertifikat     = New JenisSertfikat;
         $this->middleware('auth');
     }
 
@@ -56,32 +65,18 @@ class ObjekPropertiController extends Controller
     {
         $user = Auth::user();
 
-        $kategori = $this->kategori
-        ->where('nama', ucwords($nm_kategori))
-        ->select('id','nama')
-        ->first();
-
-        $subkategori = $this->sub_kategori
-        ->where('nama', ucwords($nm_subkategori))
-        ->select('id','nama')
-        ->first();
-
-        $pemilik = $this->pemilik
-        ->select('id','first_name','last_name')
-        ->get();
-
-        $provinsi = $this->master_provinsi
-        ->select('id','text')
-        ->orderBy('text', 'ASC')
-        ->get();
-
-        $jenissertifikat = $this->jenis_sertifikat
-        ->select('id','nama','singkatan')
-        ->orderBy('id','ASC')
-        ->get(); 
+        $kategori           = $this->kategori->where('nama', ucwords($nm_kategori))->select('id','nama')->first();
+        $subkategori        = $this->sub_kategori->where('nama', ucwords($nm_subkategori))->select('id','nama')->first();
+        $pemilik            = $this->pemilik->select('id','first_name','last_name')->get();
+        $provinsi           = $this->master_provinsi->select('id','text')->orderBy('text', 'ASC')->get();
+        $jenissertifikat    = $this->jenis_sertifikat->select('id','nama','singkatan')->orderBy('id','ASC')->get(); 
+        $withdata           = [
+            'id_sertifikat' => '',
+            'id_pemilik'    => ''
+        ];
 
         // return response()->json($kategoris);
-        return view('pages.admin.objek.add-properti', compact('user','kategori','subkategori','pemilik','provinsi','jenissertifikat'));
+        return view('pages.admin.objek.add-properti', compact('user','kategori','subkategori','pemilik','provinsi','jenissertifikat'))->with('withdata', $withdata);
 
     }
 
@@ -195,9 +190,31 @@ class ObjekPropertiController extends Controller
      * @param  \App\Models\ObjekProperti  $objekProperti
      * @return \Illuminate\Http\Response
      */
-    public function edit(ObjekProperti $objekProperti)
+    public function edit($nm_subkategori, $id)
     {
-        //
+        $user = Auth::user();
+
+        $properti           = $this->objek_properti->where('id', $id)->first();
+        $kategori           = $this->kategori->where('nama', 'Properti')->select('id','nama')->first();
+        $subkategori        = $this->sub_kategori->where('nama', ucwords($nm_subkategori))->select('id','nama')->first();
+        $pemilik            = $this->pemilik->select('id','first_name','last_name')->get();
+        $provinsi           = $this->master_provinsi->select('id','text')->orderBy('text', 'ASC')->get();
+        $kota               = $this->master_kota->where('id_provinsi', $properti->id_provinsi)->select('id','text')->orderBy('text', 'ASC')->get();
+        $kecamatan          = $this->master_kecamatan->where('id_kota', $properti->id_kota)->select('id','text')->orderBy('text', 'ASC')->get();
+        $kelurahan          = $this->master_kelurahan->where('id_kecamatan', $properti->id_kecamatan)->select('id','text')->orderBy('text', 'ASC')->get();
+        $jenissertifikat    = $this->jenis_sertifikat->select('id','nama','singkatan')->orderBy('id','ASC')->get(); 
+        $withdata           = [
+            'id_provinsi'   => $properti->id_provinsi,
+            'id_kota'       => $properti->id_kota,
+            'id_kecamatan'  => $properti->id_kecamatan,
+            'id_kelurahan'  => $properti->id_kelurahan,
+            'id_sertifikat' => $properti->id_sertifikat,
+            'id_pemilik'    => $properti->id_pemilik,
+            'alamat'        => $properti->alamat,
+            'kode_pos'      => $properti->kode_pos
+        ];
+        // return response()->json($withdata['alamat']);
+        return view('pages.admin.objek.edit-properti', compact('user','properti','kategori','subkategori','pemilik','provinsi','kota','kecamatan','kelurahan','jenissertifikat'))->with('withdata', $withdata);
     }
 
     /**
