@@ -34,10 +34,10 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <form method="post" action="/edit/{{ Request::segment(2)}}/{{ Request::segment(3) }}'/'{{ $properti->id }}">
+                <form method="post" action="/edit/{{ Request::segment(2)}}/{{ Request::segment(3) }}/{{ $properti->id }}">
+                    @method('patch')
                     @csrf
-                    <input type="hidden" name="id_kategori" value="{{ $kategori->id }}">
-                    <input type="hidden" name="id_sub_kategori" value="{{ $subkategori->id }}">
+                    <input type="hidden" name="sub_kategori" value="{{ $subkategori->nama }}">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">

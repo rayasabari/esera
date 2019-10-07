@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('head')
-    <title>Master Objek Lelang - SRA</title>
+    <title>Listing Objek - SRA</title>
 @endsection
 
 @section('menu')
@@ -10,7 +10,7 @@
 
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/objek') }}" class="kt-subheader__breadcrumbs-link">Master Objek Lelang</a>
+    <a href="{{ url('/listing') }}" class="kt-subheader__breadcrumbs-link">Master Listing Objek</a>
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <div class="kt-portlet__head-title">
-                        Master Objek Lelang
+                        Data Listing Objek
                     </div>                    
                 </div>
                 <div class="kt-portlet__head-toolbar">
@@ -30,9 +30,9 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
                             {{-- <a class="dropdown-item" href="{{ url('/objek/properti/add') }}"><i class="fa fa-home"></i> Properti</a>
                             <a class="dropdown-item" href="#"><i class="fa fa-car"></i> Kendaraan</a> --}}
-                            @foreach($subkategori as $item)
+                            {{-- @foreach($subkategori as $item)
                                 <a class="dropdown-item mt-1" href="/add/{{ strtolower($item->kategori->nama)."/".strtolower($item->nama) }}"><i class="flaticon-add"></i><span class="mt-1" > {{ $item->nama }}</span></a>
-                            @endforeach
+                            @endforeach --}}
                         </div>
                     </div>
                 </div>
@@ -48,9 +48,10 @@
                         <tr>
                             <th>#</th>
                             <th>Nama Objek</th>
-                            <th class="kt-align-left">Kategori</th>
-                            <th class="kt-align-left">Sub Kategori</th>
                             <th class="kt-align-left">Pemilik</th>
+                            <th class="kt-align-left">Kode Lot</th>
+                            <th class="kt-align-center">Tgl Mulai Lelang</th>
+                            <th class="kt-align-center">Tgl Akhir Lelang</th>
                             <th class="kt-align-center">Harga Limit</th>
                             <th class="kt-align-center">Jaminan</th>
                             <th class="kt-align-center">Status</th>
@@ -61,26 +62,19 @@
                         @foreach ($objek as $obj)
                         <tr>
                             <th scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</th>
-                            <td style="vertical-align: middle"><a href="/detail/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-promary"> {{ $obj->nama }}</a></td>
-                            <td class="kt-align-left" style="vertical-align: middle">{{ $obj->kategori->nama }}</td>
-                            <td class="kt-align-left" style="vertical-align: middle">{{ $obj->sub_kategori->nama }}</td>
-                            <td class="kt-align-left" style="vertical-align: middle">{{ $obj->pemilik->first_name. " ".$obj->pemilik->last_name }}</td>
-                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->harga_limit,0,",",".") }},-</b></td>
-                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->jaminan,0,",",".") }},-</b></td>
-                            <td class="kt-align-center" style="vertical-align: middle">
-                                @if($obj->status_objek->id == 1)
-                                    <b class="text-warning">{{ $obj->status_objek->nama }}</b>
-                                @elseif($obj->status_objek->id == 2)
-                                    <b class="text-success">{{ $obj->status_objek->nama }}</b>
-                                @elseif($obj->status_objek->id == 3)
-                                    <b class="text-danger">{{ $obj->status_objek->nama }}</b>
-                                @endif
-                            </td>
-                            <td>
+                            <td style="vertical-align: middle">{{ $obj->objek_properti->nama }}</td>
+                            <td class="kt-align-left" style="vertical-align: middle">{{ $obj->objek_properti->pemilik->first_name .' '. $obj->objek_properti->pemilik->last_name }}</td>
+                            <td class="kt-align-left" style="vertical-align: middle">{{ $obj->kode_lot}}</td>
+                            <td class="kt-align-center" style="vertical-align: middle">{{ date("d F Y", strtotime( $obj->tgl_mulai_lelang)) }}</td>
+                            <td class="kt-align-center" style="vertical-align: middle">{{ date("d F Y", strtotime( $obj->tgl_akhir_lelang)) }}</td>
+                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->harga_limit,0,",",".") }},-</b></td>
+                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->jaminan,0,",",".") }},-</b></td>
+
+                            {{-- <td>
                                 <a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-primary" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
                                     <i class="fa fa-edit"></i>
                                 </a>
-                            </td>
+                            </td> --}}
                         </tr>
                         @endforeach
                     </tbody>

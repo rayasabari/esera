@@ -56,24 +56,6 @@ Route::group(['middleware' => ['auth', 'activated', 'activity', 'twostep', 'chec
         'uses' => 'UserController@index'
         ]);
 
-    // Route::get('/data_objek', 'ObjekController@index');
-    // Route::get('/data_objek/create', 'ObjekController@create');
-    // Route::get('/data_objek/{id}', 'ObjekController@show');
-    // Route::post('/data_objek', 'ObjekController@store');
-    // Route::delete('/data_objek/{id}', 'ObjekController@destroy');
-    // Route::get('/data_objek/{id}/edit', 'ObjekController@edit');
-    // Route::patch('/data_objek/{id}', 'ObjekController@update');
-
-    Route::get('/objek', 'MasterObjekController@index');
-    Route::get('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@create');
-    Route::post('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@store');
-    Route::get('/edit/properti/{nm_subkategori}/{id}', 'ObjekPropertiController@edit');
-
-
-    Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
-    Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');
-    Route::get('ajax/dropdown/kelurahan/{id_kecamatan}', 'DropdownController@kelurahan');
-
     // Show users profile - viewable by other users.
     Route::get('profile/{username}', [
         'as'   => '{username}',
@@ -120,6 +102,30 @@ Route::group(['middleware' => ['auth', 'activated', 'currentUser', 'activity', '
 
 // Registered, activated, and is admin routes.
 Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'activity', 'twostep', 'checkblocked']], function () {
+    
+    // Route::get('/data_objek', 'ObjekController@index');
+    // Route::get('/data_objek/create', 'ObjekController@create');
+    // Route::get('/data_objek/{id}', 'ObjekController@show');
+    // Route::post('/data_objek', 'ObjekController@store');
+    // Route::delete('/data_objek/{id}', 'ObjekController@destroy');
+    // Route::get('/data_objek/{id}/edit', 'ObjekController@edit');
+    // Route::patch('/data_objek/{id}', 'ObjekController@update');
+
+    Route::get('/objek', 'MasterObjekController@index');
+    Route::get('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@create');
+    Route::post('/add/{nm_kategori}/{nm_subkategori}', 'ObjekPropertiController@store');
+    Route::get('/edit/properti/{nm_subkategori}/{id}', 'ObjekPropertiController@edit');
+    Route::patch('/edit/properti/{nm_subkategori}/{id}', 'ObjekPropertiController@update');
+    Route::delete('/delete/properti/{nm_subkategori}/{id}', 'ObjekPropertiController@destroy');
+    Route::get('detail/properti/{nm_subkategori}/{id}', 'ObjekPropertiController@show');
+
+    Route::get('/listing', 'ListingController@index');
+
+
+    Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
+    Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');
+    Route::get('ajax/dropdown/kelurahan/{id_kecamatan}', 'DropdownController@kelurahan');
+    
     Route::resource('/users/deleted', 'SoftDeletesController', [
         'only' => [
             'index', 'show', 'update', 'destroy',

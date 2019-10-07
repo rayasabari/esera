@@ -23,4 +23,9 @@ class ObjekKendaraan extends Model
     {
         return $this->hasOne('App\Models\Pemilik','id','id_pemilik');
     }
+
+    public function status_objek()
+    {
+        return $this->hasOne('App\Models\StatusObjek','id','id_status_objek');
+    }
 }

@@ -38,6 +38,7 @@ class CreateObjekKendaraanTable extends Migration
             $table->string('deskripsi')->nullable();
             $table->double('harga_limit')->nullable();
             $table->double('jaminan')->nullable();
+            $table->integer('id_status_objek')->nullable();
             $table->timestamps();
         });
     }

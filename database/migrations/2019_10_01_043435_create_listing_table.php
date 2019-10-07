@@ -15,6 +15,8 @@ class CreateListingTable extends Migration
     {
         Schema::create('listing', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('id_kategori');
+            $table->integer('id_sub_kategori');
             $table->integer('id_objek');
             $table->string('kode_lot', 20);
             $table->date('batas_akhir_jaminan');

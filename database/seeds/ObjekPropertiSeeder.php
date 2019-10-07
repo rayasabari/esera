@@ -34,7 +34,8 @@ class ObjekPropertiSeeder extends Seeder
                     'id_pemilik'        => 1,
                     'deskripsi'         => '',
                     'harga_limit'       => 280000000,
-                    'jaminan'           => 56000000
+                    'jaminan'           => 56000000,
+                    'id_status_objek'   => 1
                 ]
             );
             DB::table('objek_properti')->insert(
@@ -59,7 +60,8 @@ class ObjekPropertiSeeder extends Seeder
                     'id_pemilik'        => 2,
                     'deskripsi'         => '',
                     'harga_limit'       => 370000000,
-                    'jaminan'           => 74000000
+                    'jaminan'           => 74000000,
+                    'id_status_objek'   => 1
                 ]
             );
         }

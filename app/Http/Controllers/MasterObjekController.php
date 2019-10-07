@@ -32,7 +32,7 @@ class MasterObjekController extends Controller
         $user = Auth::user();
         
         $properti = $this->objekproperti
-        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan')
+        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
         ->with(array
             (
                 'kategori'      => function($query){
@@ -41,8 +41,11 @@ class MasterObjekController extends Controller
                 'sub_kategori'  => function($query){
                     $query->select('id','nama');
                 },
-                'pemilik'  => function($query){
+                'pemilik'       => function($query){
                     $query->select('id','first_name','last_name');
+                },
+                'status_objek'  => function($query){
+                    $query->select('id','nama');
                 }
             )
         )
@@ -50,7 +53,7 @@ class MasterObjekController extends Controller
         ->toArray();
 
         $kendaraan = $this->objekkendaraan
-        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan')
+        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
         ->with(array
             (
                 'kategori'      => function($query){
@@ -61,6 +64,9 @@ class MasterObjekController extends Controller
                 },
                 'pemilik'  => function($query){
                     $query->select('id','first_name','last_name');
+                },
+                'status_objek'  => function($query){
+                    $query->select('id','nama');
                 }
             )
         )

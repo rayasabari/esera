@@ -4,10 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ObjekProperti extends Model
+class Listing extends Model
 {
-    
-    protected $table = 'objek_properti';
+    protected $table = 'listing';
 
     public function kategori()
     {
@@ -46,11 +45,17 @@ class ObjekProperti extends Model
 
     public function pemilik()
     {
-        return $this->hasOne('App\Models\Pemilik','id','id_pemilik');
+        return $this->hasOne('App\Models\Pemilik','id', 'id_pemilik' );
     }
 
     public function status_objek()
     {
         return $this->hasOne('App\Models\StatusObjek','id','id_status_objek');
     }
+
+    public function objek_properti()
+    {
+        return $this->hasOne('App\Models\ObjekProperti','id','id_objek');
+    }
+
 }

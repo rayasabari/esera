@@ -36,7 +36,8 @@ class ObjekKendaraan extends Seeder
                     'id_pemilik'        => 2,
                     'deskripsi'         => '',
                     'harga_limit'       => 150000000,
-                    'jaminan'           => 30000000
+                    'jaminan'           => 30000000,
+                    'id_status_objek'   => 1
                 ]
             );
             DB::table('objek_kendaraan')->insert(
@@ -63,7 +64,8 @@ class ObjekKendaraan extends Seeder
                     'id_pemilik'        => 2,
                     'deskripsi'         => '',
                     'harga_limit'       => 215000000,
-                    'jaminan'           => 43000000
+                    'jaminan'           => 43000000,
+                    'id_status_objek'   => 1
                 ]
             );
         }
