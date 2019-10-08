@@ -19,15 +19,15 @@ class CreateListingTable extends Migration
             $table->integer('id_sub_kategori');
             $table->integer('id_objek');
             $table->string('kode_lot', 20);
-            $table->date('batas_akhir_jaminan');
+            $table->date('batas_akhir_jaminan')->nullable();
             $table->double('kelipatan_bid');
-            $table->double('harga_berjalan');
-            $table->double('harga_terbentuk');
+            $table->double('harga_berjalan')->nullable();
+            $table->double('harga_terbentuk')->nullable();
             $table->date('tgl_mulai_lelang');
             $table->date('tgl_akhir_lelang');
-            $table->string('status', 10);
-            $table->longText('keterangan');
-            $table->integer('dilihat');
+            $table->string('status', 10)->nullable();
+            $table->longText('keterangan')->nullable();
+            $table->integer('dilihat')->nullable();
             $table->timestamps();
         });
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\StatusObjek;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ObjekPropertiSeeder::class);
         $this->call(PemilikSeeder::class);
         $this->call(ObjekKendaraan::class);
+        $this->call(StatusObjekSeeder::class);
 
         Model::reguard();
     }

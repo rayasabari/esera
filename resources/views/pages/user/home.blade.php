@@ -4,6 +4,10 @@
     <title>Home User - SRA</title>
 @endsection
 
+@section('menu')
+    @include('pages.user.menu')
+@endsection
+
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
     <a href="{{ url('/home') }}" class="kt-subheader__breadcrumbs-link">Home</a>

@@ -33,7 +33,7 @@ class CreateObjekPropertiTable extends Migration
             $table->double('kamar_mandi')->nullable();
             $table->integer('id_sertifikat')->nullable();
             $table->integer('id_pemilik')->nullable();
-            $table->string('deskripsi')->nullable();
+            $table->longText('deskripsi')->nullable();
             $table->double('harga_limit')->nullable();
             $table->double('jaminan')->nullable();
             $table->integer('id_status_objek')->nullable();

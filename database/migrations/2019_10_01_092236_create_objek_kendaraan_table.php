@@ -35,7 +35,7 @@ class CreateObjekKendaraanTable extends Migration
             $table->string('kilometer', 30)->nullable();
             $table->string('warna', 30)->nullable();
             $table->integer('id_pemilik')->nullable();
-            $table->string('deskripsi')->nullable();
+            $table->longText('deskripsi')->nullable();
             $table->double('harga_limit')->nullable();
             $table->double('jaminan')->nullable();
             $table->integer('id_status_objek')->nullable();

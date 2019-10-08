@@ -78,6 +78,9 @@ Route::group(['middleware' => ['auth', 'activated', 'currentUser', 'activity', '
             ],
         ]
     );
+
+    Route::get('/lelang', 'ListingController@listobjek');
+
     Route::put('profile/{username}/updateUserAccount', [
         'as'   => '{username}',
         'uses' => 'ProfilesController@updateUserAccount',
@@ -120,6 +123,8 @@ Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'activity', 't
     Route::get('detail/properti/{nm_subkategori}/{id}', 'ObjekPropertiController@show');
 
     Route::get('/listing', 'ListingController@index');
+    Route::get('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@create');
+    Route::post('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@store');
 
 
     Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');

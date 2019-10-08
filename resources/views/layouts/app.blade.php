@@ -15,7 +15,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
 <!-- begin::Head -->
 <head>
-    <base href="../../../">
+    <base href="../../../../">
     <meta charset="utf-8" />
     <meta name="description" content="No aside layout examples">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -97,7 +97,7 @@ License: You must have a valid license purchased only from themeforest(the above
 <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
     <div class="kt-header-mobile__logo">
         <a href="/home">
-            <img alt="Logo" src="assets/media/logos/sra-logo.gif" />
+            <img alt="Logo" src="assets/media/logos/sra-logo.gif" width="38px" />
         </a>
     </div>
     <div class="kt-header-mobile__toolbar">
@@ -306,6 +306,27 @@ License: You must have a valid license purchased only from themeforest(the above
 <script src="assets/js/pages/dashboard.js" type="text/javascript"></script>
 
 @yield('footer_script')
+
+<script>
+    /* FORMAT ANGKA 3 titik*/
+    function angka(objek) {
+        objek = typeof(objek) != 'undefined' ? objek : 0;
+        a = objek.value;
+        b = a.replace(/[^\d]/g, "");
+        c = "";
+        panjang = b.length;
+        j = 0;
+        for (i = panjang; i > 0; i--) {
+            j = j + 1;
+            if (((j % 3) == 1) && (j != 1)) {
+                c = b.substr(i - 1, 1) + "." + c;
+            } else {
+                c = b.substr(i - 1, 1) + c;
+            }
+        }
+        objek.value = c;
+    }
+</script>
 
 <!--end::Page Scripts -->
 </body>

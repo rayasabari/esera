@@ -24,12 +24,10 @@
                 </div>
                 <div class="kt-portlet__head-toolbar">
                     <div class="dropdown show">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                        <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
                             <i class="flaticon2-plus-1"></i> Tambah
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
-                            {{-- <a class="dropdown-item" href="{{ url('/objek/properti/add') }}"><i class="fa fa-home"></i> Properti</a>
-                            <a class="dropdown-item" href="#"><i class="fa fa-car"></i> Kendaraan</a> --}}
                             @foreach($subkategori as $item)
                                 <a class="dropdown-item mt-1" href="/add/{{ strtolower($item->kategori->nama)."/".strtolower($item->nama) }}"><i class="flaticon-add"></i><span class="mt-1" > {{ $item->nama }}</span></a>
                             @endforeach
@@ -43,8 +41,8 @@
                         {{ session('status') }}
                     </div>
                 @endif
-                <table class="table table-striped">
-                    <thead class="thead-dark">
+                <table class="table table-hover">
+                    <thead class="">
                         <tr>
                             <th>#</th>
                             <th>Nama Objek</th>
@@ -54,7 +52,7 @@
                             <th class="kt-align-center">Harga Limit</th>
                             <th class="kt-align-center">Jaminan</th>
                             <th class="kt-align-center">Status</th>
-                            <th class="kt-align-center" style="width: 2%"></th>
+                            <th class="kt-align-center" style="width: 5%"><i class="flaticon2-settings"></i></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,9 +74,12 @@
                                     <b class="text-danger">{{ $obj->status_objek->nama }}</b>
                                 @endif
                             </td>
-                            <td>
+                            <td class="kt-align-center">
                                 <a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-primary" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
                                     <i class="fa fa-edit"></i>
+                                </a>
+                                <a href="/add/listing/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-success" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Add to Listing" >
+                                    <i class="fa fa-list-alt"></i>
                                 </a>
                             </td>
                         </tr>
