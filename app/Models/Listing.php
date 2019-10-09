@@ -58,4 +58,14 @@ class Listing extends Model
         return $this->hasOne('App\Models\ObjekProperti','id','id_objek');
     }
 
+    public function bid()
+    {
+        return $this->hasOne('App\Models\Bid','id_listing','id');
+    }
+
+    public function bid_count()
+    {
+        return $this->hasMany('App\Models\Bid','id_listing','id');
+    }
+
 }

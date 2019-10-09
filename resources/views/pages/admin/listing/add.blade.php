@@ -44,14 +44,14 @@
                         </div>
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>No. LOT <span class="text-danger">*</span></label>
+                                <label>Kode Lot <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('kode_lot') is-invalid @enderror" placeholder="" name="kode_lot" value="{{ old('kode_lot') }}">
                                 @error('kode_lot')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label>Kelipatan BID <span class="text-danger">*</span></label>
+                                <label>Kelipatan Bid <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text">Rp</span></div>
                                     <input type="text" onkeyup="angka(this)" onblur="angka(this)" class="form-control text-right font-weight-bold @error('kelipatan_bid') is-invalid @enderror" placeholder="" name="kelipatan_bid" value="{{ Request::segment(1)=='edit' ? old('kelipatan_bid', $properti->kelipatan_bid) : old('kelipatan_bid') }}">

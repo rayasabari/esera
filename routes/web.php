@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth', 'activated', 'currentUser', 'activity', '
     );
 
     Route::get('/lelang', 'ListingController@listobjek');
+    Route::get('/detail/objek/{id}', 'ListingController@show');
+    Route::post('/bid/{id_nipl}/{id_listing}', 'ListingController@submit_bid');
 
     Route::put('profile/{username}/updateUserAccount', [
         'as'   => '{username}',
@@ -125,7 +127,6 @@ Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'activity', 't
     Route::get('/listing', 'ListingController@index');
     Route::get('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@create');
     Route::post('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@store');
-
 
     Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
     Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');

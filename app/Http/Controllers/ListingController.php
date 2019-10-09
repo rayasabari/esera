@@ -9,6 +9,8 @@ use App\Models\ObjekKendaraan;
 use App\Models\Kategori;
 use App\Models\SubKategori;
 use App\Models\Pemilik;
+use App\Models\Bid;
+use App\Models\Nipl;
 use App\Models\IndonesiaProvinsi;
 use App\Models\IndonesiaKota;
 use App\Models\IndonesiaKecamatan;
@@ -28,7 +30,9 @@ class ListingController extends Controller
             $master_kecamatan,
             $master_kelurahan,
             $jenis_sertifikat,
-            $listing;
+            $listing,
+            $nipl,
+            $bid;
     /**
      * Create a new controller instance.
      *
@@ -47,6 +51,8 @@ class ListingController extends Controller
         $this->master_kelurahan     = New IndonesiaKelurahan;
         $this->jenis_sertifikat     = New JenisSertifikat;
         $this->listing              = New Listing;
+        $this->bid                  = New Bid;
+        $this->nipl                 = New Nipl;
         $this->middleware('auth');
     }
 
@@ -168,7 +174,59 @@ class ListingController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = Auth::user();
+
+        $nipl = $this->nipl->where('id_user', $user->id)->first();
+
+        $objek = $this->listing
+        ->where('id', $id)
+        ->with(array(
+            'objek_properti' => function($query){
+                $query->with(array(
+                    'pemilik' => function($query){
+                        $query->select('id','first_name','last_name');
+                    },
+                    'provinsi' => function($query){
+                        $query->select('id','text');
+                    },
+                    'kota' => function($query){
+                        $query->select('id','text');
+                    },
+                    'kecamatan' => function($query){
+                        $query->select('id','text');
+                    },
+                    'kelurahan' => function($query){
+                        $query->select('id','text');
+                    },
+                    'sertifikat' => function($query){
+                        $query->select('id','nama','singkatan');
+                    }
+                ));
+            },
+            'kategori' => function($query){
+                $query->select('id','nama');
+            },
+            'sub_kategori' => function($query){
+                $query->select('id','nama');
+            }      
+        ))
+        ->first();
+
+        $bid = $this->bid->where('id_listing', $id)
+        ->with(array(
+            'nipl'  => function ($query){
+                $query->select('id','id_user','nipl')
+                ->with(array(
+                    'user' => function($query){
+                        $query->select('id','first_name','last_name');
+                    }
+                ));
+            }
+        ))
+        ->orderBy('jumlah_bid', 'DESC')->get();
+
+        // return $bid[0]->jumlah_bid;
+        return view('pages.user.detail-objek', compact('user','nipl','objek','bid'));
     }
 
     /**
@@ -235,13 +293,31 @@ class ListingController extends Controller
             },
             'sub_kategori' => function($query){
                 $query->select('id','nama');
-            }      
+            },
+            'bid' => function($query){
+                $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
+            },
+            'bid_count' => function($query){
+                $query->select('id','id_listing');
+            }
         ))
         ->get();
+        
 
-        // return $objek;
+        // return count($objek[0]->bid_count);
         return view('pages.user.list-objek', compact('user','objek'));
+    }
 
+    public function submit_bid(Request $request, $id_nipl, $id_listing)
+    {
+        $bid = $this->bid;
+        $bid->id_listing     = $id_listing;
+        $bid->id_nipl        = $id_nipl;
+        $bid->jumlah_bid     = str_replace(".","",$request->jumlah_bid);
+        $bid->save();
+
+        return redirect('/detail/objek/'.$id_listing)->with('status','Bid berhasil disubmit');
+        return $request;
     }
 
 }

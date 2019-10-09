@@ -4,6 +4,15 @@
     <title>List Objek Lelang - SRA</title>
 @endsection
 
+@section('menu')
+    @include('pages.user.menu')
+@endsection
+
+@section('sub_subheader')
+    <span class="kt-subheader__breadcrumbs-separator"></span>
+    <a href="{{ url('/lelang') }}" class="kt-subheader__breadcrumbs-link">List Objek Lelang</a>
+@endsection
+
 @section('content')
     <div class="kt-container">
         @foreach($objek as $obj)
@@ -16,119 +25,75 @@
                             </div>
                             <div class="kt-widget__content">
                                 <div class="kt-widget__head">
-                                    <a href="#" class="kt-widget__username">
+                                    <a href="/detail/objek/{{ $obj->id }}" class="kt-widget__username">
                                         {{ $obj->objek_properti->nama }}    
                                         <i class="flaticon2-correct kt-font-success"></i>                       
                                     </a>
 
                                     <div class="kt-widget__action">
-                                        <button type="button" class="btn btn-label-success btn-sm btn-upper">ask</button>&nbsp;
-                                        <button type="button" class="btn btn-brand btn-sm btn-upper">hire</button>
+                                        <a href="/detail/objek/{{ $obj->id }}" class="kt-widget__username">LOT {{ $obj->kode_lot }}</a>
                                     </div>
                                 </div>
 
                                 <div class="kt-widget__subhead">
-                                    <a href="#"><i class="flaticon2-new-email"></i>jason@siastudio.com</a>
-                                    <a href="#"><i class="flaticon2-calendar-3"></i>PR Manager </a>
-                                    <a href="#"><i class="flaticon2-placeholder"></i>Melbourne</a>
+                                    <a href="#"><i class="flaticon2-location"></i>{{ $obj->objek_properti->provinsi->text }}</a>
+                                    <a href="#"><i class="flaticon2-calendar-3"></i>{{ $obj->kategori->nama }}</a>
+                                    <a href="#"><i class="flaticon2-placeholder"></i>{{ $obj->objek_properti->pemilik->first_name .' '. $obj->objek_properti->pemilik->last_name }}</a>
                                 </div>
 
                                 <div class="kt-widget__info">
                                     <div class="kt-widget__desc">
-                                        I distinguish three main text objektive could be merely to inform people.
-                                        <br> A second could be persuade people.You want people to bay objective
-                                    </div>
-                                    <div class="kt-widget__progress">
-                                        <div class="kt-widget__text">
-                                            Progress
-                                        </div>
-                                        <div class="progress" style="height: 5px;width: 100%;">
-                                            <div class="progress-bar kt-bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <div class="kt-widget__stats">
-                                            78%
-                                        </div>
+                                        {{ $obj->objek_properti->deskripsi }}
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                         <div class="kt-widget__bottom">
-                            <div class="kt-widget__item">
+                            <div class="kt-widget__item col-lg-3">
                                 <div class="kt-widget__icon">
                                     <i class="flaticon-price-tag text-black-50"></i>
                                 </div>
                                 <div class="kt-widget__details">
                                     <span class="kt-widget__title">Harga Limit</span>
-                                    <span class="kt-widget__value text-success">Rp {{ number_format($obj->objek_properti->harga_limit,0,',','.') }}</span>
+                                    <span class="kt-widget__value text-danger">Rp {{ number_format($obj->objek_properti->harga_limit,0,',','.') }}</span>
                                 </div>
                             </div>
 
-                            <div class="kt-widget__item">
+                            <div class="kt-widget__item col-lg-3">
                                 <div class="kt-widget__icon">
                                     <i class="flaticon-safe-shield-protection text-black-50"></i>
                                 </div>
                                 <div class="kt-widget__details">
                                     <span class="kt-widget__title">Jaminan</span>
-                                    <span class="kt-widget__value text-primary">Rp {{ number_format($obj->objek_properti->jaminan,0,',','.') }}</span>
+                                    <span class="kt-widget__value kt-font-brand">Rp {{ number_format($obj->objek_properti->jaminan,0,',','.') }}</span>
                                 </div>
                             </div>
 
-                            <div class="kt-widget__item">
+                            <div class="kt-widget__item col-lg-3">
                                 <div class="kt-widget__icon">
-                                    <i class="flaticon-pie-chart"></i>
+                                    <i class="flaticon2-poll-symbol text-black-50"></i>
                                 </div>
                                 <div class="kt-widget__details">
                                     <span class="kt-widget__title">On going Bid</span>
-                                    <span class="kt-widget__value"><span>$</span>782,300</span>
+                                    @if(isset($obj->bid))
+                                        <span class="kt-widget__value text-warning">Rp {{ number_format($obj->bid->jumlah_bid,0,',','.') }}</span>
+                                    @else 
+                                        <span class="kt-widget__value text-success">Open Bid</span>
+                                    @endif
                                 </div>
                             </div>
 
-                            <div class="kt-widget__item">
-                                <div class="kt-widget__icon">
-                                    <i class="flaticon-file-2"></i>
-                                </div>
-                                <div class="kt-widget__details">
-                                    <span class="kt-widget__title">73 Tasks</span>
+                            <div class="kt-widget__item col-lg-3">
+                                <div class="kt-widget__details" style="position: absolute; right: 45px">
+                                    <span class="kt-widget__title">{{ count($obj->bid_count) }} Bid</span>
                                     <a href="#" class="kt-widget__value kt-font-brand">View</a>
                                 </div>
-                            </div>
-
-                            <div class="kt-widget__item">
-                                <div class="kt-widget__icon">
-                                    <i class="flaticon-chat-1"></i>
-                                </div>
-                                <div class="kt-widget__details">
-                                    <span class="kt-widget__title">648 Comments</span>
-                                    <a href="#" class="kt-widget__value kt-font-brand">View</a>
+                                <div class="kt-widget__icon" style="position: absolute; right: 0">
+                                    <i class="flaticon-users text-black-50 ml-3"></i>
                                 </div>
                             </div>
 
-                            <div class="kt-widget__item">
-                                <div class="kt-widget__icon">
-                                    <i class="flaticon-network"></i>
-                                </div>
-                                <div class="kt-widget__details">
-                                    <div class="kt-section__content kt-section__content--solid">
-                                        <div class="kt-media-group">
-                                            <a href="#" class="kt-media kt-media--sm kt-media--circle" data-toggle="kt-tooltip" data-skin="brand" data-placement="top" title="" data-original-title="John Myer">
-                                                <img src="/metronic/themes/metronic/theme/default/demo1/dist/assets/media/users/100_1.jpg" alt="image">
-                                            </a>
-                                            <a href="#" class="kt-media kt-media--sm kt-media--circle" data-toggle="kt-tooltip" data-skin="brand" data-placement="top" title="" data-original-title="Alison Brandy">
-                                                <img src="/metronic/themes/metronic/theme/default/demo1/dist/assets/media/users/100_10.jpg" alt="image">
-                                            </a>
-                                            <a href="#" class="kt-media kt-media--sm kt-media--circle" data-toggle="kt-tooltip" data-skin="brand" data-placement="top" title="" data-original-title="Selina Cranson">
-                                                <img src="/metronic/themes/metronic/theme/default/demo1/dist/assets/media/users/100_11.jpg" alt="image">
-                                            </a>
-                                            <a href="#" class="kt-media kt-media--sm kt-media--circle" data-toggle="kt-tooltip" data-skin="brand" data-placement="top" title="" data-original-title="Micheal York">
-                                                <img src="/metronic/themes/metronic/theme/default/demo1/dist/assets/media/users/100_3.jpg" alt="image">
-                                            </a>
-                                            <a href="#" class="kt-media kt-media--sm kt-media--circle" data-toggle="kt-tooltip" data-skin="brand" data-placement="top" title="" data-original-title="Micheal York">
-                                                <span>+5</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

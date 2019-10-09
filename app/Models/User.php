@@ -122,4 +122,9 @@ class User extends Authenticatable
     {
         return $this->profiles()->detach($profile);
     }
+
+    public function nipl()
+    {
+        return $this->hasOne('App\Models\Nipl', 'id_user', 'id');
+    }
 }
