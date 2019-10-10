@@ -50,7 +50,7 @@
                             @include('partials.alamat')
                         </div>
                         <div class="col-lg-6">
-                            @include('pages.admin.objek.add-'.Request::segment(3) )
+                            @include('pages.admin.objek.form-'.Request::segment(3) )
                         </div>
                     </div>
                     <div class="row">

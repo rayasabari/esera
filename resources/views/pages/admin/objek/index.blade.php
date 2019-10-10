@@ -25,7 +25,7 @@
                 <div class="kt-portlet__head-toolbar">
                     <div class="dropdown show">
                         <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                            <i class="flaticon2-plus-1"></i> Tambah
+                            <i class="flaticon2-plus"></i> Tambah
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
                             @foreach($subkategori as $item)

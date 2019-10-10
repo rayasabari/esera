@@ -82,7 +82,7 @@
                                     </div>
                                     <input id="jumlah_bid" onkeyup="angka(this)" name="jumlah_bid" type="text" class="form-control font-weight-bold" placeholder="">
                                     <div class="input-group-append">
-                                        <button class="btn btn-primary" type="submit">Submit Bid!</button>
+                                        <button class="btn btn-danger" type="submit">Submit Bid!</button>
                                     </div>
                                 </div>
                             </form>

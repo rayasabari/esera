@@ -63,8 +63,6 @@ class ListingController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-
         $objek  = $this->listing
         ->with(array(
             'objek_properti' => function($query){
@@ -85,7 +83,7 @@ class ListingController extends Controller
         ->get();
 
         // return $objek;
-        return view('pages.admin.listing.index', compact('user','objek'));
+        return view('pages.admin.listing.index', compact('objek'));
     }
 
     /**
@@ -95,8 +93,6 @@ class ListingController extends Controller
      */
     public function create($nm_kategori, $nm_subkategori, $id)
     {
-        $user = Auth::user();
-
         if($nm_kategori == 'properti'){
             $objek = $this->objek_properti
             ->where('id', $id)
@@ -128,7 +124,7 @@ class ListingController extends Controller
         }
 
         // return $objek;
-        return view('pages.admin.listing.add', compact('user','objek'));
+        return view('pages.admin.listing.add', compact('objek'));
     }
 
     /**
@@ -140,7 +136,7 @@ class ListingController extends Controller
     public function store(Request $request, $nm_kategori, $nm_subkategori, $id)
     {
 
-        $listing  = $this->listing;
+        $listing                        = $this->listing;
         $listing->id_kategori           = $request->id_kategori;
         $listing->id_sub_kategori       = $request->id_sub_kategori;
         $listing->id_objek              = $id;
@@ -174,10 +170,7 @@ class ListingController extends Controller
      */
     public function show($id)
     {
-        $user = Auth::user();
-
-        $nipl = $this->nipl->where('id_user', $user->id)->first();
-
+        $nipl = $this->nipl->where('id_user', Auth::user()->id)->first();
         $objek = $this->listing
         ->where('id', $id)
         ->with(array(
@@ -226,7 +219,7 @@ class ListingController extends Controller
         ->orderBy('jumlah_bid', 'DESC')->get();
 
         // return $bid[0]->jumlah_bid;
-        return view('pages.user.detail-objek', compact('user','nipl','objek','bid'));
+        return view('pages.user.detail-objek', compact('nipl','objek','bid'));
     }
 
     /**
@@ -265,8 +258,6 @@ class ListingController extends Controller
 
     public function listobjek()
     {
-        $user = Auth::user();
-
         $objek = $this->listing
         ->with(array(
             'objek_properti' => function($query){
@@ -305,7 +296,7 @@ class ListingController extends Controller
         
 
         // return count($objek[0]->bid_count);
-        return view('pages.user.list-objek', compact('user','objek'));
+        return view('pages.user.list-objek', compact('objek'));
     }
 
     public function submit_bid(Request $request, $id_nipl, $id_listing)

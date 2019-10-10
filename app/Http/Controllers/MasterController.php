@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ErrorMessageRequest;
+use Illuminate\Http\Request;
 use App\Models\ObjekProperti;
+use App\Models\ObjekKendaraan;
 use App\Models\Kategori;
 use App\Models\SubKategori;
 use App\Models\Pemilik;
@@ -12,12 +13,14 @@ use App\Models\IndonesiaKota;
 use App\Models\IndonesiaKecamatan;
 use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertifikat;
-use Illuminate\Http\Request;
+use App\Http\Requests\ErrorMessageRequest;
+// use Psy\Util\Json;
 use Auth;
 
-class ObjekPropertiController extends Controller
+class MasterController extends Controller
 {
-    public  $objek_properti,
+    public  $objek_properti, 
+            $objekk_endaraan,
             $kategori,
             $sub_kategori,
             $pemilik,
@@ -27,16 +30,12 @@ class ObjekPropertiController extends Controller
             $master_kelurahan,
             $jenis_sertifikat;
 
-        /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        $this->objek_properti       = New ObjekProperti;
-        $this->kategori             = New Kategori;
-        $this->sub_kategori         = New SubKategori;
+        $this->objek_properti       = New ObjekProperti();
+        $this->objek_kendaraan      = New ObjekKendaraan();
+        $this->kategori             = New Kategori();
+        $this->sub_kategori         = New SubKategori();
         $this->pemilik              = New Pemilik;
         $this->master_provinsi      = New IndonesiaProvinsi;
         $this->master_kota          = New IndonesiaKota;
@@ -46,25 +45,72 @@ class ObjekPropertiController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    // INDEX MASTER OBJEK
+    public function objek_index()
     {
-        //
+        $properti   = $this->objek_properti
+        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
+        ->with(array
+            (
+                'kategori'      => function($query){
+                    $query->select('id','nama');
+                },
+                'sub_kategori'  => function($query){
+                    $query->select('id','nama');
+                },
+                'pemilik'       => function($query){
+                    $query->select('id','first_name','last_name');
+                },
+                'status_objek'  => function($query){
+                    $query->select('id','nama');
+                }
+            )
+        )
+        ->get()
+        ->toArray();
+
+        $kendaraan = $this->objek_kendaraan
+        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
+        ->with(array
+            (
+                'kategori'      => function($query){
+                    $query->select('id','nama');
+                },
+                'sub_kategori'  => function($query){
+                    $query->select('id','nama');
+                },
+                'pemilik'  => function($query){
+                    $query->select('id','first_name','last_name');
+                },
+                'status_objek'  => function($query){
+                    $query->select('id','nama');
+                }
+            )
+        )
+        ->get()
+        ->toArray();
+
+        $subkategori = $this->sub_kategori
+        ->where('id_kategori',1)
+        ->select('id','id_kategori','nama')
+        ->with(array
+            (
+                'kategori'      => function($query){
+                    $query->select('id','nama');
+                },
+            )
+        )
+        ->get();
+        
+        $merged = array_merge($properti, $kendaraan);
+        $objek = json_decode(json_encode($merged));
+        return view('pages.admin.objek.index', compact('objek','subkategori'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create($nm_kategori, $nm_subkategori)
+    // CREATE OBJEK PROPERTI
+    public function objek_properti_create($nm_kategori, $nm_subkategori)
     {
-        $user = Auth::user();
-
+        $user               = Auth::user();
         $kategori           = $this->kategori->where('nama', ucwords($nm_kategori))->select('id','nama')->first();
         $subkategori        = $this->sub_kategori->where('nama', ucwords($nm_subkategori))->select('id','nama')->first();
         $pemilik            = $this->pemilik->select('id','first_name','last_name')->get();
@@ -75,18 +121,11 @@ class ObjekPropertiController extends Controller
             'id_pemilik'    => ''
         ];
 
-        // return response()->json($kategoris);
-        return view('pages.admin.objek.add-properti', compact('user','kategori','subkategori','pemilik','provinsi','jenissertifikat'))->with('withdata', $withdata);
-
+        return view('pages.admin.objek.add-properti', compact('kategori','subkategori','pemilik','provinsi','jenissertifikat'))->with('withdata', $withdata);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, $nm_kategori, $nm_subkategori)
+    // STORE OBJEK PROPERTI
+    public function objek_properti_store(Request $request, $nm_kategori, $nm_subkategori)
     {
         if($nm_subkategori  == 'rumah'){
             $request->validate([
@@ -171,20 +210,12 @@ class ObjekPropertiController extends Controller
         $objek->save();
 
         return redirect('/objek')->with('status','Objek Properti berhasil ditambah!');
-        // return $request;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ObjekProperti  $objekProperti
-     * @return \Illuminate\Http\Response
-     */
-    public function show($nm_subkategori, $id)
+    // SHOW OBJEK PROPERTI
+    public function objek_properti_show($nm_subkategori, $id)
     {
-        $user = Auth::user();
-
-        $properti = $this->objek_properti
+        $properti   = $this->objek_properti
         ->where('id', $id)
         ->with(array
             (
@@ -216,21 +247,12 @@ class ObjekPropertiController extends Controller
         )
         ->first();
 
-        // return response()->json($properti);
-        return view('pages.admin.objek.details', compact('user','properti'));
-
+        return view('pages.admin.objek.details', compact('properti'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ObjekProperti  $objekProperti
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($nm_subkategori, $id)
+    // EDIT OBJEK PROPERTI
+    public function objek_properti_edit($nm_subkategori, $id)
     {
-        $user = Auth::user();
-
         $properti           = $this->objek_properti->where('id', $id)->first();
         $kategori           = $this->kategori->where('nama', 'Properti')->select('id','nama')->first();
         $subkategori        = $this->sub_kategori->where('nama', ucwords($nm_subkategori))->select('id','nama')->first();
@@ -250,57 +272,80 @@ class ObjekPropertiController extends Controller
             'alamat'        => $properti->alamat,
             'kode_pos'      => $properti->kode_pos
         ];
-        // return $id;
-        return view('pages.admin.objek.edit-properti', compact('user','properti','kategori','subkategori','pemilik','provinsi','kota','kecamatan','kelurahan','jenissertifikat'))->with('withdata', $withdata);
+
+        return view('pages.admin.objek.edit-properti', compact('properti','kategori','subkategori','pemilik','provinsi','kota','kecamatan','kelurahan','jenissertifikat'))->with('withdata', $withdata);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ObjekProperti  $objekProperti
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $nm_subkategori, $id)
+    // UPDATE OBJEK PROPERTI
+    public function objek_properti_update(Request $request, $nm_subkategori, $id)
     {
-        
-            ObjekProperti::where('id', $id)
-            ->update([
-                'nama'          => $request->nama,
-                'alamat'        => $request->alamat,
-                'id_provinsi'   => $request->provinsi,
-                'id_kota'       => $request->kota,
-                'id_kecamatan'  => $request->kecamatan,
-                'id_kelurahan'  => $request->kelurahan,
-                'kode_pos'      => $request->kode_pos,
-                'tipe'          => $request->tipe,
-                'jumlah_lantai' => $request->jumlah_lantai,
-                'luas_tanah'    => $request->luas_tanah,
-                'luas_bangunan' => $request->luas_bangunan,
-                'kamar_tidur'   => $request->kamar_tidur,
-                'kamar_mandi'   => $request->kamar_mandi,
-                'id_sertifikat' => $request->sertifikat,
-                'id_pemilik'    => $request->pemilik,
-                'harga_limit'   => str_replace(".","",$request->harga_limit),
-                'jaminan'       => str_replace(".","",$request->jaminan),
-                'deskripsi'     => $request->deskripsi
-            ]);
+        ObjekProperti::where('id', $id)
+        ->update([
+            'nama'          => $request->nama,
+            'alamat'        => $request->alamat,
+            'id_provinsi'   => $request->provinsi,
+            'id_kota'       => $request->kota,
+            'id_kecamatan'  => $request->kecamatan,
+            'id_kelurahan'  => $request->kelurahan,
+            'kode_pos'      => $request->kode_pos,
+            'tipe'     => $request->tipe,
+            'jumlah_lantai' => $request->jumlah_lantai,
+            'luas_tanah'    => $request->luas_tanah,
+            'luas_bangunan' => $request->luas_bangunan,
+            'kamar_tidur'   => $request->kamar_tidur,
+            'kamar_mandi'   => $request->kamar_mandi,
+            'id_sertifikat' => $request->sertifikat,
+            'id_pemilik'    => $request->pemilik,
+            'harga_limit'   => str_replace(".","",$request->harga_limit),
+            'jaminan'       => str_replace(".","",$request->jaminan),
+            'deskripsi'     => $request->deskripsi
+        ]);
         
         return redirect('/objek')->with('status','Data Objek berhasil diubah!');
-        // return $request;
-
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ObjekProperti  $objekProperti
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($nm_subkategori, $id)
+    // DESTROY OBJEK PROPERTI
+    public function objek_properti_destroy($nm_subkategori, $id)
     {
         ObjekProperti::destroy($id);
         return redirect('/objek')->with('status','Data Objek berhasil dihapus!');
-        // return $id;
+    }
+
+    // INDEX PEMILIK
+    public function pemilik_index(){
+
+        $pemilik    = $this->pemilik
+        ->with(array(
+            'user_info' => function($query){
+                $query->where('id_status_user', 1)
+                ->with(array(
+                    'provinsi'  => function($query){
+                        $query->select('id','text');
+                    },
+                    'kota'  => function($query){
+                        $query->select('id','text');
+                    },
+                    'kecamatan'  => function($query){
+                        $query->select('id','text');
+                    },
+                    'kelurahan'  => function($query){
+                        $query->select('id','text');
+                    }
+                ));
+            }
+        ))
+        ->orderBy('first_name', 'ASC')
+        ->get();
+
+        return view('pages.admin.pemilik.index', compact('pemilik'));
+        // return $pemilik;
+    }
+
+    // CREATE PEMILIK
+    public function pemilik_create(){
+
+        $provinsi           = $this->master_provinsi->select('id','text')->orderBy('text', 'ASC')->get();
+
+        return view('pages.admin.pemilik.add', compact('provinsi'));
     }
 }
