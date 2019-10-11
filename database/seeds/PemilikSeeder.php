@@ -15,12 +15,16 @@ class PemilikSeeder extends Seeder
             DB::table('pemilik')->insert([
                 'first_name'    => 'Bank',
                 'last_name'     => 'BTN',
-                'email'         => 'email@btn.co.id'
+                'email'         => 'btn@btn.co.id',
+                'created_at'    => '2019-10-11 12:17:36',
+                'updated_at'    => '2019-10-11 12:17:36'
             ]);
             DB::table('pemilik')->insert([
                 'first_name'    => 'Dapenbun',
                 'last_name'     => '',
-                'email'         => 'email@dapenbun.co.id'
+                'email'         => 'email@dapenbun.co.id',
+                'created_at'    => '2019-10-11 12:22:17',
+                'updated_at'    => '2019-10-11 12:22:17'
             ]);
         }
     }

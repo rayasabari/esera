@@ -8,13 +8,14 @@ use App\Models\ObjekKendaraan;
 use App\Models\Kategori;
 use App\Models\SubKategori;
 use App\Models\Pemilik;
+use App\Models\UserInfo;
 use App\Models\IndonesiaProvinsi;
 use App\Models\IndonesiaKota;
 use App\Models\IndonesiaKecamatan;
 use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertifikat;
 use App\Http\Requests\ErrorMessageRequest;
-// use Psy\Util\Json;
+use Psy\Util\Json;
 use Auth;
 
 class MasterController extends Controller
@@ -24,6 +25,7 @@ class MasterController extends Controller
             $kategori,
             $sub_kategori,
             $pemilik,
+            $user_info,
             $master_provinsi,
             $master_kota,
             $master_kecamatan,
@@ -32,11 +34,12 @@ class MasterController extends Controller
 
     public function __construct()
     {
-        $this->objek_properti       = New ObjekProperti();
-        $this->objek_kendaraan      = New ObjekKendaraan();
-        $this->kategori             = New Kategori();
-        $this->sub_kategori         = New SubKategori();
+        $this->objek_properti       = New ObjekProperti;
+        $this->objek_kendaraan      = New ObjekKendaraan;
+        $this->kategori             = New Kategori;
+        $this->sub_kategori         = New SubKategori;
         $this->pemilik              = New Pemilik;
+        $this->user_info            = New UserInfo;
         $this->master_provinsi      = New IndonesiaProvinsi;
         $this->master_kota          = New IndonesiaKota;
         $this->master_kecamatan     = New IndonesiaKecamatan;
@@ -65,9 +68,7 @@ class MasterController extends Controller
                     $query->select('id','nama');
                 }
             )
-        )
-        ->get()
-        ->toArray();
+        )->get()->toArray();
 
         $kendaraan = $this->objek_kendaraan
         ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
@@ -86,9 +87,7 @@ class MasterController extends Controller
                     $query->select('id','nama');
                 }
             )
-        )
-        ->get()
-        ->toArray();
+        )->get()->toArray();
 
         $subkategori = $this->sub_kategori
         ->where('id_kategori',1)
@@ -99,8 +98,7 @@ class MasterController extends Controller
                     $query->select('id','nama');
                 },
             )
-        )
-        ->get();
+        )->get();
         
         $merged = array_merge($properti, $kendaraan);
         $objek = json_decode(json_encode($merged));
@@ -179,7 +177,7 @@ class MasterController extends Controller
             ]);
         }
 
-        $objek = $this->objek_properti;
+        $objek                      = $this->objek_properti;
         $objek->id_kategori         = $request->id_kategori;
         $objek->id_sub_kategori     = $request->id_sub_kategori;
         $objek->nama                = $request->nama;
@@ -244,8 +242,7 @@ class MasterController extends Controller
                     $query->select('id','first_name','last_name');
                 }
             )
-        )
-        ->first();
+        )->first();
 
         return view('pages.admin.objek.details', compact('properti'));
     }
@@ -334,11 +331,9 @@ class MasterController extends Controller
                 ));
             }
         ))
-        ->orderBy('first_name', 'ASC')
-        ->get();
+        ->orderBy('id', 'ASC')->get();
 
         return view('pages.admin.pemilik.index', compact('pemilik'));
-        // return $pemilik;
     }
 
     // CREATE PEMILIK
@@ -346,6 +341,153 @@ class MasterController extends Controller
 
         $provinsi           = $this->master_provinsi->select('id','text')->orderBy('text', 'ASC')->get();
 
-        return view('pages.admin.pemilik.add', compact('provinsi'));
+        return view('pages.admin.pemilik.add-or-edit', compact('provinsi'));
+    }
+
+    // STORE PEMILIK
+    public function pemilik_store(Request $request)
+    {
+        $request->validate([
+            'first_name'            => 'required',
+            'last_name'             => 'required',
+            'alamat'                => 'required',
+            'provinsi'              => 'required',
+            'kota'                  => 'required',
+            'kecamatan'             => 'required',
+            'kelurahan'             => 'required',
+            'no_telepon'            => 'required',
+            'no_ktp'                => 'required',
+            'no_rekening'           => 'required',
+            'nama_bank'             => 'required',
+            'atas_nama_bank'        => 'required'
+        ]);
+
+        $pemilik                    = $this->pemilik;
+        $pemilik->first_name        = $request->first_name;
+        $pemilik->last_name         = $request->last_name;
+        $pemilik->email             = $request->email;
+        $pemilik->save();
+        
+        $id_pemilik = $this->pemilik->select('id')->orderBy('id', 'DESC')->first();
+
+        $ui                         = $this->user_info;
+        $ui->id_status_user         = 1;
+        $ui->id_user                = $id_pemilik->id;
+        $ui->alamat                 = $request->alamat;
+        $ui->id_provinsi            = $request->provinsi;
+        $ui->id_kota                = $request->kota;
+        $ui->id_kecamatan           = $request->kecamatan;
+        $ui->id_kelurahan           = $request->kelurahan;
+        $ui->kode_pos               = $request->kode_pos;
+        $ui->no_telepon             = $request->no_telepon;
+        $ui->no_fax                 = $request->no_fax;
+        $ui->no_ktp                 = $request->no_ktp;
+        $ui->npwp                   = $request->npwp;
+        $ui->no_rekening            = $request->no_rekening;
+        $ui->nama_bank              = $request->nama_bank;
+        $ui->cabang_bank            = $request->cabang_bank;
+        $ui->atas_nama_bank         = $request->atas_nama_bank;
+        $ui->save();
+
+        return redirect('/pemilik')->with('status','Data Pemilik berhasil ditambah!');
+    }
+
+    // EDIT PEMILIK
+    public function pemilik_edit($id)
+    {
+        $pemilik            = $this->pemilik->where('id', $id)
+        ->with(array(
+            'user_info'     => function($query){
+                $query->where('id_status_user', 1)
+                ->with(array(
+                    'provinsi'      => function($query){
+                        $query->select('id', 'text');
+                    },
+                    'kota'      => function($query){
+                        $query->select('id', 'text');
+                    },
+                    'kecamatan'      => function($query){
+                        $query->select('id', 'text');
+                    },
+                    'kelurahan'      => function($query){
+                        $query->select('id', 'text');
+                    }
+                ));
+            }
+        ))->first();
+        $provinsi           = $this->master_provinsi->select('id','text')->orderBy('text', 'ASC')->get();
+        $kota               = $this->master_kota->where('id_provinsi', $pemilik->user_info->id_provinsi)->select('id','text')->orderBy('text', 'ASC')->get();
+        $kecamatan          = $this->master_kecamatan->where('id_kota', $pemilik->user_info->id_kota)->select('id','text')->orderBy('text', 'ASC')->get();
+        $kelurahan          = $this->master_kelurahan->where('id_kecamatan', $pemilik->user_info->id_kecamatan)->select('id','text')->orderBy('text', 'ASC')->get();
+        $withdata           = [
+            'id_provinsi'   => $pemilik->user_info->id_provinsi,
+            'id_kota'       => $pemilik->user_info->id_kota,
+            'id_kecamatan'  => $pemilik->user_info->id_kecamatan,
+            'id_kelurahan'  => $pemilik->user_info->id_kelurahan,
+            'id_sertifikat' => $pemilik->user_info->id_sertifikat,
+            'id_pemilik'    => $pemilik->user_info->id_pemilik
+        ];
+        return view('pages.admin.pemilik.add-or-edit', compact('pemilik','provinsi','kota','kecamatan','kelurahan'))->with('withdata', $withdata);
+        // return $withdata;
+    }
+
+    // UPDATE PEMILIK
+    public function pemilik_update(Request $request, $id)
+    {
+        $request->validate([
+            'first_name'            => 'required',
+            'last_name'             => 'required',
+            'alamat'                => 'required',
+            'provinsi'              => 'required',
+            'kota'                  => 'required',
+            'kecamatan'             => 'required',
+            'kelurahan'             => 'required',
+            'no_telepon'            => 'required',
+            'no_ktp'                => 'required',
+            'no_rekening'           => 'required',
+            'nama_bank'             => 'required',
+            'atas_nama_bank'        => 'required'
+        ]);
+
+        Pemilik::where('id', $id)
+        ->update([
+            'first_name'            => $request->first_name,
+            'last_name'             => $request->last_name,
+            'email'                 => $request->email,
+        ]);
+
+        UserInfo::where([
+            ['id_status_user', 1],
+            ['id_user', $id]
+        ])->update([
+            'alamat'                => $request->alamat,
+            'id_kelurahan'          => $request->kelurahan,
+            'id_kecamatan'          => $request->kecamatan,
+            'id_kota'               => $request->kota,
+            'id_provinsi'           => $request->provinsi,
+            'kode_pos'              => $request->kode_pos,
+            'no_telepon'            => $request->no_telepon,
+            'no_fax'                => $request->no_fax,
+            'no_ktp'                => $request->no_ktp,
+            'npwp'                  => $request->npwp,
+            'no_rekening'           => $request->no_rekening,
+            'nama_bank'             => $request->nama_bank,
+            'cabang_bank'           => $request->cabang_bank,
+            'atas_nama_bank'        => $request->atas_nama_bank
+        ]);
+
+        return redirect('/edit/pemilik/'.$id)->with('status','Data Pemilik berhasil dirubah!');
+    }
+    
+    // DESTROY OBJEK PROPERTI
+    public function pemilik_destroy($id)
+    {
+        Pemilik::destroy($id);
+        UserInfo::where([
+            ['id_status_user', 1],
+            ['id_user', $id]
+        ])->delete();
+        
+        return redirect('/pemilik')->with('status','Data Pemilik berhasil dihapus!');
     }
 }

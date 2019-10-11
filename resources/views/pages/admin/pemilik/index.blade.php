@@ -15,6 +15,11 @@
 
 @section('content')
     <div class="kt-container">
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
         <div class="kt-portlet kt-portlet--tab">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
@@ -29,19 +34,14 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                @if (session('status'))
-                    <div class="alert alert-success">
-                        {{ session('status') }}
-                    </div>
-                @endif
                 <table class="table table-hover">
                     <thead class="">
                         <tr>
                             <th>#</th>
                             <th>Nama Pemilik</th>
-                            <th class="kt-align-left">Email</th>
                             <th class="kt-align-left">Alamat</th>
                             <th class="kt-align-left">No. Telepon</th>
+                            <th class="kt-align-left">Email</th>
                             <th class="kt-align-center" style="width: 5%"><i class="flaticon2-settings"></i></th>
                         </tr>
                     </thead>
@@ -49,8 +49,7 @@
                         @foreach ($pemilik as $plk)
                         <tr>
                             <th scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</th>
-                            <td class="kt-align-left" style="vertical-align: middle">{{ $plk->first_name .' '. $plk->last_name }}</td>
-                            <td class="kt-align-left" style="vertical-align: middle">{{ $plk->email }}</td>
+                            <td class="kt-align-left" style="vertical-align: middle"><a href="/edit/pemilik/{{ $plk->id }}"> {{ $plk->first_name .' '. $plk->last_name }}</a></td>
                             <td class="kt-align-left" style="vertical-align: middle">
                                 @if(isset($plk->user_info))
                                     {{ $plk->user_info->alamat .', '. ucwords(strtolower($plk->user_info->kelurahan->text)) .', '. ucwords(strtolower($plk->user_info->kecamatan->text)) .', '. ucwords(strtolower($plk->user_info->kota->text)) .', '. ucwords(strtolower($plk->user_info->provinsi->text)) }}
@@ -59,14 +58,16 @@
                                 @endif
                             </td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ isset($plk->user_info) ? $plk->user_info->no_telepon : '-'}}</td>
-                            {{-- <td class="kt-align-center">
-                                <a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-primary" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <a href="/add/listing/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-success" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Add to Listing" >
-                                    <i class="fa fa-list-alt"></i>
-                                </a>
-                            </td> --}}
+                            <td class="kt-align-left" style="vertical-align: middle">{{ $plk->email }}</td>
+                            <td class="kt-align-center">
+                                <form method="post" action="/delete/pemilik/{{ $plk->id }}">
+                                    @method('delete')
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Delete">
+                                        <i class="text-danger flaticon2-rubbish-bin-delete-button"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

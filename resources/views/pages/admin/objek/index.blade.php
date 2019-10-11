@@ -41,25 +41,25 @@
                         {{ session('status') }}
                     </div>
                 @endif
-                <table class="table table-hover">
+                <table class="table table-hover" style="width: 100%">
                     <thead class="">
                         <tr>
                             <th>#</th>
-                            <th>Nama Objek</th>
+                            <th style="width: 25%">Nama Objek</th>
                             <th class="kt-align-left">Kategori</th>
                             <th class="kt-align-left">Sub Kategori</th>
                             <th class="kt-align-left">Pemilik</th>
                             <th class="kt-align-center">Harga Limit</th>
                             <th class="kt-align-center">Jaminan</th>
                             <th class="kt-align-center">Status</th>
-                            <th class="kt-align-center" style="width: 5%"><i class="flaticon2-settings"></i></th>
+                            <th class="kt-align-center" style="width: 10%"><i class="flaticon2-settings"></i></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($objek as $obj)
                         <tr>
                             <th scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</th>
-                            <td style="vertical-align: middle"><a href="/detail/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-promary"> {{ $obj->nama }}</a></td>
+                            <td style="vertical-align: middle"><a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-promary"> {{ $obj->nama }}</a></td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->kategori->nama }}</td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->sub_kategori->nama }}</td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->pemilik->first_name. " ".$obj->pemilik->last_name }}</td>
@@ -75,12 +75,19 @@
                                 @endif
                             </td>
                             <td class="kt-align-center">
-                                <a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-primary" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
+                                {{-- <a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="mr-n2 kt-font-brand btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
                                     <i class="fa fa-edit"></i>
-                                </a>
-                                <a href="/add/listing/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-success" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Add to Listing" >
+                                </a> --}}
+                                <a href="/add/listing/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="mr-n2 text-primary btn btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Add to Listing" >
                                     <i class="fa fa-list-alt"></i>
                                 </a>
+                                <form method="post" action="/delete/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="d-inline">
+                                    @method('delete')
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Delete">
+                                        <i class="text-danger flaticon2-rubbish-bin-delete-button"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         @endforeach

@@ -108,6 +108,7 @@ Route::group(['middleware' => ['auth', 'activated', 'currentUser', 'activity', '
 // Registered, activated, and is admin routes.
 Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'activity', 'twostep', 'checkblocked']], function () {
     
+    // Master Objek
     Route::get('/objek', 'MasterController@objek_index');
     Route::get('/add/{nm_kategori}/{nm_subkategori}', 'MasterController@objek_properti_create');
     Route::post('/add/{nm_kategori}/{nm_subkategori}', 'MasterController@objek_properti_store');
@@ -116,8 +117,13 @@ Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'activity', 't
     Route::patch('/edit/properti/{nm_subkategori}/{id}', 'MasterController@objek_properti_update');
     Route::delete('/delete/properti/{nm_subkategori}/{id}', 'MasterController@objek_properti_destroy');
 
+    // Master Pemilik
     Route::get('/pemilik', 'MasterController@pemilik_index');
     Route::get('/add/pemilik', 'MasterController@pemilik_create');
+    Route::post('/add/pemilik', 'MasterController@pemilik_store');
+    Route::get('/edit/pemilik/{id}', 'MasterController@pemilik_edit');
+    Route::patch('/edit/pemilik/{id}', 'MasterController@pemilik_update');
+    Route::delete('/delete/pemilik/{id}', 'MasterController@pemilik_destroy');
 
     Route::get('/listing', 'ListingController@index');
     Route::get('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@create');

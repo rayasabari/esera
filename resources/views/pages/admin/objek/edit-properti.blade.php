@@ -29,7 +29,7 @@
                         <i class="la la-gear"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        Form Tambah {{ $subkategori->nama }}
+                        Form Edit {{ $subkategori->nama }}
                     </h3>
                 </div>
             </div>
