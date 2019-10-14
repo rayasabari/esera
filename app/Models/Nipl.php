@@ -11,4 +11,8 @@ class Nipl extends Model
     public function user(){
         return $this->hasOne('App\Models\User', 'id', 'id_user');
     }
+
+    public function status_nipl(){
+        return $this->hasOne('App\Models\StatusNipl', 'id', 'id_status_nipl');
+    }
 }

@@ -16,11 +16,11 @@ class CreateNiplTable extends Migration
         Schema::create('nipl', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('id_user');
-            $table->string('nipl', 20);
-            $table->double('deposite');
-            $table->date('tgl_deposite');
-            $table->string('status');
-            $table->longText('keterangan');
+            $table->string('nipl', 20)->nullable();
+            $table->double('deposite')->nullable();
+            $table->date('tgl_deposite')->nullable();
+            $table->string('id_status_nipl')->nullable();
+            $table->longText('keterangan')->nullable();
             $table->timestamps();
         });
     }

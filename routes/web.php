@@ -16,6 +16,7 @@
 // Homepage Route
 Route::group(['middleware' => ['web', 'checkblocked']], function () {
     Route::get('/', 'WelcomeController@welcome')->name('welcome');
+
 });
 
 // Authentication Routes
@@ -125,10 +126,17 @@ Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'activity', 't
     Route::patch('/edit/pemilik/{id}', 'MasterController@pemilik_update');
     Route::delete('/delete/pemilik/{id}', 'MasterController@pemilik_destroy');
 
+    // Master Listing
     Route::get('/listing', 'ListingController@index');
     Route::get('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@create');
     Route::post('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@store');
 
+    // Master Bidder
+    Route::get('/bidder', 'MasterController@bidder_index');
+    Route::get('/update/bidder/{id}', 'MasterController@bidder_edit');
+    Route::post('/update/bidder/{id}', 'MasterController@bidder_store_or_update');
+
+    // Master Dropdown
     Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
     Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');
     Route::get('ajax/dropdown/kelurahan/{id_kecamatan}', 'DropdownController@kelurahan');

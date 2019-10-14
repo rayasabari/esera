@@ -15,6 +15,11 @@
 
 @section('content')
     <div class="kt-container">
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
         <div class="kt-portlet kt-portlet--tab">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
@@ -36,12 +41,7 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                @if (session('status'))
-                    <div class="alert alert-success">
-                        {{ session('status') }}
-                    </div>
-                @endif
-                <table class="table table-hover" style="width: 100%">
+                <table class="table table-hover">
                     <thead class="">
                         <tr>
                             <th>#</th>

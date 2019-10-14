@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ObjekKendaraan::class);
         $this->call(StatusObjekSeeder::class);
         $this->call(UserInfoSeeder::class);
+        $this->call(StatusNiplSeeder::class);
 
         Model::reguard();
     }

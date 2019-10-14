@@ -4,6 +4,15 @@
     {!! trans('usersmanagement.showing-all-users') !!}
 @endsection
 
+@section('menu')
+    @include('pages.admin.menu')
+@endsection
+
+@section('sub_subheader')
+    <span class="kt-subheader__breadcrumbs-separator"></span>
+    <a href="{{ url('/objek') }}" class="kt-subheader__breadcrumbs-link">Data user</a>
+@endsection
+
 @section('template_linked_css')
     @if(config('usersmanagement.enabledDatatablesJs'))
         <link rel="stylesheet" type="text/css" href="{{ config('usersmanagement.datatablesCssCDN') }}">

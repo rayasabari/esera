@@ -8,12 +8,15 @@ use App\Models\ObjekKendaraan;
 use App\Models\Kategori;
 use App\Models\SubKategori;
 use App\Models\Pemilik;
+use App\Models\User;
 use App\Models\UserInfo;
+use App\Models\Nipl;
 use App\Models\IndonesiaProvinsi;
 use App\Models\IndonesiaKota;
 use App\Models\IndonesiaKecamatan;
 use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertifikat;
+use App\Models\StatusNipl;
 use App\Http\Requests\ErrorMessageRequest;
 use Psy\Util\Json;
 use Auth;
@@ -25,12 +28,15 @@ class MasterController extends Controller
             $kategori,
             $sub_kategori,
             $pemilik,
+            $user,
             $user_info,
+            $nipl,
             $master_provinsi,
             $master_kota,
             $master_kecamatan,
             $master_kelurahan,
-            $jenis_sertifikat;
+            $jenis_sertifikat,
+            $statu_nipl;
 
     public function __construct()
     {
@@ -39,12 +45,15 @@ class MasterController extends Controller
         $this->kategori             = New Kategori;
         $this->sub_kategori         = New SubKategori;
         $this->pemilik              = New Pemilik;
+        $this->user                 = New User;
         $this->user_info            = New UserInfo;
+        $this->nipl                 = New Nipl;
         $this->master_provinsi      = New IndonesiaProvinsi;
         $this->master_kota          = New IndonesiaKota;
         $this->master_kecamatan     = New IndonesiaKecamatan;
         $this->master_kelurahan     = New IndonesiaKelurahan;
         $this->jenis_sertifikat     = New JenisSertifikat;
+        $this->status_nipl          = New StatusNipl;
         $this->middleware('auth');
     }
 
@@ -489,5 +498,71 @@ class MasterController extends Controller
         ])->delete();
         
         return redirect('/pemilik')->with('status','Data Pemilik berhasil dihapus!');
+    }
+
+    // INDEX BIDDER
+    public function bidder_index()
+    {
+        $bidder       = $this->user
+        ->whereHas("roleuser", function($query){
+            $query->where("role_id",2);
+        })->with(array(
+            'nipl'  => function($query){
+                $query->select('id', 'id_user','nipl','deposite','tgl_deposite','id_status_nipl')
+                ->with(array(
+                    'status_nipl'   => function($query){
+                        $query->select('id','nama');
+                    }
+                ));
+            }
+        ))->select('id','name','first_name','last_name','email')
+        ->get();
+
+        return view('pages.admin.bidder.index', compact('bidder'));
+        // return $bidder;
+    }
+
+    // EDIT BIDDER
+    public function bidder_edit($id)
+    {
+        $bidder = $this->user->where('id', $id)
+        ->with(array(
+            'nipl'  => function($query){
+                $query->get();
+            }
+        ))
+        ->first();
+
+        $status_nipl    = $this->status_nipl->select('id','nama')->get();
+        $act            = isset($bidder->nipl) ? 'edit' : 'add';
+
+        return view('pages.admin.bidder.update', compact('bidder','act','status_nipl'));
+        // return $bidder;
+    }
+
+    // STORE OR UPDATE BIDDER
+    public function bidder_store_or_update(Request $request, $id)
+    {
+        $cek  = $this->nipl->where('id_user', $id)->select('id_user')->first();
+
+        if(isset($cek->id_user)){
+            $this->nipl->where('id_user', $cek->id_user)
+            ->update([
+                'nipl'              => $request->nipl,
+                'deposite'          => str_replace('.','',$request->deposite),
+                'tgl_deposite'      => $request->tgl_deposite,
+                'id_status_nipl'    => $request->id_status_nipl
+            ]);
+        }else{
+            $nipl                   = $this->nipl;
+            $nipl->id_user          = $id;
+            $nipl->nipl             = $request->nipl;    
+            $nipl->deposite         = str_replace(".","",$request->deposite);
+            $nipl->tgl_deposite     = $request->tgl_deposite;    
+            $nipl->id_status_nipl   = $request->id_status_nipl;
+            $nipl->save();  
+        }
+
+        return redirect('/bidder')->with('status','Data Bidder berhasil diupdate!');
     }
 }
