@@ -74,7 +74,7 @@
 <div class="row">
     <div class="col-lg-6">
         <div class="form-group">
-            <label>Kode Pos <span class="text-danger">*</span></label>
+            <label>Kode Pos</label>
             <input type="text" class="form-control @error('kode_pos') is-invalid @enderror" placeholder="" name="kode_pos" value="{{ Request::segment(1)=='edit' ? old('kode_pos', $withdata['kode_pos']) : old('kode_pos') }}">
         </div>
         @error('kode_pos')

@@ -84,7 +84,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <link href="assets/css/skins/brand/light.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/skins/aside/dark.css" rel="stylesheet" type="text/css" />
     <!--end::Layout Skins -->
-    <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+    <link rel="shortcut icon" href="assets/media/logos/sra.ico" />
     @yield('head')
 </head>
 <!-- end::Head -->

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-user')
 
 @section('head')
     <title>Detail Objek - SRA</title>
@@ -10,17 +10,14 @@
     
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/lelang') }}" class="kt-subheader__breadcrumbs-link">Detail Objek Lelang</a>
-@endsection
-
-@section('sub_sub_subheader')
+    <a href="{{ url('/lelang') }}" class="kt-subheader__breadcrumbs-link">{{ $objek->kategori->nama }}</a>
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="#" class="kt-subheader__breadcrumbs-link"> LOT {{ $objek->kode_lot }}</a>
+    <a href="#" class="kt-subheader__breadcrumbs-link"> {{ $objek->sub_kategori->nama }} </a>
+    <span class="kt-subheader__breadcrumbs-separator"></span>
+    <a href="/detail/objek/{{ $objek->id }}" class="kt-subheader__breadcrumbs-link"> Detail </a>
 @endsection
 
 @section('content')
-
-<div class="kt-container">
     @if (session('status'))
         <div class="alert alert-success">
             {{ session('status') }}
@@ -40,7 +37,7 @@
                 <div class="kt-portlet__body">
                     <div class="row">
                         <div class="col-lg-5">
-                            <img src="https://1.bp.blogspot.com/-uJMphbPemCU/VuZNtOFkIZI/AAAAAAAATGE/jCeiX29Ae28cGIt0ElK3eMQbg7TFSop-g/s1600/PENJELASAN%2BTIPE%2BRUMAH%2B21%2Bdenah1.jpg" alt="..." class="rounded img-thumbnail">
+                            <img src="{{ $objek->objek_properti->img }}" alt="..." class="rounded img-thumbnail">
                         </div>
                         <div class="col-lg-7 pl-3">
                             <div class="mb-4">
@@ -62,8 +59,13 @@
                                     </div>
                                     <div class="kt-widget12__item">
                                         <div class="kt-widget12__info">
-                                            <span class="kt-widget12__desc">Harga Sementara</span>
-                                            <span class="kt-widget12__value text-success">Rp {{ number_format($bid[0]->jumlah_bid,0,',','.') }}</span>
+                                            @if(isset($objek->last_bid))
+                                                <span class="kt-widget12__desc">{{ strtotime($objek->tgl_akhir_lelang) <= time() ? 'Harga Terbentuk' : 'Harga Sementara' }}</span>
+                                                <span class="kt-widget12__value {{ strtotime($objek->tgl_akhir_lelang) <= time() ? 'text-success' : 'text-warning' }} ">Rp {{ number_format($objek->last_bid->jumlah_bid,0,',','.') }}</span>
+                                            @else
+                                                <span class="kt-widget12__desc">Harga Sementara</span>
+                                                <span class="kt-widget12__value text-black">Rp {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}</span>
+                                            @endif
                                         </div>
                                         <div class="kt-widget12__info">
                                             <span class="kt-widget12__desc">Batas Akhir Lelang</span>
@@ -73,19 +75,25 @@
                                 </div>
                             </div>
 
-                            <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
-                                @csrf
-                                <label for="jumlah_bid">Kelipatan Bid: <b class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text font-weight-bold">Rp</span>
+                            @if(strtotime($objek->tgl_akhir_lelang) <= time())
+                            <div class="alert alert-solid-warning alert-bold" role="alert">
+                                <h5 class="alert-text text-center">Lelang Selesai</h5>
+                            </div>
+                            @else
+                                <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
+                                    @csrf
+                                    <label for="jumlah_bid">Kelipatan Bid: <b class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text font-weight-bold">Rp</span>
+                                        </div>
+                                        <input id="jumlah_bid" onkeyup="angka(this)" name="jumlah_bid" type="text" class="form-control font-weight-bold" placeholder="">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-danger" type="submit">Submit Bid!</button>
+                                        </div>
                                     </div>
-                                    <input id="jumlah_bid" onkeyup="angka(this)" name="jumlah_bid" type="text" class="form-control font-weight-bold" placeholder="">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-danger" type="submit">Submit Bid!</button>
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
+                            @endif
 
                         </div>
                     </div>
@@ -141,7 +149,6 @@
                     </div>
                 </div>
             </div>
-    
             <!--end:: Widgets/Sales States-->
         </div>
     </div>
@@ -184,6 +191,4 @@
             <!--end:    : Widgets/User Progress -->
         </div>
     </div>
-</div>
-
 @endsection

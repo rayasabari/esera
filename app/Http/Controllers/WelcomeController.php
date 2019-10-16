@@ -9,9 +9,10 @@ class WelcomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function welcome()
     {
-        return view('welcome');
+        return view('layouts.app-user');
     }
 
 }

@@ -15,6 +15,11 @@
 
 @section('content')
     <div class="kt-container">
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
         <div class="kt-portlet kt-portlet--tab">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
@@ -26,11 +31,6 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                @if (session('status'))
-                    <div class="alert alert-success">
-                        {{ session('status') }}
-                    </div>
-                @endif
                 <table class="table table-hover">
                     <thead class="t">
                         <tr>
@@ -41,7 +41,7 @@
                             <th class="kt-align-center">Tgl Akhir Lelang</th>
                             <th class="kt-align-center">Harga Limit</th>
                             <th class="kt-align-center">Jaminan</th>
-                            <th class="kt-align-center">Kelipatan</th>
+                            <th class="kt-align-center">Kelipatan Bid</th>
                             <th class="kt-align-center">On going BID</th>
                             <th class="kt-align-center" style="width: 2%"></th>
                         </tr>
@@ -62,8 +62,11 @@
                             <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->harga_limit,0,",",".") }},-</b></td>
                             <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->jaminan,0,",",".") }},-</b></td>
                             <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->kelipatan_bid,0,",",".") }},-</b></td>
-                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->harga_berjalan,0,",",".") }},-</b></td>
-
+                            @if( isset($obj->last_bid))
+                                <td class="kt-align-center text-warning" style="vertical-align: middle"><b>Rp {{ number_format($obj->last_bid->jumlah_bid,0,",",".") }},-</b></td>
+                            @else 
+                                <td class="kt-align-center text-success" style="vertical-align: middle"><b>Open Bid</b></td>
+                            @endif
                             <td style="vertical-align: middle">
                                 <a href="/edit/listing/{{ $obj->id }}" class="text-primary" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
                                     <i class="fa fa-edit"></i>

@@ -16,6 +16,7 @@ class CreateIndonesiaProvinsiTable extends Migration
         Schema::create('indonesia_provinsi', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('text', 50);
+            $table->string('text_proper', 50);
             $table->timestamps();
         });
     }

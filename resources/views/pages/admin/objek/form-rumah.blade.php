@@ -70,7 +70,7 @@
             <label>Harga Limit <span class="text-danger">*</span></label>
             <div class="input-group">
                 <div class="input-group-prepend"><span class="input-group-text">Rp</span></div>
-                <input type="text" onkeyup="angka(this)" onblur="angka(this)" class="form-control text-right font-weight-bold @error('harga_limit') is-invalid @enderror" placeholder="" name="harga_limit" value="{{ Request::segment(1)=='edit' ? old('harga_limit', $properti->harga_limit) : old('harga_limit') }}">
+                <input type="text" onkeyup="angka(this)" onblur="angka(this)" class="form-control text-right font-weight-bold @error('harga_limit') is-invalid @enderror" placeholder="" name="harga_limit" value="{{ Request::segment(1)=='edit' ? old('harga_limit', number_format($properti->harga_limit,0,',','.')) : old('harga_limit') }}">
             </div>
         </div>
         @error('harga_limit')
@@ -82,7 +82,7 @@
             <label>Jaminan <span class="text-danger">*</span></label>
             <div class="input-group">
                 <div class="input-group-prepend"><span class="input-group-text">Rp</span></div>
-                <input type="text" onkeyup="angka(this)" onblur="angka(this)" class="form-control text-right font-weight-bold @error('jaminan') is-invalid @enderror" placeholder="" name="jaminan" value="{{ Request::segment(1)=='edit' ? old('jaminan', $properti->jaminan) : old('jaminan') }}">
+                <input type="text" onkeyup="angka(this)" onblur="angka(this)" class="form-control text-right font-weight-bold @error('jaminan') is-invalid @enderror" placeholder="" name="jaminan" value="{{ Request::segment(1)=='edit' ? old('jaminan', number_format($properti->jaminan,0,',','.')) : old('jaminan') }}">
             </div>
             @error('jaminan')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -98,11 +98,11 @@
                 <option value="">- Pilih -</option>
                 @foreach ($jenissertifikat as $js)
                     <option value="{{ $js->id }}" {{ Request::segment(1)=='edit' ? $js->id == $properti->id_sertifikat ? 'selected' : '' : old('id_sertifikat') == $js->id ? 'selected' : '' }}>
-                        {{ $js->singkatan== '' || $js->singkatan==null ? $js->nama : $js->nama." (".$js->singkatan.")" }}
+                        {{ $js->singkatan== '' || $js->singkatan==null ? $js->nama : $js->nama." (  ".$js->singkatan.")" }}
                     </option>
                 @endforeach
             </select>
-            @error('pemilik')
+            @error('sertifikat')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>

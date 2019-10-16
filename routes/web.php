@@ -15,8 +15,7 @@
 
 // Homepage Route
 Route::group(['middleware' => ['web', 'checkblocked']], function () {
-    Route::get('/', 'WelcomeController@welcome')->name('welcome');
-
+    Route::get('/', 'ListingController@home')->name('home');
 });
 
 // Authentication Routes

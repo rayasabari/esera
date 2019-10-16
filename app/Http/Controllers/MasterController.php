@@ -11,12 +11,12 @@ use App\Models\Pemilik;
 use App\Models\User;
 use App\Models\UserInfo;
 use App\Models\Nipl;
+use App\Models\StatusNipl;
 use App\Models\IndonesiaProvinsi;
 use App\Models\IndonesiaKota;
 use App\Models\IndonesiaKecamatan;
 use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertifikat;
-use App\Models\StatusNipl;
 use App\Http\Requests\ErrorMessageRequest;
 use Psy\Util\Json;
 use Auth;
@@ -31,12 +31,12 @@ class MasterController extends Controller
             $user,
             $user_info,
             $nipl,
+            $statu_nipl,
             $master_provinsi,
             $master_kota,
             $master_kecamatan,
             $master_kelurahan,
-            $jenis_sertifikat,
-            $statu_nipl;
+            $jenis_sertifikat;
 
     public function __construct()
     {

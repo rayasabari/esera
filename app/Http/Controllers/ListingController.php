@@ -56,6 +56,30 @@ class ListingController extends Controller
         $this->middleware('auth');
     }
 
+    public function home(){
+        $listing    = $this->listing
+        ->with(array(
+            'objek_properti'    => function($query){
+                $query->select('id','id_kategori','id_sub_kategori', 'nama','id_provinsi','harga_limit','img')
+                ->with(array(
+                    'provinsi'  => function($query){
+                        $query->select('id','text_proper');
+                    }
+                ));
+            },
+            'last_bid'          => function($query){
+                $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
+            },
+            'bid'               => function($query){
+                $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
+            }
+        ))->orderBy('tgl_mulai_lelang', 'ASC')
+        ->get();
+
+        // return $listing;
+        return view('pages.home', compact('listing'));
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -78,6 +102,9 @@ class ListingController extends Controller
                         $query->select('id','nama');
                     }
                 ))->get();
+            },
+            'last_bid' => function($query){
+                $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
             }
         ))
         ->get();
@@ -201,7 +228,10 @@ class ListingController extends Controller
             },
             'sub_kategori' => function($query){
                 $query->select('id','nama');
-            }      
+            },
+            'last_bid' => function($query){
+                $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
+            }
         ))
         ->first();
 
@@ -217,8 +247,9 @@ class ListingController extends Controller
             }
         ))
         ->orderBy('jumlah_bid', 'DESC')->get();
+        
 
-        // return $bid[0]->jumlah_bid;
+        // return $objek;
         return view('pages.user.detail-objek', compact('nipl','objek','bid'));
     }
 
@@ -266,7 +297,7 @@ class ListingController extends Controller
                         $query->select('id','first_name','last_name');
                     },
                     'provinsi' => function($query){
-                        $query->select('id','text');
+                        $query->select('id','text','text_proper');
                     },
                     'kota' => function($query){
                         $query->select('id','text');
@@ -285,10 +316,10 @@ class ListingController extends Controller
             'sub_kategori' => function($query){
                 $query->select('id','nama');
             },
-            'bid' => function($query){
+            'last_bid' => function($query){
                 $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
             },
-            'bid_count' => function($query){
+            'bid' => function($query){
                 $query->select('id','id_listing');
             }
         ))

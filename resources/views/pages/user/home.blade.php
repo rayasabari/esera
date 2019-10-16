@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-user')
 
 @section('head')
     <title>Home User - SRA</title>

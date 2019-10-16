@@ -42,8 +42,12 @@
                         <div class="form-group row">
                             <div class="col-md-6 offset-md-4">
                                 <div class="checkbox">
-                                    <label>
+                                    {{-- <label>
                                         <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> {{ __('Remember Me') }}
+                                    </label> --}}
+                                    <label class="kt-checkbox">
+                                        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> {{ __('Remember Me') }}
+                                        <span></span>
                                     </label>
                                 </div>
                             </div>
@@ -61,11 +65,11 @@
                             </div>
                         </div>
 
-                        <p class="text-center mb-3">
+                        {{-- <p class="text-center mb-3">
                             Or Login with
-                        </p>
+                        </p> --}}
 
-                        @include('partials.socials-icons')
+                        {{-- @include('partials.socials-icons') --}}
 
                     </form>
                 </div>
