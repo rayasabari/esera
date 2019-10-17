@@ -18,11 +18,6 @@
 @endsection
 
 @section('content')
-    @if (session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
-    @endif
     <div class="row">
         <div class="col-xl-8 col-lg-12 order-lg-3 order-xl-1">
             <!--begin:: Widgets/User Progress -->
@@ -61,10 +56,10 @@
                                         <div class="kt-widget12__info">
                                             @if(isset($objek->last_bid))
                                                 <span class="kt-widget12__desc">{{ strtotime($objek->tgl_akhir_lelang) <= time() ? 'Harga Terbentuk' : 'Harga Sementara' }}</span>
-                                                <span class="kt-widget12__value {{ strtotime($objek->tgl_akhir_lelang) <= time() ? 'text-success' : 'text-warning' }} ">Rp {{ number_format($objek->last_bid->jumlah_bid,0,',','.') }}</span>
+                                                <span id="min-bid" class="kt-widget12__value {{ strtotime($objek->tgl_akhir_lelang) <= time() ? 'text-success' : 'text-warning' }} ">Rp {{ number_format($objek->last_bid->jumlah_bid,0,',','.') }}</span>
                                             @else
                                                 <span class="kt-widget12__desc">Harga Sementara</span>
-                                                <span class="kt-widget12__value text-black">Rp {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}</span>
+                                                <span id="min-bid" class="kt-widget12__value text-black">Rp {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}</span>
                                             @endif
                                         </div>
                                         <div class="kt-widget12__info">
@@ -82,17 +77,32 @@
                             @else
                                 <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
                                     @csrf
-                                    <label for="jumlah_bid">Kelipatan Bid: <b class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label>
+                                    <label for="jumlah_bid">Kelipatan Bid: <b id="kelipatan" class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label> 
+                                    <div id="jml-bid" hidden>{{ count($bid) }}</div>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text font-weight-bold">Rp</span>
                                         </div>
-                                        <input id="jumlah_bid" onkeyup="angka(this)" name="jumlah_bid" type="text" class="form-control font-weight-bold" placeholder="">
+                                        <input id="jumlah_bid"  onkeyup="angka(this)" value="{{ number_format($next_bid,0,',','.') }}" name="jumlah_bid" type="text" class="form-control font-weight-bold" placeholder="">
                                         <div class="input-group-append">
+                                            <span class="input-group-text bg-white"><i class="flaticon2-up text-body" id="plus-bid"></i></span>
+                                            <span class="input-group-text bg-white"><i class="flaticon2-down text-body" id="minus-bid"></i></span>
                                             <button class="btn btn-danger" type="submit">Submit Bid!</button>
                                         </div>
                                     </div>
                                 </form>
+                                <div class="pt-4">
+                                    @if (session('status'))
+                                        <div class="alert alert-success">
+                                            {{ session('status') }}
+                                        </div>
+                                    @endif
+                                    @if (session('error'))
+                                        <div class="alert alert-warning">
+                                            {{ session('error') }}
+                                        </div>
+                                    @endif
+                                </div>
                             @endif
 
                         </div>
@@ -191,4 +201,48 @@
             <!--end:    : Widgets/User Progress -->
         </div>
     </div>
+@endsection
+
+@section('footer_script')
+    <script>
+        $('#jumlah_bid').keyup(function(){
+            var bid         = $(this).val().replace(/[^\d]/g, "");
+            var kelipatan   = $('#kelipatan').text().replace(/[^\d]/g, "");
+            if($('#jml-bid').text() == '0' ){
+                var minbid  = $('#min-bid').text().replace(/[^\d]/g, "");
+            }else{
+                var minbid  = parseInt( $('#min-bid').text().replace(/[^\d]/g, "")) + parseInt(kelipatan);
+            }
+
+            if( parseInt(bid) < parseInt(minbid) ){
+                $(this).css({"color": "red"})
+            }else if( parseInt(bid) >= parseInt(minbid) ){
+                $(this).css({"color": "black"})
+            }
+        });
+
+        $('#plus-bid').click(function(){
+            var nextbid     = $('#jumlah_bid');
+            var kelipatan   = $('#kelipatan').text().replace(/[^\d]/g, "");
+            var result      = parseInt(nextbid.val().split('.').join('')) + parseInt(kelipatan);
+            nextbid.val(result);
+            nextbid.keyup();
+        });
+
+        $('#minus-bid').click(function(){
+            var bid         = $('#jumlah_bid');
+            var kelipatan   = $('#kelipatan').text().replace(/[^\d]/g, "");
+            var minbid      = $('#min-bid').text().replace(/[^\d]/g, "");
+            if($('#jml-bid').text() == '0' ){
+                var nextbid = parseInt(minbid);
+            }else{
+                var nextbid = parseInt(minbid) + parseInt(kelipatan);
+            }
+            var result      = parseInt(bid.val().split('.').join('')) - parseInt(kelipatan);
+            if( result >= nextbid ){
+                bid.val(result);
+                bid.keyup();
+            }
+        });
+    </script>
 @endsection

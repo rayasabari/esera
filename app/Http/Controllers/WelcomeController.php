@@ -12,7 +12,7 @@ class WelcomeController extends Controller
 
     public function welcome()
     {
-        return view('layouts.app-user');
+        return view('welcome');
     }
 
 }

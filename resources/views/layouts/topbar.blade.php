@@ -798,7 +798,20 @@
 
     <div class="kt-header__topbar-item kt-header__topbar-item--user">
         <div class="kt-header__topbar-wrapper" data-offset="10px,0px">
-            <span class="kt-header__topbar-username"><a href="/login" class="kt-font-light" >Login</a></span>
+            @if(Auth::user())
+                <span class="kt-header__topbar-username"><a href="/login" class="kt-font-light" >{{ Auth::user()->first_name }}</a></span>
+                <span class="kt-header__topbar-username">
+                    <a class="kt-font-light" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                        {{-- {{ __('Logout') }} --}}
+                        <i class="fa fa-power-off ml-2"></i>
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </span>
+            @elseif(Auth::guest())
+                <span class="kt-header__topbar-username"><a href="/login" class="kt-font-light" >Login</a></span>
+            @endif
         </div>
     </div>
     <!--end: User bar -->

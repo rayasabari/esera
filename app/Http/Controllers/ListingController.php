@@ -58,9 +58,10 @@ class ListingController extends Controller
 
     public function home(){
         $listing    = $this->listing
+        ->where('tgl_akhir_lelang', '>', date('Y-m-d').' 00:00:00' )
         ->with(array(
             'objek_properti'    => function($query){
-                $query->select('id','id_kategori','id_sub_kategori', 'nama','id_provinsi','harga_limit','img')
+                $query->select('id','id_kategori','id_sub_kategori', 'nama','id_provinsi','luas_tanah','luas_bangunan','harga_limit','img')
                 ->with(array(
                     'provinsi'  => function($query){
                         $query->select('id','text_proper');
@@ -73,7 +74,7 @@ class ListingController extends Controller
             'bid'               => function($query){
                 $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
             }
-        ))->orderBy('tgl_mulai_lelang', 'ASC')
+        ))->orderBy('tgl_akhir_lelang', 'ASC')
         ->get();
 
         // return $listing;
@@ -198,6 +199,7 @@ class ListingController extends Controller
     public function show($id)
     {
         $nipl = $this->nipl->where('id_user', Auth::user()->id)->first();
+
         $objek = $this->listing
         ->where('id', $id)
         ->with(array(
@@ -248,9 +250,14 @@ class ListingController extends Controller
         ))
         ->orderBy('jumlah_bid', 'DESC')->get();
         
+        if(isset($objek->last_bid)){
+            $next_bid = $objek->last_bid->jumlah_bid + $objek->kelipatan_bid;
+        }else{
+            $next_bid = $objek->objek_properti->harga_limit;
+        }
 
-        // return $objek;
-        return view('pages.user.detail-objek', compact('nipl','objek','bid'));
+        // return count($bid);
+        return view('pages.user.detail-objek', compact('nipl','objek','bid','next_bid'));
     }
 
     /**
@@ -287,7 +294,7 @@ class ListingController extends Controller
         //
     }
 
-    public function listobjek()
+    public function list_objek()
     {
         $objek = $this->listing
         ->with(array(
@@ -330,16 +337,103 @@ class ListingController extends Controller
         return view('pages.user.list-objek', compact('objek'));
     }
 
+    public function list_hasil()
+    {
+        $objek = $this->listing
+        // ->whereHas("objek_properti", function($query){
+        //     $query->where("id_status_objek",3);
+        // })
+        ->where('tgl_akhir_lelang','<=', date('Y-m-d').' 00:00:00' )
+        ->with(array(
+            'objek_properti' => function($query){
+                $query->with(array(
+                    'pemilik' => function($query){
+                        $query->select('id','first_name','last_name');
+                    },
+                    'provinsi' => function($query){
+                        $query->select('id','text','text_proper');
+                    },
+                    'kota' => function($query){
+                        $query->select('id','text');
+                    },
+                    'kecamatan' => function($query){
+                        $query->select('id','text');
+                    },
+                    'kelurahan' => function($query){
+                        $query->select('id','text');
+                    }
+                ));
+            },
+            'kategori' => function($query){
+                $query->select('id','nama');
+            },
+            'sub_kategori' => function($query){
+                $query->select('id','nama');
+            },
+            'last_bid' => function($query){
+                $query->select('id','id_listing','id_nipl','jumlah_bid')->orderBy('jumlah_bid', "DESC")
+                ->with(array(
+                    'nipl' => function($query){
+                        $query->select('id','id_user')
+                        ->with(array(
+                            'user'  => function($query){
+                                $query->select('id','first_name','last_name');
+                            }
+                        ));
+                    }
+                ));
+            },
+            'bid' => function($query){
+                $query->select('id','id_listing');
+            }
+        ))
+        ->get();
+        
+        // return $objek;
+        return view('pages.user.list-hasil', compact('objek'));
+    }
+
     public function submit_bid(Request $request, $id_nipl, $id_listing)
     {
-        $bid = $this->bid;
-        $bid->id_listing     = $id_listing;
-        $bid->id_nipl        = $id_nipl;
-        $bid->jumlah_bid     = str_replace(".","",$request->jumlah_bid);
-        $bid->save();
+        $kelipatan  = $this->listing->where('id', $id_listing)->first()->kelipatan_bid;
+        $submit     = str_replace(".","",$request->jumlah_bid);
+        $bid        = $this->bid->where('id_listing', $id_listing)->select('jumlah_bid')->get();
+        
+        if( count($bid) == 0 ){
+            $last_bid   = $this->listing
+            ->where('id', $id_listing)->with(array(
+                'objek_properti' => function($query){
+                    $query->select('id', 'harga_limit');
+                }
+            ))->first()->objek_properti->harga_limit;
 
-        return redirect('/detail/objek/'.$id_listing)->with('status','Bid berhasil disubmit');
-        return $request;
+            if($submit < $last_bid){
+                return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Limit!');
+                die;
+            }
+        }else{
+            $last_bid   = $this->bid->where('id_listing', $id_listing)->select('jumlah_bid')->orderBy('jumlah_bid', 'DESC')->first()->jumlah_bid;
+            
+            if($submit < $last_bid){
+                return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Penawaran terakhir!');
+                die;
+            }
+        }
+
+        $gap = ((int)$submit - (int)$last_bid) / (int)$kelipatan;
+
+        if(is_int($gap) == true ){
+            
+            $bid = $this->bid;
+            $bid->id_listing     = $id_listing;
+            $bid->id_nipl        = $id_nipl;
+            $bid->jumlah_bid     = str_replace(".","",$request->jumlah_bid);
+            $bid->save();
+
+            return redirect('/detail/objek/'.$id_listing)->with('status','Terima kasih, Bid berhasil disubmit!');
+        }else{
+            return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang dimasukan harus kelipatan Rp '.number_format($kelipatan,0,',','.'));
+        }
     }
 
 }

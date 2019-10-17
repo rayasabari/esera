@@ -40,10 +40,10 @@
             <div class="padsearch">
                 <div class="kt-input-icon kt-input-icon--left">
                     <div class="input-group">
-                        <input type="text" class="form-control form-control-lg" placeholder="Search..." id="generalSearch">
+                        <input type="text" class="form-control form-control-lg" placeholder="Pencarian..." id="generalSearch">
                         {{-- <input type="text" class="form-control" placeholder="Search for..."> --}}
                         <div class="input-group-append">
-                            <button class="btn btn-primary pl-5 pr-5" type="button">Cari</button>
+                            <button class="btn btn-warning pl-5 pr-5" type="button">Cari</button>
                         </div>
                     </div>
                     <span class="kt-input-icon__icon kt-input-icon__icon--left">
@@ -61,10 +61,10 @@
             <div class="kt-portlet kt-portlet--height-fluid kt-widget19">
                 <div class="kt-portlet__body kt-portlet__body--fit kt-portlet__body--unfill" style="cursor: pointer;" onclick="window.location='{{ url('/detail/objek/'.$list->id) }}';">
                     <div class="kt-widget19__pic kt-portlet-fit--top kt-portlet-fit--sides" style="min-height: 300px; background-image: url({{ $list->objek_properti->img }})">
-                        <h3 class="kt-widget19__title kt-font-light"></h3>
+                        <h4 class="kt-widget19__title kt-font-light">Lot. #{{ $list->kode_lot }}</h4>
                         <div class="kt-widget19__shadow"></div>
                         <div class="kt-widget19__labels">
-                            <a href="#" class="btn btn-label-light-o2 btn-bold ">{{ strtotime($list->tgl_akhir_lelang) <= time() ? 'Selesai' : 'On going' }}</a>
+                            <a href="#" class="btn btn-danger btn-bold ">Baru</a>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,8 @@
                                     {{ $list->objek_properti->nama }}
                                 </a>
                                 <span class="kt-widget19__time">
-                                    LOT {{ $list->kode_lot }}
+                                    LT: {{ $list->objek_properti->luas_tanah }} m<sup>2</sup> <a class="mr-4">&nbsp;</a>
+                                    LB: {{ $list->objek_properti->luas_bangunan }} m<sup>2</sup>
                                 </span>
                             </div>
                             <div class="kt-widget19__stats">
@@ -93,7 +94,7 @@
                                         </div>
                                         <div class="kt-widget__details">
                                             <span class="kt-widget__title">Harga Limit</span>
-                                            <span class="kt-widget__value"><a href="/detail/objek/{{ $list->id }}" class="text-danger">Rp {{ number_format($list->objek_properti->harga_limit,0,',','.') }}</a></span>
+                                            <span class="kt-widget__value"><a href="/detail/objek/{{ $list->id }}" class="text-body">Rp {{ number_format($list->objek_properti->harga_limit,0,',','.') }}</a></span>
                                         </div>
                                     </div>
                                 </div>

@@ -1,5 +1,8 @@
-<li class="kt-menu__item">
+{{-- <li class="kt-menu__item">
     <a href="{{ url('/lelang') }}" class="kt-menu__link"><span class="kt-menu__link-text">Lelang</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
+</li> --}}
+<li class="kt-menu__item">
+    <a href="{{ url('/hasil-lelang') }}" class="kt-menu__link"><span class="kt-menu__link-text">Hasil Lelang</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
 </li>
 <li class="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" data-ktmenu-submenu-toggle="click" aria-haspopup="true"><a href="javascript:;" class="kt-menu__link kt-menu__toggle"><span class="kt-menu__link-text">Kategori</span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
     <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
