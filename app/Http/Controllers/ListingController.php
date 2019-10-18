@@ -209,7 +209,7 @@ class ListingController extends Controller
                         $query->select('id','first_name','last_name');
                     },
                     'provinsi' => function($query){
-                        $query->select('id','text');
+                        $query->select('id','text','text_proper');
                     },
                     'kota' => function($query){
                         $query->select('id','text');

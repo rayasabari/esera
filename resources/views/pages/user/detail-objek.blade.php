@@ -19,9 +19,8 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xl-8 col-lg-12 order-lg-3 order-xl-1">
-            <!--begin:: Widgets/User Progress -->
-            <div class="kt-portlet kt-portlet--height-fluid">
+        <div class="col-lg-8">
+            <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title">
@@ -90,15 +89,17 @@
                                             <button class="btn btn-danger" type="submit">Submit Bid!</button>
                                         </div>
                                     </div>
+                                    <div id="fb-bid1" class="invalid-feedback">Nilai yang Anda masukkan kurang dari {{ count($bid) == 0 ? 'Harga Limit' : 'harga penawaran terakhir' }}!</div>
+                                    <div id="fb-bid2" class="invalid-feedback">Nilai yang Anda masukkan tidak sesuai dengan kelipatan bid!</div>
                                 </form>
-                                <div class="pt-4">
+                                <div class="">
                                     @if (session('status'))
-                                        <div class="alert alert-success">
+                                        <div class="alert alert-success mt-4 mb-n1">
                                             {{ session('status') }}
                                         </div>
                                     @endif
                                     @if (session('error'))
-                                        <div class="alert alert-warning">
+                                        <div class="alert alert-warning mt-4 mb-n1">
                                             {{ session('error') }}
                                         </div>
                                     @endif
@@ -109,63 +110,7 @@
                     </div>
                 </div>
             </div>
-            <!--end:    : Widgets/User Progress -->
-        </div>
-        <div class="col-xl-4 col-lg-6 order-lg-3 order-xl-1">
-    
-            <!--begin:: Widgets/Sales States-->
-            <div class="kt-portlet kt-portlet--height-fluid">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">
-                            Info Objek
-                        </h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
-                    <div class="kt-widget6">
-                        <table class="table table-borderless table-hover">
-                            <tr>
-                                <td class="text-left"><h6>Tipe</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->tipe }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Sertifikat</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->sertifikat->nama .' ('. $objek->objek_properti->sertifikat->singkatan . ')' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Jumlah Lantai</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->jumlah_lantai }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Kamar Tidur</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->kamar_tidur }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Kamar Mandi</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->kamar_mandi }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Luas Tanah</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->luas_tanah }} m<sup>2</sup></td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Luas Bangunan</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->luas_bangunan }} m<sup>2</sup></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <!--end:: Widgets/Sales States-->
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xl-8 col-lg-12 order-lg-3 order-xl-1">
-            <!--begin:: Widgets/User Progress -->
-            <div class="kt-portlet kt-portlet--height-fluid">
+            <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title">
@@ -198,7 +143,61 @@
                     </table>
                 </div>
             </div>
-            <!--end:    : Widgets/User Progress -->
+        </div>
+        <div class="col-lg-4">
+            <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title">
+                            Info Objek
+                        </h3>
+                    </div>
+                    <div class="kt-portlet__head-toolbar">
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <div class="kt-widget6">
+                        <table class="table table-borderless table-hover">
+                            <tr>
+                                <td class="text-left" style="width: 40%"><h6>Tipe</h6></td>
+                                <td class="text-right" style="width: 60%">{{ $objek->objek_properti->tipe }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><h6>Sertifikat</h6></td>
+                                <td class="text-right">{{ $objek->objek_properti->sertifikat->nama .' ('. $objek->objek_properti->sertifikat->singkatan . ')' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><h6>Jumlah Lantai</h6></td>
+                                <td class="text-right">{{ $objek->objek_properti->jumlah_lantai }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><h6>Kamar Tidur</h6></td>
+                                <td class="text-right">{{ $objek->objek_properti->kamar_tidur }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><h6>Kamar Mandi</h6></td>
+                                <td class="text-right">{{ $objek->objek_properti->kamar_mandi }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><h6>Luas Tanah</h6></td>
+                                <td class="text-right">{{ $objek->objek_properti->luas_tanah }} m<sup>2</sup></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><h6>Luas Bangunan</h6></td>
+                                <td class="text-right">{{ $objek->objek_properti->luas_bangunan }} m<sup>2</sup></td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><h6>Alamat</h6></td>
+                                <td class="text-right">{{ 
+                                    $objek->objek_properti->alamat.', '.ucwords(strtolower($objek->objek_properti->kelurahan->text)).', '.
+                                    ucwords(strtolower($objek->objek_properti->kecamatan->text)).', '.ucwords(strtolower($objek->objek_properti->kota->text)).', '.
+                                    ucwords(strtolower($objek->objek_properti->provinsi->text_proper))
+                                }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -215,9 +214,19 @@
             }
 
             if( parseInt(bid) < parseInt(minbid) ){
-                $(this).css({"color": "red"})
+                $(this).addClass("is-invalid")
+                $('#fb-bid1').show()
+                $('#fb-bid2').hide()
             }else if( parseInt(bid) >= parseInt(minbid) ){
-                $(this).css({"color": "black"})
+                var cek = (bid - minbid) / kelipatan;
+                if(Number.isInteger(cek) == true ){
+                    $(this).removeClass("is-invalid")
+                    $(this).addClass("is-valid")
+                    $('#fb-bid1').hide()
+                }else{
+                    $('#fb-bid1').hide()
+                    $('#fb-bid2').show()
+                }
             }
         });
 
