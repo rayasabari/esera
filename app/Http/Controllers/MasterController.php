@@ -145,12 +145,12 @@ class MasterController extends Controller
                 'kelurahan'             => 'required',
                 'sertifikat'            => 'required',
                 'pemilik'               => 'required',
-                'tipe'                  => 'required',
-                'jumlah_lantai'         => 'required',
+                // 'tipe'                  => 'required',
+                // 'jumlah_lantai'         => 'required',
                 'luas_tanah'            => 'required',
-                'luas_bangunan'         => 'required',
-                'kamar_tidur'           => 'required',
-                'kamar_mandi'           => 'required',
+                // 'luas_bangunan'         => 'required',
+                // 'kamar_tidur'           => 'required',
+                // 'kamar_mandi'           => 'required',
                 'harga_limit'           => 'required',
                 'jaminan'               => 'required'
             ]);
@@ -197,6 +197,9 @@ class MasterController extends Controller
         $objek->id_kelurahan        = $request->kelurahan;
         $objek->kode_pos            = $request->kode_pos;
         $objek->id_sertifikat       = $request->sertifikat;
+        $objek->no_sertifikat       = $request->no_sertifikat;
+        $objek->atas_nama_sertifikat= $request->atas_nama_sertifikat;
+        $objek->jenis_pengikatan    = $request->jenis_pengikatan;
         $objek->id_pemilik          = $request->pemilik;
         $objek->jumlah_lantai       = $request->jumlah_lantai;
         $objek->harga_limit         = str_replace(".","",$request->harga_limit);

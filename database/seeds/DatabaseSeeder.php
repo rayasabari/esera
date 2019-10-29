@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StatusObjekSeeder::class);
         $this->call(UserInfoSeeder::class);
         $this->call(StatusNiplSeeder::class);
+        $this->call(ApikeySeeder::class);
 
         Model::reguard();
     }

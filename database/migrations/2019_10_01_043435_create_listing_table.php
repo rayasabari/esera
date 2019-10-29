@@ -23,8 +23,8 @@ class CreateListingTable extends Migration
             $table->double('kelipatan_bid');
             $table->double('harga_berjalan')->nullable();
             $table->double('harga_terbentuk')->nullable();
-            $table->date('tgl_mulai_lelang');
-            $table->date('tgl_akhir_lelang');
+            $table->dateTime('tgl_mulai_lelang');
+            $table->dateTime('tgl_akhir_lelang');
             $table->string('status', 10)->nullable();
             $table->longText('keterangan')->nullable();
             $table->integer('dilihat')->nullable();

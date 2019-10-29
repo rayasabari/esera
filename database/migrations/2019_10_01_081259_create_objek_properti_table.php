@@ -24,6 +24,8 @@ class CreateObjekPropertiTable extends Migration
             $table->integer('id_kota')->nullable();
             $table->integer('id_provinsi')->nullable();
             $table->string('kode_pos', 8)->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
             $table->string('tipe', 30)->nullable();
             $table->double('luas_tanah')->nullable();
             $table->double('luas_bangunan')->nullable();
@@ -32,6 +34,9 @@ class CreateObjekPropertiTable extends Migration
             $table->double('kamar_tidur')->nullable();
             $table->double('kamar_mandi')->nullable();
             $table->integer('id_sertifikat')->nullable();
+            $table->integer('no_sertifikat')->nullable();
+            $table->integer('atas_nama_sertifikat')->nullable();
+            $table->integer('jenis_pengikatan')->nullable();
             $table->integer('id_pemilik')->nullable();
             $table->longText('deskripsi')->nullable();
             $table->double('harga_limit')->nullable();

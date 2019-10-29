@@ -184,5 +184,12 @@
             }
             objek.value = c;
         }
+
+        $('#harga_limit').keyup(function(){
+            var jaminan = $('#jaminan');
+            var limit   = $(this).val().replace(/[^\d]/g, "");
+            jaminan.val( limit / 5 );
+            jaminan.trigger('keyup');
+        })
     </script>
 @endsection

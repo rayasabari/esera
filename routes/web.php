@@ -130,6 +130,10 @@ Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'checkblocked'
     Route::get('/listing', 'ListingController@index');
     Route::get('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@create');
     Route::post('/add/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@store');
+    Route::get('/edit/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@edit');
+    Route::patch('/edit/listing/{nm_kategori}/{nm_subkategori}/{id}', 'ListingController@update');
+    Route::post('/publish/listing/{id}', 'ListingController@publish');
+    Route::post('/unpublish/listing/{id}', 'ListingController@unpublish');
 
     // Master Bidder
     Route::get('/bidder', 'MasterController@bidder_index');

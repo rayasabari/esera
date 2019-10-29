@@ -20,6 +20,7 @@
 @section('content')
     <div class="row">
         <div class="col-lg-8">
+            <input id="jadwal_lelang" type="hidden" value="{{ $objek->tgl_mulai_lelang }}">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -31,7 +32,7 @@
                 <div class="kt-portlet__body">
                     <div class="row">
                         <div class="col-lg-5">
-                            <img src="{{ $objek->objek_properti->img }}" alt="..." class="rounded img-thumbnail">
+                            <img src="../../attachment/foto/{{ $objek->objek_properti->img }}" alt="..." class="rounded img-thumbnail">
                         </div>
                         <div class="col-lg-7 pl-3">
                             <div class="mb-4">
@@ -70,8 +71,35 @@
                             </div>
 
                             @if(strtotime($objek->tgl_akhir_lelang) <= time())
-                            <div class="alert alert-solid-warning alert-bold" role="alert">
+                            <div class="alert alert-solid-success alert-bold" role="alert">
                                 <h5 class="alert-text text-center">Lelang Selesai</h5>
+                            </div>
+                            @elseif(strtotime($objek->tgl_mulai_lelang) >= time())
+                            <div class="alert alert-solid-warning mt-2" role="alert">
+                                <div class="col-lg-3 pt-3">
+                                    <div class="alert-text">
+                                        <span class="font-weight-bold text-center"><h2 id="waktu-hari"></h2></span>
+                                        <span class="text-center"><h6>Hari</h6></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 pt-3">
+                                    <div class="alert-text">
+                                        <span class="font-weight-bold text-center"><h2 id="waktu-jam"></h2></span>
+                                        <span class="text-center"><h6>Jam</h6></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 pt-3">
+                                    <div class="alert-text">
+                                        <span class="font-weight-bold text-center"><h2 id="waktu-menit"></h2></span>
+                                        <span class="text-center"><h6>Menit</h6></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 pt-3">
+                                    <div class="alert-text">
+                                        <span class="font-weight-bold text-center"><h2 id="waktu-detik"></h2></span>
+                                        <span class="text-center"><h6>Detik</h6></span>
+                                    </div>
+                                </div>
                             </div>
                             @else
                                 <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
@@ -108,6 +136,73 @@
 
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title">
+                            Simulasi Pembayaran
+                        </h3>
+                    </div>
+                    <div class="kt-portlet__head-toolbar">
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <table class="table">
+                        <thead class="">
+                            <tr>
+                                <th>Deskripsi</th>
+                                <th style="width: 20px;"></th>
+                                <th style="width: 160px" class="text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Total Harga Terbentuk</td>
+                                <td class="font-weight-bold">Rp.</td>
+                                <td class="text-right font-weight-bold">
+                                    @if(isset($objek->last_bid))
+                                        {{ number_format($objek->last_bid->jumlah_bid,0,',','.') }}
+                                    @else 
+                                        {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Uang Jaminan</td>
+                                <td class="font-weight-bold">Rp.</td>
+                                <td class="text-right font-weight-bold">{{ number_format($objek->objek_properti->jaminan ,0,',','.') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Kekurangan Pembayaran</td>
+                                <td class="font-weight-bold">Rp.</td>
+                                <td class="text-right font-weight-bold">
+                                    @if(isset($objek->last_bid))
+                                        {{ number_format($objek->last_bid->jumlah_bid - $objek->objek_properti->jaminan ,0,',','.') }}
+                                    @else
+                                        {{ number_format($objek->objek_properti->harga_limit - $objek->objek_properti->jaminan ,0,',','.') }}
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Bea Lelang  Pembeli (0,4%)</td>
+                                <td class="font-weight-bold">Rp.</td>
+                                <td class="text-right font-weight-bold">{{ number_format($objek->objek_properti->harga_limit * (0.4/100) ,0,',','.') }}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 12pt" class="font-weight-bold">Total yang harus dibayarkan</td>
+                                <td style="font-size: 12pt" class="font-weight-bold">Rp.</td>
+                                <td style="font-size: 12pt" class="text-right font-weight-bold">
+                                    @if(isset($objek->last_bid))
+                                        {{ number_format( ($objek->last_bid->jumlah_bid - $objek->objek_properti->jaminan) + ($objek->objek_properti->harga_limit * (0.4/100)) ,0,',','.') }}
+                                    @else
+                                        {{ number_format( ($objek->objek_properti->harga_limit - $objek->objek_properti->jaminan) + ($objek->objek_properti->harga_limit * (0.4/100)) ,0,',','.') }}
+                                    @endif
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="kt-portlet">
@@ -186,15 +281,32 @@
                                 <td class="text-left"><h6>Luas Bangunan</h6></td>
                                 <td class="text-right">{{ $objek->objek_properti->luas_bangunan }} m<sup>2</sup></td>
                             </tr>
-                            <tr>
-                                <td class="text-left"><h6>Alamat</h6></td>
-                                <td class="text-right">{{ 
-                                    $objek->objek_properti->alamat.', '.ucwords(strtolower($objek->objek_properti->kelurahan->text)).', '.
-                                    ucwords(strtolower($objek->objek_properti->kecamatan->text)).', '.ucwords(strtolower($objek->objek_properti->kota->text)).', '.
-                                    ucwords(strtolower($objek->objek_properti->provinsi->text_proper))
-                                }}</td>
-                            </tr>
                         </table>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title">
+                            Lokasi Objek
+                        </h3>
+                    </div>
+                    <div class="kt-portlet__head-toolbar">
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <div class="kt-widget6">
+                        <div id="map"></div>
+                        <input type="hidden" id="latitude" value="{{ $objek->objek_properti->latitude }}">
+                        <input type="hidden" id="longitude" value="{{ $objek->objek_properti->longitude }}">
+                    </div>
+                    <div class="alert alert-elevate alert-light ">
+                    {{ 
+                        $objek->objek_properti->alamat.', '.ucwords(strtolower($objek->objek_properti->kelurahan->text)).', '.
+                        ucwords(strtolower($objek->objek_properti->kecamatan->text)).', '.ucwords(strtolower($objek->objek_properti->kota->text)).', '.
+                        ucwords(strtolower($objek->objek_properti->provinsi->text_proper))
+                    }}
                     </div>
                 </div>
             </div>
@@ -203,7 +315,29 @@
 @endsection
 
 @section('footer_script')
+    <style>
+        #map {
+            width: 100%;
+            height: 250px;
+            background-color: grey;
+        }
+    </style>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$apikey}}&callback=initMap"></script>
     <script>
+
+        // Initialize and add the map
+        function initMap() {
+        // The location of Uluru
+        var vlatitude = $('#latitude').val();
+        var vlongitude = $('#longitude').val();
+        var uluru = {lat: parseFloat(vlatitude), lng: parseFloat(vlongitude) };
+        // The map, centered at Uluru
+        var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 12, center: uluru});
+        // The marker, positioned at Uluru
+        var marker = new google.maps.Marker({position: uluru, map: map});
+        }
+
         $('#jumlah_bid').keyup(function(){
             var bid         = $(this).val().replace(/[^\d]/g, "");
             var kelipatan   = $('#kelipatan').text().replace(/[^\d]/g, "");
@@ -253,5 +387,40 @@
                 bid.keyup();
             }
         });
+
+        // Set the date we're counting down to
+        var jadwal = $('#jadwal_lelang').val()
+        var countDownDate = new Date(jadwal).getTime();
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+            
+        // Find the distance between now and the count down date
+        var distance = countDownDate - now;
+            
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+        // Output the result in an element with id="demo"
+        document.getElementById("waktu-hari").innerHTML = days ;
+        document.getElementById("waktu-jam").innerHTML = hours ;
+        document.getElementById("waktu-menit").innerHTML = minutes ;
+        document.getElementById("waktu-detik").innerHTML = seconds ;
+
+
+            
+        // If the count down is over, write some text 
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("waktu").innerHTML = "Refresh halaman!";
+            document.getElementById("hari").innerHTML = "Refresh halaman";
+        }
+        }, 1000);
     </script>
 @endsection

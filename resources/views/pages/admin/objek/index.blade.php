@@ -52,13 +52,13 @@
                             <th class="kt-align-center">Harga Limit</th>
                             <th class="kt-align-center">Jaminan</th>
                             <th class="kt-align-center">Status</th>
-                            <th class="kt-align-center" style="width: 10%"><i class="flaticon2-settings"></i></th>
+                            <th class="kt-align-center" style="width: 8%"><i class="flaticon2-settings"></i></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($objek as $obj)
                         <tr>
-                            <th scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</th>
+                            <td scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</td>
                             <td style="vertical-align: middle"><a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-promary"> {{ $obj->nama }}</a></td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->kategori->nama }}</td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->sub_kategori->nama }}</td>
@@ -67,20 +67,26 @@
                             <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->jaminan,0,",",".") }},-</b></td>
                             <td class="kt-align-center" style="vertical-align: middle">
                                 @if($obj->status_objek->id == 1)
-                                    <b class="text-warning">{{ $obj->status_objek->nama }}</b>
+                                    <span style="width: 139px;"><span class="kt-badge kt-badge--brand kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
                                 @elseif($obj->status_objek->id == 2)
-                                    <b class="text-success">{{ $obj->status_objek->nama }}</b>
+                                    <span style="width: 139px;"><span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
                                 @elseif($obj->status_objek->id == 3)
-                                    <b class="text-danger">{{ $obj->status_objek->nama }}</b>
+                                    <span style="width: 139px;"><span class="kt-badge kt-badge--danger kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
                                 @endif
                             </td>
                             <td class="kt-align-center">
                                 {{-- <a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="mr-n2 kt-font-brand btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
                                     <i class="fa fa-edit"></i>
                                 </a> --}}
-                                <a href="/add/listing/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="mr-n2 text-primary btn btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Add to Listing" >
-                                    <i class="fa fa-list-alt"></i>
-                                </a>
+                                @if($obj->id_status_objek == 1)
+                                    <a href="/add/listing/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="mr-n2 text-primary btn btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Add to Listing" >
+                                        <i class="fa fa-list-alt"></i>
+                                    </a>
+                                @else 
+                                    <a class="mr-n2 text-black-50 btn btn-sm btn-icon btn-circle" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="" >
+                                        <i class="fa fa-list-alt"></i>
+                                    </a>
+                                @endif
                                 <form method="post" action="/delete/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="d-inline">
                                     @method('delete')
                                     @csrf

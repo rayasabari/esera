@@ -16,6 +16,7 @@ use App\Models\IndonesiaKota;
 use App\Models\IndonesiaKecamatan;
 use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertifikat;
+use App\Models\ApiKeyRHR;
 use Auth;
 
 class ListingController extends Controller
@@ -32,7 +33,8 @@ class ListingController extends Controller
             $jenis_sertifikat,
             $listing,
             $nipl,
-            $bid;
+            $bid,
+            $apikey;
     /**
      * Create a new controller instance.
      *
@@ -53,12 +55,15 @@ class ListingController extends Controller
         $this->listing              = New Listing;
         $this->bid                  = New Bid;
         $this->nipl                 = New Nipl;
+        $this->apikey               = New ApiKeyRHR;
+
         $this->middleware('auth');
     }
 
     public function home(){
         $listing    = $this->listing
-        ->where('tgl_akhir_lelang', '>', date('Y-m-d').' 00:00:00' )
+        ->where('status', 1)
+        // ->where('tgl_akhir_lelang', '>', date('Y-m-d').' 00:00:00' )
         ->with(array(
             'objek_properti'    => function($query){
                 $query->select('id','id_kategori','id_sub_kategori', 'nama','id_provinsi','luas_tanah','luas_bangunan','harga_limit','img')
@@ -74,10 +79,14 @@ class ListingController extends Controller
             'bid'               => function($query){
                 $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
             }
-        ))->orderBy('tgl_akhir_lelang', 'ASC')
+        ))->orderBy('tgl_akhir_lelang', 'DESC')
         ->get();
 
-        // return $listing;
+        $live       = $listing->where('tgl_mulai_lelang', '<', date('Y-m-d H:i:s'))->where('tgl_akhir_lelang','>', date('Y-m-d H:i:s') )->toArray();
+        $segera     = $listing->where('tgl_mulai_lelang', '>', date('Y-m-d H:i:s'))->toArray();
+        $selesai    = $listing->where('tgl_akhir_lelang', '<', date('Y-m-d H:i:s'))->toArray();
+        $listing    = json_decode( json_encode(array_merge($live,$segera,$selesai)));
+
         return view('pages.home', compact('listing'));
     }
 
@@ -121,6 +130,8 @@ class ListingController extends Controller
      */
     public function create($nm_kategori, $nm_subkategori, $id)
     {
+        $act    = 'add';
+
         if($nm_kategori == 'properti'){
             $objek = $this->objek_properti
             ->where('id', $id)
@@ -152,7 +163,7 @@ class ListingController extends Controller
         }
 
         // return $objek;
-        return view('pages.admin.listing.add', compact('objek'));
+        return view('pages.admin.listing.add-or-edit', compact('objek','act'));
     }
 
     /**
@@ -172,6 +183,7 @@ class ListingController extends Controller
         $listing->kelipatan_bid         = str_replace(".","",$request->kelipatan_bid);
         $listing->tgl_mulai_lelang      = $request->tgl_mulai_lelang;
         $listing->tgl_akhir_lelang      = $request->tgl_akhir_lelang;
+        $listing->status                = 1;
         $listing->save();
 
         if($nm_kategori == 'properti'){
@@ -186,7 +198,7 @@ class ListingController extends Controller
             ]);
         }
 
-        return redirect('/listing')->with('status','Listing Properti berhasil ditambah!');
+        return redirect('/objek')->with('status','Objek berhasil dilisting!');
         // return $id;
     }
 
@@ -198,9 +210,9 @@ class ListingController extends Controller
      */
     public function show($id)
     {
-        $nipl = $this->nipl->where('id_user', Auth::user()->id)->first();
-
-        $objek = $this->listing
+        $nipl   = $this->nipl->where('id_user', Auth::user()->id)->first();
+        $apikey = $this->apikey->where('nama', 'Google')->first()->key;
+        $objek  = $this->listing
         ->where('id', $id)
         ->with(array(
             'objek_properti' => function($query){
@@ -257,7 +269,29 @@ class ListingController extends Controller
         }
 
         // return count($bid);
-        return view('pages.user.detail-objek', compact('nipl','objek','bid','next_bid'));
+        return view('pages.user.detail-objek', compact('nipl','objek','bid','next_bid','apikey'));
+    }
+
+    public function unpublish($id){
+
+        $this->listing->where('id', $id)
+        ->update([
+            'status' => 2
+        ]);
+
+        $objek = $this->listing->where('id', $id)->select('kode_lot')->first();
+        return redirect('/listing')->with('status','Lot '.$objek->kode_lot.' sudah diunpublish!');
+    }
+
+    public function publish($id){
+
+        $this->listing->where('id', $id)
+        ->update([
+            'status' => 1
+        ]);
+
+        $objek = $this->listing->where('id', $id)->select('kode_lot')->first();
+        return redirect('/listing')->with('status','Lot '.$objek->kode_lot.' sudah dipublish!');
     }
 
     /**
@@ -266,9 +300,44 @@ class ListingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($nm_kategori, $nm_subkategori, $id)
     {
-        //
+        $act        = 'edit';
+
+        $listing    = $this->listing->where('id',$id)->first();
+
+        if($nm_kategori == 'properti'){
+            $objek = $this->objek_properti
+            ->where('id', $listing->id_objek)
+            ->with(array(
+                'pemilik' => function($query){
+                    $query->select('id', 'first_name', 'last_name');
+                },
+                'provinsi' => function($query){
+                    $query->select('id', 'text');
+                },
+                'kota' => function($query){
+                    $query->select('id', 'text');
+                },
+                'kecamatan' => function($query){
+                    $query->select('id', 'text');
+                },
+                'kelurahan' => function($query){
+                    $query->select('id', 'text');
+                },
+                'sertifikat' => function($query){
+                    $query->select('id', 'nama','singkatan');
+                }
+            ))
+            ->first();
+        }else{
+            $objek = $this->objek_kendaraan
+            ->where('id', $listing->id_objek)
+            ->first();
+        }
+    
+        // return response()->json( date('Y-m-d\TH:i', strtotime($listing->tgl_mulai_lelang)) );
+        return view('pages.admin.listing.add-or-edit', compact('objek','act','listing'));
     }
 
     /**
@@ -278,9 +347,17 @@ class ListingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $nm_kategori, $nm_subkategori, $id)
     {
-        //
+        $this->listing::where('id', $id)
+        ->update([
+            'kode_lot'          => $request->kode_lot,
+            'kelipatan_bid'     => str_replace(".","", $request->kelipatan_bid),
+            'tgl_mulai_lelang'  => $request->tgl_mulai_lelang,
+            'tgl_akhir_lelang'  => $request->tgl_akhir_lelang
+        ]);
+
+        return redirect('/edit/listing/'.$nm_kategori.'/'.$nm_subkategori.'/'.$id)->with('status','Listing berhasil dirubah!');
     }
 
     /**
