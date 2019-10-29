@@ -163,7 +163,7 @@
                                 <td class="font-weight-bold">Rp.</td>
                                 <td class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
-                                        {{ number_format($objek->last_bid->jumlah_bid,0,',','.') }}
+                                        {{ number_format($objek->last_bid->jumlah_bid + $objek->kelipatan_bid,0,',','.') }}
                                     @else 
                                         {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}
                                     @endif
@@ -179,7 +179,7 @@
                                 <td class="font-weight-bold">Rp.</td>
                                 <td class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
-                                        {{ number_format($objek->last_bid->jumlah_bid - $objek->objek_properti->jaminan ,0,',','.') }}
+                                        {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) - $objek->objek_properti->jaminan ,0,',','.') }}
                                     @else
                                         {{ number_format($objek->objek_properti->harga_limit - $objek->objek_properti->jaminan ,0,',','.') }}
                                     @endif
@@ -188,14 +188,20 @@
                             <tr>
                                 <td>Bea Lelang  Pembeli (0,4%)</td>
                                 <td class="font-weight-bold">Rp.</td>
-                                <td class="text-right font-weight-bold">{{ number_format($objek->objek_properti->harga_limit * (0.4/100) ,0,',','.') }}</td>
+                                <td class="text-right font-weight-bold">
+                                    @if(isset($objek->last_bid))
+                                        {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) * (0.4/100) ,0,',','.') }}
+                                    @else
+                                        {{ number_format($objek->objek_properti->harga_limit * (0.4/100) ,0,',','.') }}
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
                                 <td style="font-size: 12pt" class="font-weight-bold">Total yang harus dibayarkan</td>
                                 <td style="font-size: 12pt" class="font-weight-bold">Rp.</td>
                                 <td style="font-size: 12pt" class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
-                                        {{ number_format( ($objek->last_bid->jumlah_bid - $objek->objek_properti->jaminan) + ($objek->objek_properti->harga_limit * (0.4/100)) ,0,',','.') }}
+                                        {{ number_format( (($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) - $objek->objek_properti->jaminan) + (($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) * (0.4/100)) ,0,',','.') }}
                                     @else
                                         {{ number_format( ($objek->objek_properti->harga_limit - $objek->objek_properti->jaminan) + ($objek->objek_properti->harga_limit * (0.4/100)) ,0,',','.') }}
                                     @endif
