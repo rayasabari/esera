@@ -20,7 +20,7 @@
                 <div class="kt-widget kt-widget--user-profile-3">
                     <div class="kt-widget__top">
                         <div class="kt-widget__media kt-hidden-">
-                            <img src="{{ $obj->objek_properti->img }}" height="100" alt="image">
+                            <img src="../../attachment/foto/{{ $obj->objek_properti->img }}" height="100" alt="image">
                         </div>
                         <div class="kt-widget__content">
                             <div class="kt-widget__head">

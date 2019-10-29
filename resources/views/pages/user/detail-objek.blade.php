@@ -412,8 +412,6 @@
         document.getElementById("waktu-jam").innerHTML = hours ;
         document.getElementById("waktu-menit").innerHTML = minutes ;
         document.getElementById("waktu-detik").innerHTML = seconds ;
-
-
             
         // If the count down is over, write some text 
         if (distance < 0) {
