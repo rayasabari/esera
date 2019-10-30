@@ -191,6 +191,8 @@ class MasterController extends Controller
         $objek->id_sub_kategori     = $request->id_sub_kategori;
         $objek->nama                = $request->nama;
         $objek->alamat              = $request->alamat;
+        $objek->latitude            = $request->latitude;
+        $objek->longitude           = $request->longitude;
         $objek->id_provinsi         = $request->provinsi;
         $objek->id_kota             = $request->kota;
         $objek->id_kecamatan        = $request->kecamatan;
@@ -279,6 +281,8 @@ class MasterController extends Controller
             'id_sertifikat' => $properti->id_sertifikat,
             'id_pemilik'    => $properti->id_pemilik,
             'alamat'        => $properti->alamat,
+            'latitude'      => $properti->latitude,
+            'longitude'     => $properti->longitude,
             'kode_pos'      => $properti->kode_pos
         ];
 
@@ -292,12 +296,14 @@ class MasterController extends Controller
         ->update([
             'nama'          => $request->nama,
             'alamat'        => $request->alamat,
+            'latitude'      => $request->latitude,
+            'longitude'     => $request->longitude,
             'id_provinsi'   => $request->provinsi,
             'id_kota'       => $request->kota,
             'id_kecamatan'  => $request->kecamatan,
             'id_kelurahan'  => $request->kelurahan,
             'kode_pos'      => $request->kode_pos,
-            'tipe'     => $request->tipe,
+            'tipe'          => $request->tipe,
             'jumlah_lantai' => $request->jumlah_lantai,
             'luas_tanah'    => $request->luas_tanah,
             'luas_bangunan' => $request->luas_bangunan,

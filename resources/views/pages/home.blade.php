@@ -56,7 +56,10 @@
 
     <div class="row">
         @foreach($listing as $list)
+        
         <div class="col-xl-3 col-lg-4 col-md-6 order-lg-2 order-xl-1">
+            <input type="hidden" id="id_listing" value="{{ $list->id }}">
+            <input type="hidden" id="batas_lelang{{ $list->id }}" value="{{ $list->tgl_akhir_lelang }}">
             <!--begin:: Widgets/Blog-->
             <div class="kt-portlet kt-portlet--height-fluid kt-widget19">
                 <div class="kt-portlet__body kt-portlet__body--fit kt-portlet__body--unfill" style="cursor: pointer;" onclick="window.location='{{ url('/detail/objek/'.$list->id) }}';">
@@ -65,7 +68,7 @@
                         <div class="kt-widget19__shadow"></div>
                         <div class="kt-widget19__labels">
                             @if($list->tgl_mulai_lelang <= date('Y-m-d') && $list->tgl_akhir_lelang >= date('Y-m-d') )
-                                <a href="#" style="background: red;color:white" class="btn btn-bold">Live!</a>
+                                <a href="#" style="background: red;color:white" class="btn btn-bold">Live! <span id="waktu{{ $list->id }}"></span> </a>
                             @elseif($list->tgl_mulai_lelang >= date('Y-m-d'))
                                 <a href="#" class="btn btn-brand btn-bold ">Segera</a>
                             @elseif($list->tgl_akhir_lelang <= date('Y-m-d'))
@@ -114,4 +117,38 @@
         </div>
         @endforeach
     </div>
+@endsection
+
+@section('footer_script')
+    <script>
+        // Set the date we're counting down to
+        var id_listing      = $('#id_listing').val()
+        var jadwal          = $('#batas_lelang'+ id_listing ).val()
+        var countDownDate   = new Date(jadwal).getTime();
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+            
+        // Find the distance between now and the count down date
+        var distance = countDownDate - now;
+            
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+        // Output the result in an element with id="demo"
+        document.getElementById("waktu"+id_listing).innerHTML = hours + " : " + minutes + " : " + seconds;
+            
+        // If the count down is over, write some text 
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("waktu"+id_listing).innerHTML = "Refresh halaman!";
+        }
+        }, 1000);
+    </script>
 @endsection
