@@ -39,9 +39,10 @@
                             <th>Nama Objek</th>
                             <th class="kt-align-center">Tgl Mulai Lelang</th>
                             <th class="kt-align-center">Tgl Akhir Lelang</th>
-                            <th class="kt-align-center">Harga Limit</th>
                             <th class="kt-align-center">Jaminan</th>
+                            <th class="kt-align-center">Harga Limit</th>
                             <th class="kt-align-center">On going BID</th>
+                            <th class="kt-align-center">Status</th>
                             <th class="kt-align-center" style="width: 7%"><i class="flaticon2-settings"></i></th>
                         </tr>
                     </thead>
@@ -56,15 +57,24 @@
                                     Milik: <a class="text-danger">{{ $obj->objek_properti->pemilik->first_name .' '. $obj->objek_properti->pemilik->last_name }}</a>
                                 </span>
                             </td>
-                            <td class="kt-align-center" style="vertical-align: middle">{{ date("d F Y", strtotime( $obj->tgl_mulai_lelang)) }}</td>
-                            <td class="kt-align-center" style="vertical-align: middle">{{ date("d F Y", strtotime( $obj->tgl_akhir_lelang)) }}</td>
-                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->harga_limit,0,",",".") }},-</b></td>
+                            <td class="kt-align-center" style="vertical-align: middle">{{ date("d F Y", strtotime( $obj->tgl_mulai_lelang)) }} <br> <b>{{ date("H:i", strtotime( $obj->tgl_mulai_lelang)) }}</b></td>
+                            <td class="kt-align-center" style="vertical-align: middle">{{ date("d F Y", strtotime( $obj->tgl_akhir_lelang)) }} <br> <b>{{ date("H:i", strtotime( $obj->tgl_akhir_lelang)) }}</b></td>
                             <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->jaminan,0,",",".") }},-</b></td>
+                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->harga_limit,0,",",".") }},-</b></td>
                             @if( isset($obj->last_bid))
-                                <td class="kt-align-center text-warning" style="vertical-align: middle"><b>Rp {{ number_format($obj->last_bid->jumlah_bid,0,",",".") }},-</b></td>
+                            <td class="kt-align-center kt-font-primary" style="vertical-align: middle"><b>Rp {{ number_format($obj->last_bid->jumlah_bid,0,",",".") }},-</b></td>
                             @else 
-                                <td class="kt-align-center text-success" style="vertical-align: middle"><b>Open Bid</b></td>
+                                <td class="kt-align-center text-black-50" style="vertical-align: middle"><b>Rp {{ number_format($obj->objek_properti->harga_limit,0,",",".") }},-</b></td>
                             @endif
+                            <td class="kt-align-center" style="vertical-align: middle">
+                                @if(strtotime($obj->tgl_mulai_lelang) <= time() && strtotime($obj->tgl_akhir_lelang) >= time() )
+                                    <span class="kt-badge kt-badge--unified-danger kt-badge--inline kt-badge--pill">Live! <span id="waktu{{ $obj->id }}"></span> </span>
+                                @elseif(strtotime($obj->tgl_mulai_lelang) >= time())
+                                    <span class="kt-badge kt-badge--unified-primary kt-badge--inline kt-badge--pill">Segera</span>
+                                @elseif(strtotime($obj->tgl_akhir_lelang) <= time())
+                                    <span class="kt-badge kt-badge--unified-success kt-badge--inline kt-badge--pill">Selesai</span>
+                                @endif
+                            </td>
                             <td style="vertical-align: middle" class="kt-align-center">
                                 <a href="/edit/listing/{{ strtolower($obj->kategori->nama) }}/{{ strtolower($obj->sub_kategori->nama) }}/{{ $obj->id }}" class="text-primary" data-skin="dark" data-toggle="kt-tooltip" data-placement="top" title="" data-original-title="Edit" >
                                     <i class="fa fa-edit"></i>

@@ -67,11 +67,11 @@
                             <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->jaminan,0,",",".") }},-</b></td>
                             <td class="kt-align-center" style="vertical-align: middle">
                                 @if($obj->status_objek->id == 1)
-                                    <span style="width: 139px;"><span class="kt-badge kt-badge--brand kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
+                                    <span style="width: 139px;"><span class="kt-badge kt-badge--unified-primary kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
                                 @elseif($obj->status_objek->id == 2)
-                                    <span style="width: 139px;"><span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
+                                    <span style="width: 139px;"><span class="kt-badge kt-badge--unified-success kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
                                 @elseif($obj->status_objek->id == 3)
-                                    <span style="width: 139px;"><span class="kt-badge kt-badge--danger kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
+                                    <span style="width: 139px;"><span class="kt-badge kt-badge--unified-danger kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
                                 @endif
                             </td>
                             <td class="kt-align-center">

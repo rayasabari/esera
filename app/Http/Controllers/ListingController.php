@@ -86,8 +86,11 @@ class ListingController extends Controller
         $segera     = $listing->where('tgl_mulai_lelang', '>', date('Y-m-d H:i:s'))->toArray();
         $selesai    = $listing->where('tgl_akhir_lelang', '<', date('Y-m-d H:i:s'))->toArray();
         $listing    = json_decode( json_encode(array_merge($live,$segera,$selesai)));
-
-        return view('pages.home', compact('listing'));
+        
+        $nipl       = $this->nipl->where('id_user', Auth::user()->id)->first();
+        
+        // return response()->json($nipl);
+        return view('pages.home', compact('listing','live','nipl'));
     }
 
     /**
@@ -261,7 +264,7 @@ class ListingController extends Controller
             }
         ))
         ->orderBy('jumlah_bid', 'DESC')->get();
-        
+
         if(isset($objek->last_bid)){
             $next_bid = $objek->last_bid->jumlah_bid + $objek->kelipatan_bid;
         }else{
@@ -357,7 +360,7 @@ class ListingController extends Controller
             'tgl_akhir_lelang'  => $request->tgl_akhir_lelang
         ]);
 
-        return redirect('/edit/listing/'.$nm_kategori.'/'.$nm_subkategori.'/'.$id)->with('status','Listing berhasil dirubah!');
+        return redirect('/listing')->with('status','Listing berhasil dirubah!');
     }
 
     /**
@@ -416,6 +419,7 @@ class ListingController extends Controller
 
     public function list_hasil()
     {
+        $nipl  = $this->nipl->where('id_user', Auth::user()->id)->first();
         $objek = $this->listing
         // ->whereHas("objek_properti", function($query){
         //     $query->where("id_status_objek",3);
@@ -467,7 +471,7 @@ class ListingController extends Controller
         ->get();
         
         // return $objek;
-        return view('pages.user.list-hasil', compact('objek'));
+        return view('pages.user.list-hasil', compact('objek','nipl'));
     }
 
     public function submit_bid(Request $request, $id_nipl, $id_listing)

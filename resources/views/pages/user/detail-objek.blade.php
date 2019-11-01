@@ -20,7 +20,7 @@
 @section('content')
     <div class="row">
         <div class="col-lg-8">
-            <input id="jadwal_lelang" type="hidden" value="{{ $objek->tgl_mulai_lelang }}">
+            <input id="timer" type="hidden" value="{{ $objek->tgl_akhir_lelang < time() ? $objek->tgl_akhir_lelang : $objek->tgl_mulai_lelang }}">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -58,13 +58,32 @@
                                                 <span class="kt-widget12__desc">{{ strtotime($objek->tgl_akhir_lelang) <= time() ? 'Harga Terbentuk' : 'Harga Sementara' }}</span>
                                                 <span id="min-bid" class="kt-widget12__value {{ strtotime($objek->tgl_akhir_lelang) <= time() ? 'text-success' : 'text-warning' }} ">Rp {{ number_format($objek->last_bid->jumlah_bid,0,',','.') }}</span>
                                             @else
-                                                <span class="kt-widget12__desc">Harga Sementara</span>
-                                                <span id="min-bid" class="kt-widget12__value text-black">Rp {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}</span>
+                                                <span class="kt-widget12__desc">{{ strtotime($objek->tgl_mulai_lelang) >= time() ? 'Waktu Mulai Lelang' : 'Harga Sementara' }}</span>
+                                                @if(strtotime($objek->tgl_mulai_lelang) >= time() )
+                                                    <span class="kt-widget12__value text-success">{{ date('d F Y H:i', strtotime($objek->tgl_mulai_lelang)) }}</span>
+                                                @else 
+                                                    <span id="min-bid" class="kt-widget12__value text-black">Rp {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}</span>
+                                                @endif
                                             @endif
                                         </div>
                                         <div class="kt-widget12__info">
-                                            <span class="kt-widget12__desc">Batas Akhir Lelang</span>
-                                            <span class="kt-widget12__value text-danger">{{ date('d F Y', strtotime($objek->tgl_akhir_lelang)) }}</span>
+                                            <span class="kt-widget12__desc">
+                                                {{ isset($objek->last_bid) && strtotime($objek->tgl_akhir_lelang) <= time() || strtotime($objek->tgl_akhir_lelang) <= time() ? 'Pemenang' :  'Waktu Berakhir Lelang' }}
+                                            </span>
+                                            @if( isset($objek->last_bid) && strtotime($objek->tgl_akhir_lelang) <= time() )
+                                                <span class="kt-widget12__value text-danger">{{ $bid[0]->nipl->user->first_name .' '. $bid[0]->nipl->user->last_name}}</span>
+                                            @elseif(strtotime($objek->tgl_akhir_lelang) <= time() )
+                                                <span class="kt-widget12__value text-body">-</span>
+                                            @elseif(strtotime($objek->tgl_mulai_lelang) <= time() && strtotime($objek->tgl_akhir_lelang) >= time() )
+                                                <span class="kt-widget12__value" style="color:red">
+                                                    <span hidden id="waktu-hari"></span>
+                                                    <span id="waktu-jam"></span> :
+                                                    <span id="waktu-menit"></span> :
+                                                    <span id="waktu-detik"></span>
+                                                </span>
+                                            @elseif(strtotime($objek->tgl_akhir_lelang) >= time() )
+                                                <span class="kt-widget12__value text-danger">{{ date('d F Y H:i', strtotime($objek->tgl_akhir_lelang)) }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -102,24 +121,32 @@
                                 </div>
                             </div>
                             @else
-                                <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
-                                    @csrf
-                                    <label for="jumlah_bid">Kelipatan Bid: <b id="kelipatan" class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label> 
-                                    <div id="jml-bid" hidden>{{ count($bid) }}</div>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text font-weight-bold">Rp</span>
+                                @if(isset($nipl))
+                                    <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
+                                        @csrf
+                                        <label for="jumlah_bid">Kelipatan Bid: <b id="kelipatan" class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label> 
+                                        <div id="jml-bid" hidden>{{ count($bid) }}</div>
+                                        <div class="kt-input-icon kt-input-icon--left">
+                                            <div class="input-group">
+                                                <input disabled id="jumlah_bid"  onkeyup="angka(this)" value="{{ number_format($next_bid,0,',','.') }}" name="jumlah_bid" type="text" class="form-control form-control-lg font-weight-bold" placeholder="">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text bg-white"><i class="flaticon2-up text-body" id="plus-bid"></i></span>
+                                                    <span class="input-group-text bg-white"><i class="flaticon2-down text-body" id="minus-bid"></i></span>
+                                                    <button class="btn btn-danger" type="submit">Submit Bid!</button>
+                                                </div>
+                                            </div>
+                                            <span class="kt-input-icon__icon kt-input-icon__icon--left">
+                                                <span class="font-weight-bold">Rp</span>
+                                            </span>
                                         </div>
-                                        <input id="jumlah_bid"  onkeyup="angka(this)" value="{{ number_format($next_bid,0,',','.') }}" name="jumlah_bid" type="text" class="form-control font-weight-bold" placeholder="">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text bg-white"><i class="flaticon2-up text-body" id="plus-bid"></i></span>
-                                            <span class="input-group-text bg-white"><i class="flaticon2-down text-body" id="minus-bid"></i></span>
-                                            <button class="btn btn-danger" type="submit">Submit Bid!</button>
-                                        </div>
+                                        <div id="fb-bid1" class="invalid-feedback">Harga yang Anda masukkan kurang dari {{ count($bid) == 0 ? 'Harga Limit' : 'harga penawaran terakhir' }}!</div>
+                                        <div id="fb-bid2" class="invalid-feedback">Harga yang Anda masukkan tidak sesuai dengan kelipatan bid!</div>
+                                    </form>
+                                @else 
+                                    <div class="alert alert-solid-danger alert-bold" role="alert">
+                                        <h6 class="alert-text text-center">Maaf, akun Anda tidak memiliki saldo Deposit, silahkan melakukan penyetoran jaminan!</h6>
                                     </div>
-                                    <div id="fb-bid1" class="invalid-feedback">Nilai yang Anda masukkan kurang dari {{ count($bid) == 0 ? 'Harga Limit' : 'harga penawaran terakhir' }}!</div>
-                                    <div id="fb-bid2" class="invalid-feedback">Nilai yang Anda masukkan tidak sesuai dengan kelipatan bid!</div>
-                                </form>
+                                @endif
                                 <div class="">
                                     @if (session('status'))
                                         <div class="alert alert-success mt-4 mb-n1">
@@ -133,7 +160,6 @@
                                     @endif
                                 </div>
                             @endif
-
                         </div>
                     </div>
                 </div>
@@ -228,7 +254,9 @@
                                 <th style="width: 30%">Waktu</th>
                                 <th style="width: 10%">NIPL</th>
                                 <th style="width: 30%">Bidder</th>
-                                <th>Jumlah Bid</th>
+                                <th style="width: 10%"></th>
+                                <th style="width: 15%" class="text-right">Jumlah Bid</th>
+                                <th style="width: 5%"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -237,7 +265,13 @@
                                     <td class="text-muted">{{ $b->created_at }}</td>
                                     <td>{{ $b->nipl->nipl }}</td>
                                     <td>{{ $b->nipl->user->first_name .' '. $b->nipl->user->last_name }}</td>
-                                    <td>Rp {{ number_format($b->jumlah_bid,0,',','.') }}</td>
+                                    <td class="text-right">Rp</td>
+                                    <td class="text-right">{{ number_format($b->jumlah_bid,0,',','.') }} </td>
+                                    <td class="text-left">
+                                        @if($objek->tgl_akhir_lelang <= time() && $b->jumlah_bid == $bid[0]->jumlah_bid )
+                                            <i class="flaticon-medal text-warning"></i>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -395,8 +429,8 @@
         });
 
         // Set the date we're counting down to
-        var jadwal = $('#jadwal_lelang').val()
-        var countDownDate = new Date(jadwal).getTime();
+        var timer = $('#timer').val();
+        var countDownDate = new Date(timer).getTime();
 
         // Update the count down every 1 second
         var x = setInterval(function() {
@@ -418,12 +452,12 @@
         document.getElementById("waktu-jam").innerHTML = hours ;
         document.getElementById("waktu-menit").innerHTML = minutes ;
         document.getElementById("waktu-detik").innerHTML = seconds ;
-            
+
         // If the count down is over, write some text 
         if (distance < 0) {
             clearInterval(x);
-            document.getElementById("waktu").innerHTML = "Refresh halaman!";
-            document.getElementById("hari").innerHTML = "Refresh halaman";
+            // document.getElementById("waktu").innerHTML = "Refresh halaman!";
+            location.reload();
         }
         }, 1000);
     </script>
