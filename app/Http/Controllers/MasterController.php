@@ -17,7 +17,10 @@ use App\Models\IndonesiaKota;
 use App\Models\IndonesiaKecamatan;
 use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertifikat;
+use App\Models\AttachmentFoto;
+use App\Models\AttachmentDokumen;
 use App\Http\Requests\ErrorMessageRequest;
+use Illuminate\Support\Facades\Storage;
 use Psy\Util\Json;
 use Auth;
 
@@ -36,6 +39,8 @@ class MasterController extends Controller
             $master_kota,
             $master_kecamatan,
             $master_kelurahan,
+            $attachment_foto,
+            $attachment_dokumen,
             $jenis_sertifikat;
 
     public function __construct()
@@ -52,12 +57,14 @@ class MasterController extends Controller
         $this->master_kota          = New IndonesiaKota;
         $this->master_kecamatan     = New IndonesiaKecamatan;
         $this->master_kelurahan     = New IndonesiaKelurahan;
+        $this->attachment_foto      = New AttachmentFoto;
+        $this->attachment_dokumen   = New AttachmentDokumen;
         $this->jenis_sertifikat     = New JenisSertifikat;
         $this->status_nipl          = New StatusNipl;
         $this->middleware('auth');
     }
 
-    // INDEX MASTER OBJEK
+    // INDEX MASTER OBJEK 
     public function objek_index()
     {
         $properti   = $this->objek_properti
@@ -221,7 +228,8 @@ class MasterController extends Controller
         }
         $objek->save();
 
-        return redirect('/objek')->with('status','Objek Properti berhasil ditambah!');
+        $id_properti = $this->objek_properti->select('id')->orderBy('id','DESC')->first()->id;
+        return redirect('/edit/properti/'.$nm_subkategori.'/'.$id_properti)->with('status','Objek Properti berhasil ditambah!');
     }
 
     // SHOW OBJEK PROPERTI
@@ -272,7 +280,9 @@ class MasterController extends Controller
         $kota               = $this->master_kota->where('id_provinsi', $properti->id_provinsi)->select('id','text')->orderBy('text', 'ASC')->get();
         $kecamatan          = $this->master_kecamatan->where('id_kota', $properti->id_kota)->select('id','text')->orderBy('text', 'ASC')->get();
         $kelurahan          = $this->master_kelurahan->where('id_kecamatan', $properti->id_kecamatan)->select('id','text')->orderBy('text', 'ASC')->get();
-        $jenissertifikat    = $this->jenis_sertifikat->select('id','nama','singkatan')->orderBy('id','ASC')->get(); 
+        $jenissertifikat    = $this->jenis_sertifikat->select('id','nama','singkatan')->orderBy('id','ASC')->get();
+        $foto               = $this->attachment_foto->where('id_kategori', $kategori->id)->where('id_objek', $id)->get();
+        $dokumen            = $this->attachment_dokumen->where('id_kategori', $kategori->id)->where('id_objek', $id)->get();
         $withdata           = [
             'id_provinsi'   => $properti->id_provinsi,
             'id_kota'       => $properti->id_kota,
@@ -286,13 +296,32 @@ class MasterController extends Controller
             'kode_pos'      => $properti->kode_pos
         ];
 
-        return view('pages.admin.objek.edit-properti', compact('properti','kategori','subkategori','pemilik','provinsi','kota','kecamatan','kelurahan','jenissertifikat'))->with('withdata', $withdata);
+        return view('pages.admin.objek.edit-properti', compact('properti','kategori','subkategori','pemilik','provinsi','kota','kecamatan','kelurahan','jenissertifikat','foto','dokumen'))->with('withdata', $withdata);
     }
 
     // UPDATE OBJEK PROPERTI
     public function objek_properti_update(Request $request, $nm_subkategori, $id)
     {
-        ObjekProperti::where('id', $id)
+        $request->validate([
+            'nama'                  => 'required',
+            'alamat'                => 'required',
+            'provinsi'              => 'required',
+            'kota'                  => 'required',
+            'kecamatan'             => 'required',
+            'kelurahan'             => 'required',
+            'sertifikat'            => 'required',
+            'pemilik'               => 'required',
+            // 'tipe'                  => 'required',
+            // 'jumlah_lantai'         => 'required',
+            'luas_tanah'            => 'required',
+            // 'luas_bangunan'         => 'required',
+            // 'kamar_tidur'           => 'required',
+            // 'kamar_mandi'           => 'required',
+            'harga_limit'           => 'required',
+            'jaminan'               => 'required'
+        ]);
+
+        $this->objek_properti::where('id', $id)
         ->update([
             'nama'          => $request->nama,
             'alamat'        => $request->alamat,
@@ -316,13 +345,73 @@ class MasterController extends Controller
             'deskripsi'     => $request->deskripsi
         ]);
         
-        return redirect('/objek')->with('status','Data Objek berhasil diubah!');
+        return back()->with('status','Data berhasil diubah!');
     }
+
+    // UPLOAD FOTO PROPERTI
+    public function foto_upload(Request $request, $id_kategori, $id){
+        $request->validate([
+            'filefoto' => 'required|image|max:2048',
+        ]);
+
+        $fileName = time().'_'.request()->filefoto->getClientOriginalName();
+        $request->filefoto->storeAs('foto', $fileName);
+
+        $att_foto                   = $this->attachment_foto;
+        $att_foto->id_kategori      = $id_kategori;
+        $att_foto->id_objek         = $id;
+        $att_foto->nama_file        = $fileName;
+        $att_foto->nama_original    = request()->filefoto->getClientOriginalName();
+        $att_foto->save();
+
+        return back()->with('status','Foto berhasil diupload!');
+    }
+
+    // DESTROY FOTO PROPERTI
+    public function foto_destroy($id_foto)
+    {
+        $file = $this->attachment_foto->where('id',$id_foto)->first()['nama_file'];
+        Storage::delete('/foto/'.$file);
+        $this->attachment_foto::destroy($id_foto);
+
+        return back()->with('status','Foto berhasil dihapus!');
+    } 
+
+    // UPLOAD DOKUMEN PROPERTI
+    public function dokumen_upload(Request $request, $id_kategori, $id){
+        $request->validate([
+            'nama_dokumen' => 'required',
+            'filedokumen' => 'required|mimes:xls,xlsx,pdf,doc,docx|max:5120',
+        ]);
+        
+        $fileName = time().'_'.request()->filedokumen->getClientOriginalName();
+        $request->filedokumen->storeAs('dokumen', $fileName);
+
+        $att_dokumen                   = $this->attachment_dokumen;
+        $att_dokumen->id_kategori      = $id_kategori;
+        $att_dokumen->id_objek         = $id;
+        $att_dokumen->nama_dokumen     = $request->nama_dokumen;
+        $att_dokumen->nama_file        = $fileName;
+        $att_dokumen->nama_original    = request()->filedokumen->getClientOriginalName();
+        $att_dokumen->save();
+
+        return back()->with('status','Dokumen berhasil diupload!');
+    }
+
+    // DESTROY DOKUMEN PROPERTI
+    public function dokumen_destroy($id_dokumen)
+    {
+        $file = $this->attachment_dokumen->where('id',$id_dokumen)->first()['nama_file'];
+        Storage::delete('/dokumen/'.$file);
+        $this->attachment_dokumen::destroy($id_dokumen);
+
+        return back()->with('status','Dokumen berhasil dihapus!');
+    } 
 
     // DESTROY OBJEK PROPERTI
     public function objek_properti_destroy($nm_subkategori, $id)
     {
-        ObjekProperti::destroy($id);
+        $this->objek_properti::destroy($id);
         return redirect('/objek')->with('status','Data Objek berhasil dihapus!');
     }
 

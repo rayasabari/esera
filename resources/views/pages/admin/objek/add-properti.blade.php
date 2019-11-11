@@ -34,31 +34,45 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <form method="post" action="/add/{{ Request::segment(2)}}/{{ Request::segment(3) }}">
-                    @csrf
-                    <input type="hidden" name="id_kategori" value="{{ $kategori->id }}">
-                    <input type="hidden" name="id_sub_kategori" value="{{ $subkategori->id }}">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Nama Objek <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('nama') is-invalid @enderror" placeholder="" name="nama" value="{{ old('nama') }}">
-                                @error('nama')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                <ul class="nav nav-tabs  nav-tabs-line nav-tabs-line-success" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active mr-2" data-toggle="tab" href="#tab_data" role="tab"><i class="flaticon2-list-2"></i> Info</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mr-2 lock-nav" role="tab"><i class="flaticon2-photo-camera"></i> Foto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link lock-nav" role="tab"><i class="flaticon2-file-1"></i> Dokumen</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <form method="post" action="/add/{{ Request::segment(2)}}/{{ Request::segment(3) }}">
+                        @csrf
+                        <input type="hidden" name="id_kategori" value="{{ $kategori->id }}">
+                        <input type="hidden" name="id_sub_kategori" value="{{ $subkategori->id }}">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Nama Objek <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('nama') is-invalid @enderror" placeholder="" name="nama" value="{{ old('nama') }}">
+                                    @error('nama')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                @include('partials.alamat')
                             </div>
-                            @include('partials.alamat')
+                            <div class="col-lg-6">
+                                @include('pages.admin.objek.form-'.Request::segment(3) )
+                            </div>
                         </div>
-                        <div class="col-lg-6">
-                            @include('pages.admin.objek.form-'.Request::segment(3) )
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                <a href="/objek" class="btn btn-outline-primary">Kembali</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -67,6 +81,10 @@
 @section('footer_script')
     <script>
         $(document).ready(function(){
+
+            $('.lock-nav').click(function(){
+                alert('Lengkapi dan simpan info terlebih dahulu!');
+            })
 
             if($('#provinsi').val() != 0 || $('#provinsi').val() != '') {
                 var id_provinsi = $('#provinsi').val();

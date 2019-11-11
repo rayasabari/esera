@@ -24,8 +24,10 @@ class ErrorMessageRequest extends FormRequest
     public function rules()
     {
         return [
-            'nama' => 'required',
-            'id_kategori' => 'required'
+            // 'nama' => 'required',
+            // 'id_kategori' => 'required',
+            'filefoto' => 'required',
+            'filefoto' => 'max:1024'
         ];
     }
 
@@ -37,8 +39,10 @@ class ErrorMessageRequest extends FormRequest
     public function messages()
     {
         return [
-            'nama.required' => 'Nama tidak boleh kosong!',
-            'id_kategori.required'  => 'Kategori belum dipilih!',
+            // 'nama.required' => 'Nama tidak boleh kosong!',
+            // 'id_kategori.required'  => 'Kategori belum dipilih!',
+            'filefoto.required'  => 'File belum dipilih!',
+            'filefoto.max'  => 'File maksimal 1MB!'
         ];
     }
 }

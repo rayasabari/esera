@@ -476,17 +476,22 @@ class ListingController extends Controller
 
     public function submit_bid(Request $request, $id_nipl, $id_listing)
     {
+        $nipl       = $this->nipl->where('id_user', Auth::user()->id)->first();
         $kelipatan  = $this->listing->where('id', $id_listing)->first()->kelipatan_bid;
         $submit     = str_replace(".","",$request->jumlah_bid);
-        $bid        = $this->bid->where('id_listing', $id_listing)->select('jumlah_bid')->get();
-        
+        $bid        = $this->bid->where('id_listing', $id_listing)->select('id_nipl','jumlah_bid')->orderBy('jumlah_bid','DESC')->get();
+        $objek      = $this->listing
+        ->where('id', $id_listing)->with(array(
+            'objek_properti' => function($query){
+                $query->select('id','jaminan', 'harga_limit');
+            }
+        ))->first();
+
+        // return response()->json($bid);
+        // die;
+
         if( count($bid) == 0 ){
-            $last_bid   = $this->listing
-            ->where('id', $id_listing)->with(array(
-                'objek_properti' => function($query){
-                    $query->select('id', 'harga_limit');
-                }
-            ))->first()->objek_properti->harga_limit;
+            $last_bid   = $objek->objek_properti->harga_limit;
 
             if($submit < $last_bid){
                 return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Limit!');
@@ -494,7 +499,7 @@ class ListingController extends Controller
             }
         }else{
             $last_bid   = $this->bid->where('id_listing', $id_listing)->select('jumlah_bid')->orderBy('jumlah_bid', 'DESC')->first()->jumlah_bid;
-            
+
             if($submit < $last_bid){
                 return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Penawaran terakhir!');
                 die;
@@ -504,12 +509,34 @@ class ListingController extends Controller
         $gap = ((int)$submit - (int)$last_bid) / (int)$kelipatan;
 
         if(is_int($gap) == true ){
-            
-            $bid = $this->bid;
-            $bid->id_listing     = $id_listing;
-            $bid->id_nipl        = $id_nipl;
-            $bid->jumlah_bid     = str_replace(".","",$request->jumlah_bid);
-            $bid->save();
+
+            if($nipl->deposite < $objek->objek_properti->jaminan ){ // validasi deposite
+                return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, Saldo deposite Anda tidak cukup melakukan bid di lot ini!');
+            }elseif($nipl->deposite >= $objek->objek_properti->jaminan ){
+                // balikin saldo deposite last bidder
+                if(count($bid) > 0 ){ // jika tidak ada last bidder
+                    $id_nipl_last   = $bid[0]->id_nipl;
+                    $deposite_last  = $this->nipl->where('id', $id_nipl_last)->select('deposite')->first();
+    
+                    $this->nipl::where('id', $id_nipl_last)
+                    ->update([
+                        'deposite' => $deposite_last->deposite + $objek->objek_properti->jaminan
+                    ]);
+                }
+    
+                // recored bid
+                $bid = $this->bid;
+                $bid->id_listing     = $id_listing;
+                $bid->id_nipl        = $id_nipl;
+                $bid->jumlah_bid     = str_replace(".","",$request->jumlah_bid);
+                $bid->save();
+    
+                // kurangi saldo deposite bidder
+                $this->nipl::where('id', $id_nipl)
+                ->update([
+                    'deposite' => $nipl->deposite - $objek->objek_properti->jaminan
+                ]);
+            }
 
             return redirect('/detail/objek/'.$id_listing)->with('status','Terima kasih, Bid berhasil disubmit!');
         }else{

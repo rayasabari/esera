@@ -122,26 +122,32 @@
                             </div>
                             @else
                                 @if(isset($nipl))
-                                    <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
-                                        @csrf
-                                        <label for="jumlah_bid">Kelipatan Bid: <b id="kelipatan" class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label> 
-                                        <div id="jml-bid" hidden>{{ count($bid) }}</div>
-                                        <div class="kt-input-icon kt-input-icon--left">
-                                            <div class="input-group">
-                                                <input disabled id="jumlah_bid"  onkeyup="angka(this)" value="{{ number_format($next_bid,0,',','.') }}" name="jumlah_bid" type="text" class="form-control form-control-lg font-weight-bold" placeholder="">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text bg-white"><i class="flaticon2-up text-body" id="plus-bid"></i></span>
-                                                    <span class="input-group-text bg-white"><i class="flaticon2-down text-body" id="minus-bid"></i></span>
-                                                    <button class="btn btn-danger" type="submit">Submit Bid!</button>
-                                                </div>
-                                            </div>
-                                            <span class="kt-input-icon__icon kt-input-icon__icon--left">
-                                                <span class="font-weight-bold">Rp</span>
-                                            </span>
+                                    @if($nipl->deposite < $objek->objek_properti->jaminan)
+                                        <div class="alert alert-solid-danger alert-bold" role="alert">
+                                            <h6 class="alert-text text-center">Maaf, Anda <b>tidak</b> bisa melakukan bid pada lot ini! <b>Jumlah Deposit</b> Anda <b>kurang</b> dari harga jaminan</h6>
                                         </div>
-                                        <div id="fb-bid1" class="invalid-feedback">Harga yang Anda masukkan kurang dari {{ count($bid) == 0 ? 'Harga Limit' : 'harga penawaran terakhir' }}!</div>
-                                        <div id="fb-bid2" class="invalid-feedback">Harga yang Anda masukkan tidak sesuai dengan kelipatan bid!</div>
-                                    </form>
+                                    @else
+                                        <form method="post" action="/bid/{{ $nipl->id }}/{{ $objek->id }}">
+                                            @csrf
+                                            <label for="jumlah_bid">Kelipatan Bid: <b id="kelipatan" class="text-black-50">Rp {{number_format($objek->kelipatan_bid,0,',','.') }} </b></label> 
+                                            <div id="jml-bid" hidden>{{ count($bid) }}</div>
+                                            <div class="kt-input-icon kt-input-icon--left">
+                                                <div class="input-group">
+                                                    <input readonly id="jumlah_bid" onkeyup="angka(this)" value="{{ number_format($next_bid,0,',','.') }}" name="jumlah_bid" type="text" class="form-control form-control-lg font-weight-bold" placeholder="">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text bg-white"><i class="flaticon2-up text-body" id="plus-bid"></i></span>
+                                                        <span class="input-group-text bg-white"><i class="flaticon2-down text-body" id="minus-bid"></i></span>
+                                                        <button class="btn btn-danger" type="submit">Submit Bid!</button>
+                                                    </div>
+                                                </div>
+                                                <span class="kt-input-icon__icon kt-input-icon__icon--left">
+                                                    <span class="font-weight-bold">Rp</span>
+                                                </span>
+                                            </div>
+                                            <div id="fb-bid1" class="invalid-feedback">Harga yang Anda masukkan kurang dari {{ count($bid) == 0 ? 'Harga Limit' : 'harga penawaran terakhir' }}!</div>
+                                            <div id="fb-bid2" class="invalid-feedback">Harga yang Anda masukkan tidak sesuai dengan kelipatan bid!</div>
+                                        </form>
+                                    @endif
                                 @else 
                                     <div class="alert alert-solid-danger alert-bold" role="alert">
                                         <h6 class="alert-text text-center">Maaf, akun Anda tidak memiliki saldo Deposit, silahkan melakukan penyetoran jaminan!</h6>
@@ -187,7 +193,7 @@
                             <tr>
                                 <td>Total Harga Terbentuk</td>
                                 <td class="font-weight-bold">Rp.</td>
-                                <td class="text-right font-weight-bold">
+                                <td id="harga-terbentuk" class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
                                         {{ number_format($objek->last_bid->jumlah_bid + $objek->kelipatan_bid,0,',','.') }}
                                     @else 
@@ -198,12 +204,12 @@
                             <tr>
                                 <td>Uang Jaminan</td>
                                 <td class="font-weight-bold">Rp.</td>
-                                <td class="text-right font-weight-bold">{{ number_format($objek->objek_properti->jaminan ,0,',','.') }}</td>
+                                <td id="jaminan" class="text-right font-weight-bold">{{ number_format($objek->objek_properti->jaminan ,0,',','.') }}</td>
                             </tr>
                             <tr>
                                 <td>Kekurangan Pembayaran</td>
                                 <td class="font-weight-bold">Rp.</td>
-                                <td class="text-right font-weight-bold">
+                                <td id="kekurangan-pembayaran" class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
                                         {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) - $objek->objek_properti->jaminan ,0,',','.') }}
                                     @else
@@ -214,7 +220,7 @@
                             <tr>
                                 <td>Bea Lelang  Pembeli (0,4%)</td>
                                 <td class="font-weight-bold">Rp.</td>
-                                <td class="text-right font-weight-bold">
+                                <td id="bea-lelang" class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
                                         {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) * (0.4/100) ,0,',','.') }}
                                     @else
@@ -225,7 +231,7 @@
                             <tr>
                                 <td style="font-size: 12pt" class="font-weight-bold">Total yang harus dibayarkan</td>
                                 <td style="font-size: 12pt" class="font-weight-bold">Rp.</td>
-                                <td style="font-size: 12pt" class="text-right font-weight-bold">
+                                <td id="total-bayar" style="font-size: 12pt" class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
                                         {{ number_format( (($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) - $objek->objek_properti->jaminan) + (($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) * (0.4/100)) ,0,',','.') }}
                                     @else
@@ -268,7 +274,7 @@
                                     <td class="text-right">Rp</td>
                                     <td class="text-right">{{ number_format($b->jumlah_bid,0,',','.') }} </td>
                                     <td class="text-left">
-                                        @if($objek->tgl_akhir_lelang <= time() && $b->jumlah_bid == $bid[0]->jumlah_bid )
+                                        @if( strtotime($objek->tgl_akhir_lelang) <= time() && $b->jumlah_bid == $bid[0]->jumlah_bid )
                                             <i class="flaticon-medal text-warning"></i>
                                         @endif
                                     </td>
@@ -362,9 +368,8 @@
             background-color: grey;
         }
     </style>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$apikey}}&callback=initMap"></script>
+    <script type="text/javascript" async defer src="https://maps.googleapis.com/maps/api/js?key={{$apikey}}&callback=initMap"></script>
     <script>
-
         // Initialize and add the map
         function initMap() {
         // The location of Uluru
@@ -404,16 +409,29 @@
             }
         });
 
+        function format_number(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
         $('#plus-bid').click(function(){
             var nextbid     = $('#jumlah_bid');
+            var jaminan     = $('#jaminan').text().replace(/[^\d]/g, "");
             var kelipatan   = $('#kelipatan').text().replace(/[^\d]/g, "");
             var result      = parseInt(nextbid.val().split('.').join('')) + parseInt(kelipatan);
             nextbid.val(result);
             nextbid.keyup();
+            var kekurangan  = parseInt(result) - parseInt(jaminan);
+            $('#harga-terbentuk').text(format_number(result));
+            $('#kekurangan-pembayaran').text(format_number(kekurangan));
+            var bealelang   = parseInt(result) * 0.004;
+            $('#bea-lelang').text(format_number(bealelang));
+            var total       = parseInt(bealelang) + parseInt(kekurangan);
+            $('#total-bayar').text(format_number(total));
         });
 
         $('#minus-bid').click(function(){
             var bid         = $('#jumlah_bid');
+            var jaminan     = $('#jaminan').text().replace(/[^\d]/g, "");
             var kelipatan   = $('#kelipatan').text().replace(/[^\d]/g, "");
             var minbid      = $('#min-bid').text().replace(/[^\d]/g, "");
             if($('#jml-bid').text() == '0' ){
@@ -425,6 +443,14 @@
             if( result >= nextbid ){
                 bid.val(result);
                 bid.keyup();
+
+                var kekurangan  = parseInt(result) - parseInt(jaminan);
+                $('#harga-terbentuk').text(format_number(result));
+                $('#kekurangan-pembayaran').text(format_number(kekurangan));
+                var bealelang   = parseInt(result) * 0.004;
+                $('#bea-lelang').text(format_number(bealelang));
+                var total       = parseInt(bealelang) + parseInt(kekurangan);
+                $('#total-bayar').text(format_number(total));
             }
         });
 

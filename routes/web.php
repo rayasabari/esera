@@ -117,6 +117,10 @@ Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'checkblocked'
     Route::get('/edit/properti/{nm_subkategori}/{id}', 'MasterController@objek_properti_edit');
     Route::patch('/edit/properti/{nm_subkategori}/{id}', 'MasterController@objek_properti_update');
     Route::delete('/delete/properti/{nm_subkategori}/{id}', 'MasterController@objek_properti_destroy');
+    Route::post('/upload/foto/{id_kategori}/{id}', 'MasterController@foto_upload');
+    Route::delete('/delete/foto/{id_foto}', 'MasterController@foto_destroy');
+    Route::post('/upload/dokumen/{id_kategori}/{id}', 'MasterController@dokumen_upload');
+    Route::delete('/delete/dokumen/{id_dokumen}', 'MasterController@dokumen_destroy');
 
     // Master Pemilik
     Route::get('/pemilik', 'MasterController@pemilik_index');
