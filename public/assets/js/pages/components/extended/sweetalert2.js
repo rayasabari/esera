@@ -5,6 +5,7 @@ var KTSweetAlert2Demo = function() {
 
     // Demos
     var initDemos = function() {
+
         // Sweetalert Demo 1
         $('#kt_sweetalert_demo_1').click(function(e) {
             swal.fire('Good job!');

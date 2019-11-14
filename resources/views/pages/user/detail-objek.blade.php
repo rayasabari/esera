@@ -1,6 +1,14 @@
 @extends('layouts.app-user')
 
 @section('head')
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lightcase/css/lightcase.css">
+    <script type="text/javascript" src="lightcase/js/lightcase.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('a[data-rel^=lightcase]').lightcase();
+        });
+    </script>
     <title>Detail Objek - SRA</title>
 @endsection
 
@@ -31,8 +39,19 @@
                 </div>
                 <div class="kt-portlet__body">
                     <div class="row">
-                        <div class="col-lg-5">
-                            <img src="../../attachment/foto/{{ $objek->objek_properti->img }}" alt="..." class="rounded img-thumbnail">
+                        <div class="col-lg-5 pr-3">
+                            <div class="">
+                                <a href="storage/foto/{{ $objek->objek_properti->foto[0]->nama_file }}" data-rel="lightcase:myCollection:slideshow"><img src="storage/foto/{{ $objek->objek_properti->foto[0]->nama_file }}" class="rounded img-thumbnail"></a>
+                            </div>
+                            <div class="row">
+                                @foreach($objek->objek_properti->foto as $key => $foto)
+                                    @if($key != 0)
+                                        <div class="col-lg-4">
+                                            <a href="storage/foto/{{ $foto->nama_file }}" data-rel="lightcase:myCollection:slideshow"><img src="storage/foto/{{ $foto->nama_file }}" class="rounded img-thumbnail mt-4" style="height: 90px; width: 90px"></a>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
                         <div class="col-lg-7 pl-3">
                             <div class="mb-4">
@@ -170,6 +189,118 @@
                     </div>
                 </div>
             </div>
+
+            <div class="kt-portlet kt-portlet--tabs">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-toolbar">
+                        <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-danger nav-tabs-line-2x nav-tabs-line-right" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab-detail" role="tab">
+                                    <i class="" aria-hidden="true"></i>Detail
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab-lampiran" role="tab">
+                                    <i class="" aria-hidden="true"></i>Lampiran
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <div class="tab-content text-body">
+                        <div class="tab-pane active" id="tab-detail" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <span class="text-black-50 d-block mb-1">Tipe</span>
+                                        <span><h6>{{ $objek->objek_properti->tipe }}</h6></span>
+                                        <hr>
+                                    </div>
+                                    <div class="form-group">
+                                        <span class="text-black-50 d-block mb-1">Sertifikat</span>
+                                        <span><h6>{{ $objek->objek_properti->sertifikat->nama .' ('. $objek->objek_properti->sertifikat->singkatan . ')' }}</h6></span>
+                                        <hr>
+                                    </div>
+                                    <div class="form-group">
+                                        <span class="text-black-50 d-block mb-1">Luas Tanah</span>
+                                        <span><h6>{{ number_format($objek->objek_properti->luas_tanah,0,',','.') }} m<sup>2</sup></h6></span>
+                                        <hr>
+                                    </div>
+                                    <div class="form-group">
+                                        <span class="text-black-50 d-block mb-1">Luas Bangunan</span>
+                                        <span><h6>{{ number_format($objek->objek_properti->luas_bangunan,0,',','.') }} m<sup>2</sup></h6></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <span class="text-black-50 d-block mb-1">Jumlah Lantai</span>
+                                        <span><h6>{{ $objek->objek_properti->jumlah_lantai }}</h6></span>
+                                        <hr>
+                                    </div>
+                                    <div class="form-group">
+                                        <span class="text-black-50 d-block mb-1">Kamar Tidur</span>
+                                        <span><h6>{{ $objek->objek_properti->kamar_tidur }}</h6></span>
+                                        <hr>
+                                    </div>
+                                    <div class="form-group">
+                                        <span class="text-black-50 d-block mb-1">Kamar Mandi</span>
+                                        <span><h6>{{ $objek->objek_properti->kamar_mandi }}</h6></span>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="tab-lampiran" role="tabpanel">
+                            <div class="row mt-2">
+                                @foreach($objek->objek_properti->dokumen as $dok)
+                                    <div class="col-lg-2">
+                                        <div class="kt-widget__files">
+                                            <a href="/storage/dokumen/{{ $dok->nama_file }}">
+                                                <div class="kt-widget__media mb-4">
+                                                    <img class="kt-widget__img kt-hidden-" src="assets/media/files/pdf.svg" alt="image">
+                                                </div>
+                                                <span class="text-center">
+                                                    <h6>{{ $dok->nama_dokumen }}</h6>
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title">
+                            Lokasi
+                        </h3>
+                    </div>
+                    <div class="kt-portlet__head-toolbar">
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <div id="map"></div>
+                    <input type="hidden" id="latitude" value="{{ $objek->objek_properti->latitude }}">
+                    <input type="hidden" id="longitude" value="{{ $objek->objek_properti->longitude }}">
+                    <div class="text-body mt-2">
+                        <b>Alamat:</b>
+                        {{ 
+                            $objek->objek_properti->alamat.', '.ucwords(strtolower($objek->objek_properti->kelurahan->text)).', '.
+                            ucwords(strtolower($objek->objek_properti->kecamatan->text)).', '.ucwords(strtolower($objek->objek_properti->kota->text)).', '.
+                            ucwords(strtolower($objek->objek_properti->provinsi->text_proper))
+                        }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -181,57 +312,60 @@
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    <table class="table">
-                        <thead class="">
+                    <div class="kt-widget6">
+                        <table class="table table-borderless table-hover">
                             <tr>
-                                <th>Deskripsi</th>
-                                <th style="width: 20px;"></th>
-                                <th style="width: 160px" class="text-right"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Total Harga Terbentuk</td>
-                                <td class="font-weight-bold">Rp.</td>
-                                <td id="harga-terbentuk" class="text-right font-weight-bold">
-                                    @if(isset($objek->last_bid))
-                                        {{ number_format($objek->last_bid->jumlah_bid + $objek->kelipatan_bid,0,',','.') }}
-                                    @else 
-                                        {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}
-                                    @endif
+                                <td class="text-left" style="width: 60%">Total Harga Terbentuk</td>
+                                <td class="text-left" style="width: 5%"><h6>Rp</h6></td>
+                                <td class="text-right" style="width: 5%">
+                                    <h6 id="harga-terbentuk">
+                                        @if(isset($objek->last_bid))
+                                            {{ number_format($objek->last_bid->jumlah_bid + $objek->kelipatan_bid,0,',','.') }}
+                                        @else 
+                                            {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}
+                                        @endif
+                                    </h6>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Uang Jaminan</td>
-                                <td class="font-weight-bold">Rp.</td>
-                                <td id="jaminan" class="text-right font-weight-bold">{{ number_format($objek->objek_properti->jaminan ,0,',','.') }}</td>
-                            </tr>
-                            <tr>
-                                <td>Kekurangan Pembayaran</td>
-                                <td class="font-weight-bold">Rp.</td>
-                                <td id="kekurangan-pembayaran" class="text-right font-weight-bold">
-                                    @if(isset($objek->last_bid))
-                                        {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) - $objek->objek_properti->jaminan ,0,',','.') }}
-                                    @else
-                                        {{ number_format($objek->objek_properti->harga_limit - $objek->objek_properti->jaminan ,0,',','.') }}
-                                    @endif
+                                <td class="text-left">Uang Jaminan<</td>
+                                <td class="text-left"><h6>Rp</h6></td>
+                                <td class="text-right">
+                                    <h6 id="jaminan">
+                                        {{ number_format($objek->objek_properti->jaminan ,0,',','.') }}
+                                    </h6>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Bea Lelang  Pembeli (0,4%)</td>
-                                <td class="font-weight-bold">Rp.</td>
-                                <td id="bea-lelang" class="text-right font-weight-bold">
-                                    @if(isset($objek->last_bid))
-                                        {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) * (0.4/100) ,0,',','.') }}
-                                    @else
-                                        {{ number_format($objek->objek_properti->harga_limit * (0.4/100) ,0,',','.') }}
-                                    @endif
+                                <td class="text-left">Kekurangan Pembayaran</td>
+                                <td class="text-left" style="width: 5%"><h6>Rp</h6></td>
+                                <td class="text-right">
+                                    <h6 id="kekurangan-pembayaran">
+                                        @if(isset($objek->last_bid))
+                                            {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) - $objek->objek_properti->jaminan ,0,',','.') }}
+                                        @else
+                                            {{ number_format($objek->objek_properti->harga_limit - $objek->objek_properti->jaminan ,0,',','.') }}
+                                        @endif
+                                    </h6>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="font-size: 12pt" class="font-weight-bold">Total yang harus dibayarkan</td>
-                                <td style="font-size: 12pt" class="font-weight-bold">Rp.</td>
-                                <td id="total-bayar" style="font-size: 12pt" class="text-right font-weight-bold">
+                                <td class="text-left">Bea Lelang  Pembeli (0,4%)</td>
+                                <td class="text-left" style="width: 5%"><h6>Rp</h6></td>
+                                <td class="text-right font-weight-bold">
+                                    <h6 id="bea-lelang">
+                                        @if(isset($objek->last_bid))
+                                            {{ number_format(($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) * (0.4/100) ,0,',','.') }}
+                                        @else
+                                            {{ number_format($objek->objek_properti->harga_limit * (0.4/100) ,0,',','.') }}
+                                        @endif
+                                    </h6>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left font-weight-bold">Total yang harus dibayarkan</td>
+                                <td class="text-left font-weight-bold" style="width: 5%">Rp</td>
+                                <td id="total-bayar" class="text-right font-weight-bold">
                                     @if(isset($objek->last_bid))
                                         {{ number_format( (($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) - $objek->objek_properti->jaminan) + (($objek->last_bid->jumlah_bid + $objek->kelipatan_bid) * (0.4/100)) ,0,',','.') }}
                                     @else
@@ -239,8 +373,8 @@
                                     @endif
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="kt-portlet">
@@ -254,105 +388,29 @@
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    <table class="table table-striped">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th style="width: 30%">Waktu</th>
-                                <th style="width: 10%">NIPL</th>
-                                <th style="width: 30%">Bidder</th>
-                                <th style="width: 10%"></th>
-                                <th style="width: 15%" class="text-right">Jumlah Bid</th>
-                                <th style="width: 5%"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($bid as $b)
+                    <div class="kt-widget6">
+                        <table class="table table-striped">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <td class="text-muted">{{ $b->created_at }}</td>
-                                    <td>{{ $b->nipl->nipl }}</td>
-                                    <td>{{ $b->nipl->user->first_name .' '. $b->nipl->user->last_name }}</td>
-                                    <td class="text-right">Rp</td>
-                                    <td class="text-right">{{ number_format($b->jumlah_bid,0,',','.') }} </td>
-                                    <td class="text-left">
-                                        @if( strtotime($objek->tgl_akhir_lelang) <= time() && $b->jumlah_bid == $bid[0]->jumlah_bid )
-                                            <i class="flaticon-medal text-warning"></i>
-                                        @endif
-                                    </td>
+                                    <th style="width: 60%">Bidder</th>
+                                    <th style="width: 10%"></th>
+                                    <th style="width: 30%" class="text-right">Jumlah Bid</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">
-                            Info Objek
-                        </h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
-                    <div class="kt-widget6">
-                        <table class="table table-borderless table-hover">
-                            <tr>
-                                <td class="text-left" style="width: 40%"><h6>Tipe</h6></td>
-                                <td class="text-right" style="width: 60%">{{ $objek->objek_properti->tipe }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Sertifikat</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->sertifikat->nama .' ('. $objek->objek_properti->sertifikat->singkatan . ')' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Jumlah Lantai</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->jumlah_lantai }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Kamar Tidur</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->kamar_tidur }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Kamar Mandi</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->kamar_mandi }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Luas Tanah</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->luas_tanah }} m<sup>2</sup></td>
-                            </tr>
-                            <tr>
-                                <td class="text-left"><h6>Luas Bangunan</h6></td>
-                                <td class="text-right">{{ $objek->objek_properti->luas_bangunan }} m<sup>2</sup></td>
-                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($bid as $b)
+                                    <tr>
+                                        <td data-skin="dark" data-toggle="kt-tooltip" data-placement="left" title="{{ date_format($b->created_at,'d F Y H:i:s') }}" >{{ $b->nipl->user->first_name .' '. $b->nipl->user->last_name }}
+                                            @if( strtotime($objek->tgl_akhir_lelang) <= time() && $b->jumlah_bid == $bid[0]->jumlah_bid )
+                                                <i class="flaticon-medal text-warning ml-2"></i>
+                                            @endif
+                                        </td>
+                                        <td class="text-right">Rp</td>
+                                        <td class="text-right">{{ number_format($b->jumlah_bid,0,',','.') }} </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">
-                            Lokasi Objek
-                        </h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
-                    <div class="kt-widget6">
-                        <div id="map"></div>
-                        <input type="hidden" id="latitude" value="{{ $objek->objek_properti->latitude }}">
-                        <input type="hidden" id="longitude" value="{{ $objek->objek_properti->longitude }}">
-                    </div>
-                    <div class="alert alert-elevate alert-light ">
-                    {{ 
-                        $objek->objek_properti->alamat.', '.ucwords(strtolower($objek->objek_properti->kelurahan->text)).', '.
-                        ucwords(strtolower($objek->objek_properti->kecamatan->text)).', '.ucwords(strtolower($objek->objek_properti->kota->text)).', '.
-                        ucwords(strtolower($objek->objek_properti->provinsi->text_proper))
-                    }}
                     </div>
                 </div>
             </div>
@@ -364,7 +422,7 @@
     <style>
         #map {
             width: 100%;
-            height: 250px;
+            height: 300px;
             background-color: grey;
         }
     </style>

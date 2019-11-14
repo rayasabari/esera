@@ -34,9 +34,9 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <ul class="nav nav-tabs  nav-tabs-line nav-tabs-line-success" role="tablist">
+                <ul class="nav nav-tabs  nav-tabs-line nav-tabs-line-danger" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active mr-2" data-toggle="tab" href="#tab_data" role="tab"><i class="flaticon2-list-2"></i> Info</a>
+                        <a class="nav-link active mr-2" data-toggle="tab" href="#tab_data" role="tab"><i class="flaticon2-list-2"></i> Info Objek</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link mr-2 lock-nav" role="tab"><i class="flaticon2-photo-camera"></i> Foto</a>
@@ -68,7 +68,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
-                                <a href="/objek" class="btn btn-outline-primary">Kembali</a>
+                                <a href="/objek" class="btn btn-secondary">Kembali</a>
                             </div>
                         </div>
                     </form>
@@ -83,7 +83,7 @@
         $(document).ready(function(){
 
             $('.lock-nav').click(function(){
-                alert('Lengkapi dan simpan info terlebih dahulu!');
+                swal.fire("Maaf!", "Lengkapi dan simpan info objek terlebih dahulu!", "error");
             })
 
             if($('#provinsi').val() != 0 || $('#provinsi').val() != '') {

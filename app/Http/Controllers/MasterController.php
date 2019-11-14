@@ -381,7 +381,7 @@ class MasterController extends Controller
     public function dokumen_upload(Request $request, $id_kategori, $id){
         $request->validate([
             'nama_dokumen' => 'required',
-            'filedokumen' => 'required|mimes:xls,xlsx,pdf,doc,docx|max:5120',
+            'filedokumen' => 'required|mimes:pdf|max:5120',
         ]);
         
         $fileName = time().'_'.request()->filedokumen->getClientOriginalName();

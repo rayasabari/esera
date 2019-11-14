@@ -85,6 +85,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <button type="submit" class="btn btn-primary">Submit</button>
+                            <a href="/listing" class="btn btn-secondary">Kembali</a>
                         </div>
                     </div>
                 </form>

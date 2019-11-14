@@ -62,7 +62,7 @@
                 <!--begin:: Widgets/Blog-->
                 <div class="kt-portlet kt-portlet--height-fluid kt-widget19">
                     <div class="kt-portlet__body kt-portlet__body--fit kt-portlet__body--unfill" style="cursor: pointer;" onclick="window.location='{{ url('/detail/objek/'.$list->id) }}';">
-                        <div class="kt-widget19__pic kt-portlet-fit--top kt-portlet-fit--sides" style="min-height: 300px; background-image: url({{ '../../attachment/foto/'.$list->objek_properti->img }})">
+                        <div class="kt-widget19__pic kt-portlet-fit--top kt-portlet-fit--sides" style="min-height: 300px; background-image: url({{ 'storage/foto/'.$list->objek_properti->foto_utama->nama_file }})">
                             <h4 class="kt-widget19__title kt-font-light">Lot. #{{ $list->kode_lot }}</h4>
                             <div class="kt-widget19__shadow"></div>
                             <div class="kt-widget19__labels">

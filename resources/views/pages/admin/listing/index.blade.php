@@ -52,7 +52,7 @@
                             <td scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->kode_lot}}</td>
                             <td style="vertical-align: middle">
-                                {{ $obj->objek_properti->nama }}
+                                <a href="/edit/listing/{{ strtolower($obj->kategori->nama) }}/{{ strtolower($obj->sub_kategori->nama) }}/{{ $obj->id }}">{{ $obj->objek_properti->nama }}</a>
                                 <span class="form-text text-muted text-small">
                                     Milik: <a class="text-danger">{{ $obj->objek_properti->pemilik->first_name .' '. $obj->objek_properti->pemilik->last_name }}</a>
                                 </span>

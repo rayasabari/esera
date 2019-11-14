@@ -53,4 +53,19 @@ class ObjekProperti extends Model
     {
         return $this->hasOne('App\Models\StatusObjek','id','id_status_objek');
     }
+
+    public function foto_utama()
+    {
+        return $this->hasOne('App\Models\AttachmentFoto','id_objek','id')->where('id_kategori', 1);
+    }
+
+    public function foto()
+    {
+        return $this->hasMany('App\Models\AttachmentFoto','id_objek','id')->where('id_kategori', 1);
+    }
+
+    public function dokumen()
+    {
+        return $this->hasMany('App\Models\AttachmentDokumen','id_objek','id')->where('id_kategori', 1);
+    }
 }

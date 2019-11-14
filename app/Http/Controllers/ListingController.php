@@ -63,13 +63,15 @@ class ListingController extends Controller
     public function home(){
         $listing    = $this->listing
         ->where('status', 1)
-        // ->where('tgl_akhir_lelang', '>', date('Y-m-d').' 00:00:00' )
         ->with(array(
             'objek_properti'    => function($query){
                 $query->select('id','id_kategori','id_sub_kategori', 'nama','id_provinsi','luas_tanah','luas_bangunan','harga_limit','img')
                 ->with(array(
                     'provinsi'  => function($query){
                         $query->select('id','text_proper');
+                    },
+                    'foto_utama'      => function($query){
+                        $query->select('id','id_objek','nama_file')->orderBy('id', 'ASC');
                     }
                 ));
             },
@@ -89,7 +91,7 @@ class ListingController extends Controller
         
         $nipl       = $this->nipl->where('id_user', Auth::user()->id)->first();
         
-        // return response()->json($nipl);
+        // return response()->json($listing);
         return view('pages.home', compact('listing','live','nipl'));
     }
 
@@ -237,6 +239,12 @@ class ListingController extends Controller
                     },
                     'sertifikat' => function($query){
                         $query->select('id','nama','singkatan');
+                    },
+                    'foto'      => function($query){
+                        $query->select('id','id_objek','nama_file');
+                    },
+                    'dokumen'   => function($query){
+                        $query->select('id','id_objek','nama_file','nama_dokumen');
                     }
                 ));
             },
@@ -271,7 +279,7 @@ class ListingController extends Controller
             $next_bid = $objek->objek_properti->harga_limit;
         }
 
-        // return count($bid);
+        // return $objek;
         return view('pages.user.detail-objek', compact('nipl','objek','bid','next_bid','apikey'));
     }
 
@@ -360,7 +368,7 @@ class ListingController extends Controller
             'tgl_akhir_lelang'  => $request->tgl_akhir_lelang
         ]);
 
-        return redirect('/listing')->with('status','Listing berhasil dirubah!');
+        return back()->with('status','Listing berhasil dirubah!');
     }
 
     /**
@@ -442,6 +450,9 @@ class ListingController extends Controller
                     },
                     'kelurahan' => function($query){
                         $query->select('id','text');
+                    },
+                    'foto' => function($query){
+                        $query->select('id','id_objek','nama_file')->orderBy('id','ASC');
                     }
                 ));
             },
@@ -470,7 +481,7 @@ class ListingController extends Controller
         ))
         ->get();
         
-        // return $objek;
+        // return response()->json($objek);
         return view('pages.user.list-hasil', compact('objek','nipl'));
     }
 
@@ -494,14 +505,14 @@ class ListingController extends Controller
             $last_bid   = $objek->objek_properti->harga_limit;
 
             if($submit < $last_bid){
-                return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Limit!');
+                return back()->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Limit!');
                 die;
             }
         }else{
             $last_bid   = $this->bid->where('id_listing', $id_listing)->select('jumlah_bid')->orderBy('jumlah_bid', 'DESC')->first()->jumlah_bid;
 
             if($submit < $last_bid){
-                return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Penawaran terakhir!');
+                return back()->with('error','Maaf, nilai Bid yang Anda masukkan harus lebih besar dari Harga Penawaran terakhir!');
                 die;
             }
         }
@@ -511,7 +522,7 @@ class ListingController extends Controller
         if(is_int($gap) == true ){
 
             if($nipl->deposite < $objek->objek_properti->jaminan ){ // validasi deposite
-                return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, Saldo deposite Anda tidak cukup melakukan bid di lot ini!');
+                return back()->with('error','Maaf, Saldo deposite Anda tidak cukup melakukan bid di lot ini!');
             }elseif($nipl->deposite >= $objek->objek_properti->jaminan ){
                 // balikin saldo deposite last bidder
                 if(count($bid) > 0 ){ // jika tidak ada last bidder
@@ -538,9 +549,9 @@ class ListingController extends Controller
                 ]);
             }
 
-            return redirect('/detail/objek/'.$id_listing)->with('status','Terima kasih, Bid berhasil disubmit!');
+            return back()->with('status','Terima kasih, Bid berhasil disubmit!');
         }else{
-            return redirect('/detail/objek/'.$id_listing)->with('error','Maaf, nilai Bid yang dimasukan harus kelipatan Rp '.number_format($kelipatan,0,',','.'));
+            return back()->with('error','Maaf, nilai Bid yang dimasukan harus kelipatan Rp '.number_format($kelipatan,0,',','.'));
         }
     }
 

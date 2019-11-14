@@ -47,9 +47,9 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <ul class="nav nav-tabs  nav-tabs-line nav-tabs-line-success" role="tablist">
+                <ul class="nav nav-tabs  nav-tabs-line nav-tabs-line-danger" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active mr-2" data-toggle="tab" href="#tab_data" role="tab"><i class="flaticon2-list-2"></i> Info</a>
+                        <a class="nav-link active mr-2" data-toggle="tab" href="#tab_data" role="tab"><i class="flaticon2-list-2"></i> Info Objek</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link mr-2" data-toggle="tab" href="#tab_foto" role="tab"><i class="flaticon2-photo-camera"></i> Foto</a>
@@ -82,7 +82,7 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <button type="submit" class="btn btn-primary">Simpan</button>
-                                    <a href="/objek" class="btn btn-outline-primary">Kembali</a>
+                                    <a href="/objek" class="btn btn-secondary">Kembali</a>
                                 </div>
                             </div>
                         </form>
@@ -152,7 +152,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $dok->nama_dokumen }}</td>
-                                        <td> <a href="storage/dokumen/{{ $dok->nama_file }}"><i class="flaticon2-download-2 mt-n1 mr-2" style="vertical-align: middle; display: inline-block  "></i> {{ $dok->nama_file }} </a></td>
+                                        <td> <a href="storage/dokumen/{{ $dok->nama_file }}"><i class="flaticon-download-1 mt-n1 mr-1" style="vertical-align: middle; display: inline-block  "></i> {{ $dok->nama_file }} </a></td>
                                         <td>
                                             <form method="post" action="/delete/dokumen/{{ $dok->id }}" class="d-inline">
                                                 @method('delete')
