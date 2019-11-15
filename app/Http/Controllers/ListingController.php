@@ -18,6 +18,7 @@ use App\Models\IndonesiaKelurahan;
 use App\Models\JenisSertifikat;
 use App\Models\ApiKeyRHR;
 use Auth;
+use App\Helpers\Tanggal;
 
 class ListingController extends Controller
 {
@@ -34,7 +35,8 @@ class ListingController extends Controller
             $listing,
             $nipl,
             $bid,
-            $apikey;
+            $apikey,
+            $tgl;
     /**
      * Create a new controller instance.
      *
@@ -56,6 +58,7 @@ class ListingController extends Controller
         $this->bid                  = New Bid;
         $this->nipl                 = New Nipl;
         $this->apikey               = New ApiKeyRHR;
+        $this->tgl                  = New Tanggal;
 
         $this->middleware('auth');
     }
@@ -124,7 +127,7 @@ class ListingController extends Controller
         ))
         ->get();
 
-        // return $objek;
+        // return $this->tgl->Indo($objek[1]->tgl_mulai_lelang);
         return view('pages.admin.listing.index', compact('objek'));
     }
 
@@ -279,8 +282,9 @@ class ListingController extends Controller
             $next_bid = $objek->objek_properti->harga_limit;
         }
 
-        // return $objek;
-        return view('pages.user.detail-objek', compact('nipl','objek','bid','next_bid','apikey'));
+        $tanggal = $this->tgl;
+        // return $tanggal->Indo($objek->tgl_mulai_lelang);
+        return view('pages.user.detail-objek', compact('nipl','objek','bid','next_bid','apikey','tanggal'));
     }
 
     public function unpublish($id){

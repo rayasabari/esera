@@ -9,6 +9,12 @@
             $('a[data-rel^=lightcase]').lightcase();
         });
     </script>
+    <style>
+    .table-hover-success tbody tr:hover td, .table-hover-success tbody tr:hover th {
+        background-color: aquamarine;
+        color:teal;
+    }
+    </style>
     <title>Detail Objek - SRA</title>
 @endsection
 
@@ -58,7 +64,6 @@
                                 <h3 class="text-body">{{ $objek->objek_properti->nama }}</h3>
                                 <span class="text-muted"> {{ $objek->kategori->nama }} <i class="flaticon2-fast-next ml-2 mr-2"></i> {{ $objek->sub_kategori->nama }} </span>
                             </div>
-
                             <div class="kt-widget12" style="height: 160px;">
                                 <div class="kt-widget12__content">
                                     <div class="kt-widget12__item">
@@ -79,7 +84,8 @@
                                             @else
                                                 <span class="kt-widget12__desc">{{ strtotime($objek->tgl_mulai_lelang) >= time() ? 'Waktu Mulai Lelang' : 'Harga Sementara' }}</span>
                                                 @if(strtotime($objek->tgl_mulai_lelang) >= time() )
-                                                    <span class="kt-widget12__value text-success">{{ date('d F Y H:i', strtotime($objek->tgl_mulai_lelang)) }}</span>
+                                                    {{-- <span class="kt-widget12__value text-success">{{ date('d F Y H:i', strtotime($objek->tgl_mulai_lelang)) }}</span> --}}
+                                                    <span class="kt-widget12__value text-success">{{ $tanggal->indo($objek->tgl_mulai_lelang, '%d %b %Y') }}  <sup class="text-danger ml-1"><small>{{ $tanggal->indo($objek->tgl_mulai_lelang, '%H:%M') .' WIB' }}</small></sup></span>
                                                 @else 
                                                     <span id="min-bid" class="kt-widget12__value text-black">Rp {{ number_format($objek->objek_properti->harga_limit,0,',','.') }}</span>
                                                 @endif
@@ -101,7 +107,7 @@
                                                     <span id="waktu-detik"></span>
                                                 </span>
                                             @elseif(strtotime($objek->tgl_akhir_lelang) >= time() )
-                                                <span class="kt-widget12__value text-danger">{{ date('d F Y H:i', strtotime($objek->tgl_akhir_lelang)) }}</span>
+                                                <span class="kt-widget12__value text-success">{{ $tanggal->indo($objek->tgl_akhir_lelang, '%d %b %Y') }}  <sup class="text-danger ml-1"><small>{{ $tanggal->indo($objek->tgl_akhir_lelang, '%H:%M') .' WIB' }}</small></sup></span>
                                             @endif
                                         </div>
                                     </div>
@@ -377,7 +383,7 @@
                     </div>
                 </div>
             </div>
-            <div class="kt-portlet">
+            <div class="kt-portlet kt-portlet--skin-solid kt-bg-success">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title">
@@ -389,8 +395,8 @@
                 </div>
                 <div class="kt-portlet__body">
                     <div class="kt-widget6">
-                        <table class="table table-striped">
-                            <thead class="thead-dark">
+                        <table class="table table-hover-success table-borderless text-white">
+                            <thead class="">
                                 <tr>
                                     <th style="width: 60%">Bidder</th>
                                     <th style="width: 10%"></th>
@@ -399,8 +405,8 @@
                             </thead>
                             <tbody>
                                 @foreach($bid as $b)
-                                    <tr>
-                                        <td data-skin="dark" data-toggle="kt-tooltip" data-placement="left" title="{{ date_format($b->created_at,'d F Y H:i:s') }}" >{{ $b->nipl->user->first_name .' '. $b->nipl->user->last_name }}
+                                    <tr data-skin="dark" data-toggle="kt-tooltip" data-placement="left" title="{{ $tanggal->indo($b->created_at,'%d %B %Y %H:%M:%S') }}">
+                                        <td>{{ $b->nipl->user->first_name .' '. $b->nipl->user->last_name }}
                                             @if( strtotime($objek->tgl_akhir_lelang) <= time() && $b->jumlah_bid == $bid[0]->jumlah_bid )
                                                 <i class="flaticon-medal text-warning ml-2"></i>
                                             @endif

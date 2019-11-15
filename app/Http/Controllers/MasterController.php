@@ -22,7 +22,9 @@ use App\Models\AttachmentDokumen;
 use App\Http\Requests\ErrorMessageRequest;
 use Illuminate\Support\Facades\Storage;
 use Psy\Util\Json;
+use App\Models\ApiKeyRHR;
 use Auth;
+use App\Helpers\Tanggal;
 
 class MasterController extends Controller
 {
@@ -41,7 +43,9 @@ class MasterController extends Controller
             $master_kelurahan,
             $attachment_foto,
             $attachment_dokumen,
-            $jenis_sertifikat;
+            $jenis_sertifikat,
+            $apikey,
+            $tgl;
 
     public function __construct()
     {
@@ -61,6 +65,8 @@ class MasterController extends Controller
         $this->attachment_dokumen   = New AttachmentDokumen;
         $this->jenis_sertifikat     = New JenisSertifikat;
         $this->status_nipl          = New StatusNipl;
+        $this->apikey               = New ApiKeyRHR;
+        $this->tgl                  = New Tanggal;
         $this->middleware('auth');
     }
 
@@ -125,6 +131,7 @@ class MasterController extends Controller
     public function objek_properti_create($nm_kategori, $nm_subkategori)
     {
         $user               = Auth::user();
+        $apikey             = $this->apikey->where('nama', 'Google')->first()->key;
         $kategori           = $this->kategori->where('nama', ucwords($nm_kategori))->select('id','nama')->first();
         $subkategori        = $this->sub_kategori->where('nama', ucwords($nm_subkategori))->select('id','nama')->first();
         $pemilik            = $this->pemilik->select('id','first_name','last_name')->get();
@@ -135,7 +142,7 @@ class MasterController extends Controller
             'id_pemilik'    => ''
         ];
 
-        return view('pages.admin.objek.add-properti', compact('kategori','subkategori','pemilik','provinsi','jenissertifikat'))->with('withdata', $withdata);
+        return view('pages.admin.objek.add-properti', compact('kategori','subkategori','pemilik','provinsi','jenissertifikat','apikey'))->with('withdata', $withdata);
     }
 
     // STORE OBJEK PROPERTI
@@ -272,6 +279,7 @@ class MasterController extends Controller
     // EDIT OBJEK PROPERTI
     public function objek_properti_edit($nm_subkategori, $id)
     {
+        $apikey             = $this->apikey->where('nama', 'Google')->first()->key;
         $properti           = $this->objek_properti->where('id', $id)->first();
         $kategori           = $this->kategori->where('nama', 'Properti')->select('id','nama')->first();
         $subkategori        = $this->sub_kategori->where('nama', ucwords($nm_subkategori))->select('id','nama')->first();
@@ -296,7 +304,7 @@ class MasterController extends Controller
             'kode_pos'      => $properti->kode_pos
         ];
 
-        return view('pages.admin.objek.edit-properti', compact('properti','kategori','subkategori','pemilik','provinsi','kota','kecamatan','kelurahan','jenissertifikat','foto','dokumen'))->with('withdata', $withdata);
+        return view('pages.admin.objek.edit-properti', compact('properti','kategori','subkategori','pemilik','provinsi','kota','kecamatan','kelurahan','jenissertifikat','foto','dokumen','apikey'))->with('withdata', $withdata);
     }
 
     // UPDATE OBJEK PROPERTI

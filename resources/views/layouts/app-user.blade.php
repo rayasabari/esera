@@ -76,11 +76,12 @@
 	<!-- end::Head -->
 
 	<!-- begin::Body -->
+	{{-- <body style="background-image: url(assets/media/demos/demo4/header.jpg); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading"> --}}
 	<body style="background-image: url(assets/media/demos/demo4/header.jpg); background-position: center top; background-size: 100% 350px;" class="kt-page--loading-enabled kt-page--loading kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-page--loading">
 
 		<!-- begin:: Page -->
 		<!-- begin:: Header Mobile -->
-		<div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
+		<div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed">
 			<div class="kt-header-mobile__logo">
 				<a href="index.html">
 					<img alt="Logo" src="assets/media/logos/sra-logo.gif" width="38px" />

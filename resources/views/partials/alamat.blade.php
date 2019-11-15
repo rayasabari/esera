@@ -105,7 +105,7 @@
     </div>
 </div>
 
-{{-- <div class="row">
+<div class="row">
     <div class="col-lg-12">
         <div class="form-group">
             <label for="address_address">Address</label>
@@ -113,15 +113,17 @@
             <input type="text" name="address_latitude" id="address-latitude" value="0" />
             <input type="text" name="address_longitude" id="address-longitude" value="0" />
         </div>
-        <div id="address-map-container" style="width:100%;height:400px; ">
-            <div style="width: 100%; height: 100%" id="address-map"></div>
+        <div class="form-group">
+            <div id="address-map-container" style="width:100%;height:400px; ">
+                <div style="width: 100%; height: 100%" id="address-map"></div>
+            </div>
         </div>
     </div>
-</div> --}}
+</div>
 
 @section('footer_script')
     @parent
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLEMAPS_API_KEY') }}&libraries=places&callback=initialize" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ $apikey }}&libraries=places&callback=initialize" async defer></script>
     <script>
         function initialize() {
 
@@ -151,7 +153,9 @@
                 });
                 const marker = new google.maps.Marker({
                     map: map,
+                    draggable: true,
                     position: {lat: latitude, lng: longitude},
+                    animation: google.maps.Animation.DROP,
                 });
 
                 marker.setVisible(isEdit);
