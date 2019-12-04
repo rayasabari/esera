@@ -71,45 +71,47 @@ class MasterController extends Controller
     }
 
     // INDEX MASTER OBJEK 
-    public function objek_index()
+    public function objek_index($nm_kategori)
     {
-        $properti   = $this->objek_properti
-        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
-        ->with(array
-            (
-                'kategori'      => function($query){
-                    $query->select('id','nama');
-                },
-                'sub_kategori'  => function($query){
-                    $query->select('id','nama');
-                },
-                'pemilik'       => function($query){
-                    $query->select('id','first_name','last_name');
-                },
-                'status_objek'  => function($query){
-                    $query->select('id','nama');
-                }
-            )
-        )->get()->toArray();
-
-        $kendaraan = $this->objek_kendaraan
-        ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
-        ->with(array
-            (
-                'kategori'      => function($query){
-                    $query->select('id','nama');
-                },
-                'sub_kategori'  => function($query){
-                    $query->select('id','nama');
-                },
-                'pemilik'  => function($query){
-                    $query->select('id','first_name','last_name');
-                },
-                'status_objek'  => function($query){
-                    $query->select('id','nama');
-                }
-            )
-        )->get()->toArray();
+        if($nm_kategori == 'properti'){
+            $objek = $this->objek_properti
+            ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
+            ->with(array
+                (
+                    'kategori'      => function($query){
+                        $query->select('id','nama');
+                    },
+                    'sub_kategori'  => function($query){
+                        $query->select('id','nama');
+                    },
+                    'pemilik'       => function($query){
+                        $query->select('id','first_name','last_name');
+                    },
+                    'status_objek'  => function($query){
+                        $query->select('id','nama');
+                    }
+                )
+            )->paginate(10);
+        }elseif($nm_kategori == 'kendaraan' ){
+            $objek = $this->objek_kendaraan
+            ->select('id','id_kategori','id_sub_kategori','id_pemilik','nama','harga_limit','jaminan','id_status_objek')
+            ->with(array
+                (
+                    'kategori'      => function($query){
+                        $query->select('id','nama');
+                    },
+                    'sub_kategori'  => function($query){
+                        $query->select('id','nama');
+                    },
+                    'pemilik'  => function($query){
+                        $query->select('id','first_name','last_name');
+                    },
+                    'status_objek'  => function($query){
+                        $query->select('id','nama');
+                    }
+                )
+            )->paginate(10);
+        }
 
         $subkategori = $this->sub_kategori
         ->where('id_kategori',1)
@@ -122,8 +124,7 @@ class MasterController extends Controller
             )
         )->get();
         
-        $merged = array_merge($properti, $kendaraan);
-        $objek = json_decode(json_encode($merged));
+
         return view('pages.admin.objek.index', compact('objek','subkategori'));
     }
 
@@ -446,7 +447,7 @@ class MasterController extends Controller
                 ));
             }
         ))
-        ->orderBy('id', 'ASC')->get();
+        ->orderBy('id', 'ASC')->paginate(10);
 
         return view('pages.admin.pemilik.index', compact('pemilik'));
     }
@@ -622,7 +623,7 @@ class MasterController extends Controller
                 ));
             }
         ))->select('id','name','first_name','last_name','email')
-        ->get();
+        ->paginate(10);
 
         return view('pages.admin.bidder.index', compact('bidder'));
         // return $bidder;

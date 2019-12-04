@@ -35,9 +35,9 @@ class UserController extends Controller
 
         if ($user->isAdmin()) {
             return view('pages.admin.home',compact('user'));
+        }else{
+            return view('pages.user.home',compact('user','nipl'));
         }
-
-        return view('pages.user.home',compact('user','nipl'));
 
         // return response()->json($role->role_id);
     }

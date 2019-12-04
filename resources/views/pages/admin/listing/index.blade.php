@@ -49,7 +49,7 @@
                     <tbody>
                         @foreach ($objek as $obj)
                         <tr>
-                            <td scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</td>
+                            <td scope="row" style="vertical-align: middle">{{ ($objek ->currentPage()-1) * $objek ->perPage() + $loop->index + 1 }}</td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->kode_lot}}</td>
                             <td style="vertical-align: middle">
                                 <a href="/edit/listing/{{ strtolower($obj->kategori->nama) }}/{{ strtolower($obj->sub_kategori->nama) }}/{{ $obj->id }}">{{ $obj->objek_properti->nama }}</a>
@@ -90,6 +90,12 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="kt-pagination kt-pagination--primary mt-2 mb-2">
+                    <p class="kt-section__desc"></p>
+                    <div class="kt-pagination__toolbar">
+                        {{ $objek->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

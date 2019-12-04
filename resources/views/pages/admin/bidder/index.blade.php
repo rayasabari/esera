@@ -67,6 +67,12 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="kt-pagination kt-pagination--primary mt-2 mb-2">
+                    <p class="kt-section__desc"></p>
+                    <div class="kt-pagination__toolbar">
+                        {{ $bidder->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

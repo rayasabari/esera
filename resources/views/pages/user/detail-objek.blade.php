@@ -11,8 +11,8 @@
     </script>
     <style>
     .table-hover-success tbody tr:hover td, .table-hover-success tbody tr:hover th {
-        background-color: aquamarine;
-        color:teal;
+        background-color: #8e9af6;
+        color: #0e0d17;
     }
     </style>
     <title>Detail Objek - SRA</title>
@@ -196,6 +196,32 @@
                 </div>
             </div>
 
+            
+            <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title">
+                            Lokasi
+                        </h3>
+                    </div>
+                    <div class="kt-portlet__head-toolbar">
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <div id="map"></div>
+                    <input type="hidden" id="latitude" value="{{ $objek->objek_properti->latitude }}">
+                    <input type="hidden" id="longitude" value="{{ $objek->objek_properti->longitude }}">
+                    <div class="text-body mt-2">
+                        <b>Alamat:</b>
+                        {{ 
+                            $objek->objek_properti->alamat.', '.ucwords(strtolower($objek->objek_properti->kelurahan->text)).', '.
+                            ucwords(strtolower($objek->objek_properti->kecamatan->text)).', '.ucwords(strtolower($objek->objek_properti->kota->text)).', '.
+                            ucwords(strtolower($objek->objek_properti->provinsi->text_proper))
+                        }}
+                    </div>
+                </div>
+            </div>
+
             <div class="kt-portlet kt-portlet--tabs">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-toolbar">
@@ -215,7 +241,7 @@
                 </div>
                 <div class="kt-portlet__body">
                     <div class="tab-content text-body">
-                        <div class="tab-pane active" id="tab-detail" role="tabpanel">
+                        <div class="tab-pane fade show active" id="tab-detail" role="tabpanel">
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
@@ -275,31 +301,6 @@
                                 @endforeach
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">
-                            Lokasi
-                        </h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
-                    <div id="map"></div>
-                    <input type="hidden" id="latitude" value="{{ $objek->objek_properti->latitude }}">
-                    <input type="hidden" id="longitude" value="{{ $objek->objek_properti->longitude }}">
-                    <div class="text-body mt-2">
-                        <b>Alamat:</b>
-                        {{ 
-                            $objek->objek_properti->alamat.', '.ucwords(strtolower($objek->objek_properti->kelurahan->text)).', '.
-                            ucwords(strtolower($objek->objek_properti->kecamatan->text)).', '.ucwords(strtolower($objek->objek_properti->kota->text)).', '.
-                            ucwords(strtolower($objek->objek_properti->provinsi->text_proper))
-                        }}
                     </div>
                 </div>
             </div>
@@ -383,7 +384,7 @@
                     </div>
                 </div>
             </div>
-            <div class="kt-portlet kt-portlet--skin-solid kt-bg-success">
+            <div class="kt-portlet kt-portlet--skin-solid kt-bg-primary">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title">

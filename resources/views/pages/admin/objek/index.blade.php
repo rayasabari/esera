@@ -10,7 +10,7 @@
 
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/objek') }}" class="kt-subheader__breadcrumbs-link">Master Objek Lelang</a>
+    <a href="{{ url('/objek/'.Request::segment(2)) }}" class="kt-subheader__breadcrumbs-link">Master Objek {{ ucwords(Request::segment(2)) }}</a>
 @endsection
 
 @section('content')
@@ -24,7 +24,7 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <div class="kt-portlet__head-title">
-                        Master Objek Lelang
+                        Master Objek {{ ucwords(Request::segment(2)) }}
                     </div>                    
                 </div>
                 <div class="kt-portlet__head-toolbar">
@@ -32,11 +32,13 @@
                         <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
                             <i class="flaticon2-plus"></i> Tambah
                         </button>
+                        @if(Request::segment(2) == 'properti')
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
                             @foreach($subkategori as $item)
                                 <a class="dropdown-item mt-1" href="/add/{{ strtolower($item->kategori->nama)."/".strtolower($item->nama) }}"><i class="flaticon-add"></i><span class="mt-1" > {{ $item->nama }}</span></a>
                             @endforeach
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -46,11 +48,10 @@
                         <tr>
                             <th>#</th>
                             <th style="width: 25%">Nama Objek</th>
-                            <th class="kt-align-left">Kategori</th>
                             <th class="kt-align-left">Sub Kategori</th>
                             <th class="kt-align-left">Pemilik</th>
-                            <th class="kt-align-center">Harga Limit</th>
-                            <th class="kt-align-center">Jaminan</th>
+                            <th class="kt-align-center" colspan="2">Harga Limit</th>
+                            <th class="kt-align-center" colspan="2">Jaminan</th>
                             <th class="kt-align-center">Status</th>
                             <th class="kt-align-center" style="width: 8%"><i class="flaticon2-settings"></i></th>
                         </tr>
@@ -58,13 +59,14 @@
                     <tbody>
                         @foreach ($objek as $obj)
                         <tr>
-                            <td scope="row" style="vertical-align: middle">{{ $loop->iteration	 }}</td>
+                            <td scope="row" style="vertical-align: middle">{{ ($objek ->currentPage()-1) * $objek ->perPage() + $loop->index + 1 }}</td>
                             <td style="vertical-align: middle"><a href="/edit/{{ strtolower($obj->kategori->nama). '/' .strtolower($obj->sub_kategori->nama). '/' .$obj->id }}" class="text-promary"> {{ $obj->nama }}</a></td>
-                            <td class="kt-align-left" style="vertical-align: middle">{{ $obj->kategori->nama }}</td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->sub_kategori->nama }}</td>
                             <td class="kt-align-left" style="vertical-align: middle">{{ $obj->pemilik->first_name. " ".$obj->pemilik->last_name }}</td>
-                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->harga_limit,0,",",".") }},-</b></td>
-                            <td class="kt-align-right" style="vertical-align: middle"><b>Rp {{ number_format($obj->jaminan,0,",",".") }},-</b></td>
+                            <td class="kt-align-right" style="vertical-align: middle;width: 5%"><b>Rp</b></td>
+                            <td class="kt-align-right" style="vertical-align: middle;width: 10%"><b>{{ number_format($obj->harga_limit,0,",",".") }},-</b></td>
+                            <td class="kt-align-right" style="vertical-align: middle;width: 5%"><b>Rp</b></td>
+                            <td class="kt-align-right" style="vertical-align: middle; width: 10%"><b>{{ number_format($obj->jaminan,0,",",".") }},-</b></td>
                             <td class="kt-align-center" style="vertical-align: middle">
                                 @if($obj->status_objek->id == 1)
                                     <span style="width: 139px;"><span class="kt-badge kt-badge--unified-primary kt-badge--inline kt-badge--pill">{{ $obj->status_objek->nama }}</span></span>
@@ -99,6 +101,12 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="kt-pagination kt-pagination--primary mt-2 mb-2">
+                    <p class="kt-section__desc"></p>
+                    <div class="kt-pagination__toolbar">
+                        {{ $objek->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

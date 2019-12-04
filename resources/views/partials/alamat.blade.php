@@ -1,3 +1,16 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label for="address_address">Koordinat</label>
+            <input type="text" id="address-input" name="address_address" class="form-control map-input">
+            <input hidden type="text" name="address_latitude" id="address-latitude" value="0" />
+            <input hidden type="text" name="address_longitude" id="address-longitude" value="0" />
+            <div id="address-map-container" style="width:100%;height:400px; ">
+                <div style="width: 100%; height: 100%" id="address-map"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="form-group">
     <label>Alamat <span class="text-danger">*</span></label>
     <textarea name="alamat" class="form-control @error('alamat') is-invalid @enderror" placeholder="nama jalan" rows="1">{{ Request::segment(1)=='edit' ? old('alamat', $withdata['alamat'])  : old('alamat') }}</textarea>
@@ -9,7 +22,7 @@
     <div class="col-lg-6">
         <div class="form-group">
             <label>Latitude</label>
-            <input type="text" class="form-control @error('latitude') is-invalid @enderror" placeholder="" name="latitude" value="{{ Request::segment(1)=='edit' ? old('latitude', $withdata['latitude']) : old('latitude') }}">
+            <input type="text" class="form-control @error('latitude') is-invalid @enderror" placeholder="" name="latitude" id="latitude" value="{{ Request::segment(1)=='edit' ? old('latitude', $withdata['latitude']) : old('latitude') }}">
         </div>
         @error('latitude')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -18,7 +31,7 @@
     <div class="col-lg-6">
         <div class="form-group">
             <label>Longitude</label>
-            <input type="text" class="form-control @error('longitude') is-invalid @enderror" placeholder="" name="longitude" value="{{ Request::segment(1)=='edit' ? old('longitude', $withdata['longitude']) : old('longitude') }}">
+            <input type="text" class="form-control @error('longitude') is-invalid @enderror" placeholder="" name="longitude" id="longitude" value="{{ Request::segment(1)=='edit' ? old('longitude', $withdata['longitude']) : old('longitude') }}">
         </div>
         @error('longitude')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -105,22 +118,6 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="form-group">
-            <label for="address_address">Address</label>
-            <input type="text" id="address-input" name="address_address" class="form-control map-input">
-            <input type="text" name="address_latitude" id="address-latitude" value="0" />
-            <input type="text" name="address_longitude" id="address-longitude" value="0" />
-        </div>
-        <div class="form-group">
-            <div id="address-map-container" style="width:100%;height:400px; ">
-                <div style="width: 100%; height: 100%" id="address-map"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section('footer_script')
     @parent
     <script src="https://maps.googleapis.com/maps/api/js?key={{ $apikey }}&libraries=places&callback=initialize" async defer></script>
@@ -134,10 +131,12 @@
                     return false;
                 }
             });
+
             const locationInputs = document.getElementsByClassName("map-input");
 
             const autocompletes = [];
-            const geocoder = new google.maps.Geocoder;
+            const geocoder = new google.maps.Geocoder;  
+
             for (let i = 0; i < locationInputs.length; i++) {
 
                 const input = locationInputs[i];
@@ -158,6 +157,7 @@
                     animation: google.maps.Animation.DROP,
                 });
 
+                markerCoords(marker);
                 marker.setVisible(isEdit);
 
                 const autocomplete = new google.maps.places.Autocomplete(input);
@@ -197,8 +197,8 @@
                     }
                     marker.setPosition(place.geometry.location);
                     marker.setVisible(true);
-
                 });
+                
             }
         }
 
@@ -207,6 +207,21 @@
             const longitudeField = document.getElementById(key + "-" + "longitude");
             latitudeField.value = lat;
             longitudeField.value = lng;
+            $('#latitude').val(lat);
+            $('#longitude').val(lng);
         }
+
+        function markerCoords(marker){
+            google.maps.event.addListener(marker, 'dragend', function(evt){
+                // infoWindow.setOptions({
+                //     content: '<p>Marker dropped: Current Lat: ' + evt.latLng.lat().toFixed(3) + ' Current Lng: ' + evt.latLng.lng().toFixed(3) + '</p>'
+                // });
+                // infoWindow.open(map, markerobject);
+                $('#address-latitude, #latitude').val(evt.latLng.lat());
+                $('#address-longitude, #longitude').val(evt.latLng.lng());
+            });
+
+        }
+
     </script>
 @stop

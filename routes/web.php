@@ -39,6 +39,15 @@ Route::group(['middleware' => ['web', 'checkblocked']], function () {
 
     // Route to for user to reactivate their user deleted account.
     Route::get('/re-activate/{token}', ['as' => 'user.reactivate', 'uses' => 'RestoreUserController@userReActivate']);
+
+    // Listing
+    Route::get('/detail/objek/{id}', 'ListingController@show');
+    Route::post('/bid/{id_nipl}/{id_listing}', 'ListingController@submit_bid');
+
+    // Master Dropdown
+    Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
+    Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');
+    Route::get('ajax/dropdown/kelurahan/{id_kecamatan}', 'DropdownController@kelurahan');
 });
 
 // Registered and Activated User Routes
@@ -81,8 +90,9 @@ Route::group(['middleware' => ['auth', 'activated', 'currentUser', 'checkblocked
         ]
     );
 
-    Route::get('/detail/objek/{id}', 'ListingController@show');
-    Route::post('/bid/{id_nipl}/{id_listing}', 'ListingController@submit_bid');
+    Route::get('profile/{username}/edit/{page}','ProfilesController@edit');
+    Route::post('profile/{id_user}/{act}/{page}','ProfilesController@userinfo_store');
+    Route::post('/changePassword','ProfilesController@changePassword');
 
     Route::put('profile/{username}/updateUserAccount', [
         'as'   => '{username}',
@@ -110,7 +120,7 @@ Route::group(['middleware' => ['auth', 'activated', 'currentUser', 'checkblocked
 Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'checkblocked']], function () {
     
     // Master Objek
-    Route::get('/objek', 'MasterController@objek_index');
+    Route::get('/objek/{nm_kategori}', 'MasterController@objek_index');
     Route::get('/add/{nm_kategori}/{nm_subkategori}', 'MasterController@objek_properti_create');
     Route::post('/add/{nm_kategori}/{nm_subkategori}', 'MasterController@objek_properti_store');
     Route::get('detail/properti/{nm_subkategori}/{id}', 'MasterController@objek_properti_show');
@@ -144,10 +154,6 @@ Route::group(['middleware' => ['auth', 'activated', 'role:admin', 'checkblocked'
     Route::get('/update/bidder/{id}', 'MasterController@bidder_edit');
     Route::post('/update/bidder/{id}', 'MasterController@bidder_store_or_update');
 
-    // Master Dropdown
-    Route::get('ajax/dropdown/kota/{id_provinsi}', 'DropdownController@kota');
-    Route::get('ajax/dropdown/kecamatan/{id_kota}', 'DropdownController@kecamatan');
-    Route::get('ajax/dropdown/kelurahan/{id_kecamatan}', 'DropdownController@kelurahan');
     
     Route::resource('/users/deleted', 'SoftDeletesController', [
         'only' => [

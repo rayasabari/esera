@@ -84,18 +84,32 @@ class ListingController extends Controller
             'bid'               => function($query){
                 $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
             }
-        ))->orderBy('tgl_akhir_lelang', 'DESC')
-        ->get();
+        ))
+        // ->orderBy('tgl_akhir_lelang', 'DESC')
+        ->orderByRaw('case 
+            when `tgl_mulai_lelang` < now() and `tgl_akhir_lelang` > now() then 1
+            when `tgl_mulai_lelang` > now() then 2
+            when `tgl_akhir_lelang` < now() then 3 
+            else 4 end')
+        ->paginate(12);
 
-        $live       = $listing->where('tgl_mulai_lelang', '<', date('Y-m-d H:i:s'))->where('tgl_akhir_lelang','>', date('Y-m-d H:i:s') )->toArray();
-        $segera     = $listing->where('tgl_mulai_lelang', '>', date('Y-m-d H:i:s'))->toArray();
-        $selesai    = $listing->where('tgl_akhir_lelang', '<', date('Y-m-d H:i:s'))->toArray();
-        $listing    = json_decode( json_encode(array_merge($live,$segera,$selesai)));
-        
+        // $live       = $listing->where('tgl_mulai_lelang', '<', date('Y-m-d H:i:s'))->where('tgl_akhir_lelang','>', date('Y-m-d H:i:s') )->toArray();
+        // $segera     = $listing->where('tgl_mulai_lelang', '>', date('Y-m-d H:i:s'))->toArray();
+        // $selesai    = $listing->where('tgl_akhir_lelang', '<', date('Y-m-d H:i:s'))->toArray();
+        // $listing    = json_decode( json_encode(array_merge($live,$segera,$selesai)));
+
+        $live       = $this->listing->where('tgl_mulai_lelang', '<', date('Y-m-d H:i:s'))->where('tgl_akhir_lelang','>', date('Y-m-d H:i:s'))->get();
         $nipl       = $this->nipl->where('id_user', Auth::user()->id)->first();
         
+        // dd($listing);
         // return response()->json($listing);
-        return view('pages.home', compact('listing','live','nipl'));
+
+        if(Auth::user()->isAdmin()){
+            return redirect('/home');
+        }else{
+            return view('pages.home', compact('listing','live','nipl'));
+        }
+
     }
 
     /**
@@ -125,9 +139,9 @@ class ListingController extends Controller
                 $query->select('id','id_listing','jumlah_bid')->orderBy('jumlah_bid', 'DESC');
             }
         ))
-        ->get();
+        ->paginate(10);
 
-        // return $this->tgl->Indo($objek[1]->tgl_mulai_lelang);
+        // return $objek;
         return view('pages.admin.listing.index', compact('objek'));
     }
 
@@ -206,7 +220,7 @@ class ListingController extends Controller
             ]);
         }
 
-        return redirect('/objek')->with('status','Objek berhasil dilisting!');
+        return redirect('/objek/'.$nm_kategori)->with('status','Objek berhasil dilisting!');
         // return $id;
     }
 

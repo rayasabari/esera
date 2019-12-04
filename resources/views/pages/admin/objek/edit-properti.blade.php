@@ -10,7 +10,7 @@
 
 @section('sub_subheader')
     <span class="kt-subheader__breadcrumbs-separator"></span>
-    <a href="{{ url('/objek') }}" class="kt-subheader__breadcrumbs-link">Master Objek Lelang</a>
+    <a href="{{ url('/objek/'.Request::segment(2)) }}" class="kt-subheader__breadcrumbs-link">Master Objek Lelang</a>
 @endsection
 
 @section('sub_sub_subheader')
@@ -82,7 +82,7 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <button type="submit" class="btn btn-primary">Simpan</button>
-                                    <a href="/objek" class="btn btn-secondary">Kembali</a>
+                                <a href="/objek/{{Request::segment(2)}}" class="btn btn-secondary">Kembali</a>
                                 </div>
                             </div>
                         </form>

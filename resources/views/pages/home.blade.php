@@ -70,7 +70,7 @@
                                     <a href="#" style="background: red;color:white" class="btn btn-bold"> <b> Live!</b> </a>
                                     <a href="#" class="btn btn-light btn-bold"><span class="font-weight-bold" style="color:red" id="waktu{{ $list->id }}"></span> </a>
                                 @elseif(strtotime($list->tgl_mulai_lelang) >= time())
-                                    <a href="#" class="btn btn-brand btn-bold ">Segera</a>
+                                    <a href="#" class="btn btn-primary btn-bold ">Segera</a>
                                 @elseif(strtotime($list->tgl_akhir_lelang) <= time())
                                     <a href="#" class="btn btn-success btn-bold ">Selesai</a>
                                 @endif
@@ -115,6 +115,14 @@
                 <!--end:: Widgets/Blog-->
             </div>
         @endforeach
+    </div>
+    <div class="kt-nav__section">
+        <div class="kt-pagination kt-pagination--primary mt-2 mb-2">
+            <p class="kt-section__desc"></p>
+            <div class="kt-pagination__toolbar">
+                {{ $listing->links() }}
+            </div>
+        </div>
     </div>
 @endsection
 

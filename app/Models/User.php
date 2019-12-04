@@ -127,4 +127,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Models\Nipl', 'id_user', 'id');
     }
+
+    public function userinfo()
+    {
+        return $this->hasOne('App\Models\UserInfo', 'id_user', 'id')->where('id_status_user', 2);
+    }
 }

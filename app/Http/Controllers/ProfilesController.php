@@ -8,6 +8,13 @@ use App\Http\Requests\UpdateUserProfile;
 use App\Models\Profile;
 use App\Models\Theme;
 use App\Models\User;
+use App\Models\UserInfo;
+use App\Models\Nipl;
+use App\Models\IndonesiaProvinsi;
+use App\Models\IndonesiaKota;
+use App\Models\IndonesiaKecamatan;
+use App\Models\IndonesiaKelurahan;
+use App\Models\ListBank;
 use App\Notifications\SendGoodbyeEmail;
 use App\Traits\CaptureIpTrait;
 use File;
@@ -18,12 +25,23 @@ use Illuminate\Support\Facades\Session;
 use Image;
 use jeremykenedy\Uuid\Uuid;
 use Validator;
+use Illuminate\Support\Facades\Hash;
 use View;
+use Auth;
 
 class ProfilesController extends Controller
 {
     protected $idMultiKey = '618423'; //int
     protected $seperationKey = '****';
+
+    public  $user,
+            $userinfo, 
+            $nipl,
+            $master_provinsi,
+            $master_kota,
+            $master_kecamatan,
+            $master_kelurahan,
+            $master_bank;
 
     /**
      * Create a new controller instance.
@@ -32,6 +50,14 @@ class ProfilesController extends Controller
      */
     public function __construct()
     {
+        $this->user             = new User;
+        $this->userinfo         = new UserInfo;
+        $this->nipl             = new Nipl;
+        $this->master_provinsi  = new IndonesiaProvinsi;
+        $this->master_kota      = new IndonesiaKota;
+        $this->master_kecamatan = new IndonesiaKecamatan;
+        $this->master_kelurahan = new IndonesiaKelurahan;
+        $this->master_bank      = new ListBank;
         $this->middleware('auth');
     }
 
@@ -45,7 +71,14 @@ class ProfilesController extends Controller
      */
     public function getUserByUsername($username)
     {
-        return User::with('profile')->wherename($username)->firstOrFail();
+        return User::with('profile')->wherename($username)
+        ->with(array(
+                'userinfo'  => function($query){
+                    $query->first();
+                }
+            )
+        )
+        ->firstOrFail();
     }
 
     /**
@@ -80,7 +113,7 @@ class ProfilesController extends Controller
      *
      * @return mixed
      */
-    public function edit($username)
+    public function edit($username, $page)
     {
         try {
             $user = $this->getUserByUsername($username);
@@ -96,14 +129,152 @@ class ProfilesController extends Controller
 
         $currentTheme = Theme::find($user->profile->theme_id);
 
-        $data = [
-            'user'         => $user,
-            'themes'       => $themes,
-            'currentTheme' => $currentTheme,
+        $nipl       = $this->nipl->where('id_user', $user->id)->first();
+        $userinfo   = $this->userinfo->where('id_user',$user->id)->where('id_status_user', 2)->first();
+        $provinsi   = $this->master_provinsi->select('id','text')->orderBy('text', 'ASC')->get();
+        $bank       = $this->master_bank->select('id','nama')->orderBy('id',"ASC")->get();
 
+        if(!empty($userinfo)){
+            $kota       = $this->master_kota->where('id_provinsi', $userinfo->id_provinsi)->select('id','text')->orderBy('text', 'ASC')->get();
+            $kecamatan  = $this->master_kecamatan->where('id_kota', $userinfo->id_kota)->select('id','text')->orderBy('text', 'ASC')->get();
+            $kelurahan  = $this->master_kelurahan->where('id_kecamatan', $userinfo->id_kecamatan)->select('id','text')->orderBy('text', 'ASC')->get();
+        }else{
+            $kota       = '';
+            $kecamatan  = '';
+            $kelurahan  = '';
+        }
+
+        $data = [
+            'user'          => $user,
+            'themes'        => $themes,
+            'currentTheme'  => $currentTheme,
+            'nipl'          => $nipl,
+            'userinfo'      => $userinfo,
+            'provinsi'      => $provinsi,
+            'kota'          => $kota,
+            'kecamatan'     => $kecamatan,
+            'kelurahan'     => $kelurahan,
+            'bank'          => $bank,
         ];
 
+        // return $kota;
         return view('profiles.edit')->with($data);
+    }
+
+    public function userinfo_store(Request $request, $id_user, $act, $page)
+    {
+        if($page == 'biodata'){
+            $this->user->where('id', $id_user)
+            ->update([
+                'first_name'     => $request->first_name,
+                'last_name'      => $request->last_name
+            ]);
+
+            if($act == 'add'){
+                $usr                    = $this->userinfo;
+                $usr->id_user           = $id_user;
+                $usr->id_status_user    = 2;
+                $usr->alamat            = $request->alamat;
+                $usr->id_kelurahan      = $request->kelurahan;
+                $usr->id_kecamatan      = $request->kecamatan;
+                $usr->id_kota           = $request->kota;
+                $usr->id_provinsi       = $request->provinsi;
+                $usr->kode_pos          = $request->kode_pos;
+                $usr->no_telepon        = $request->no_telepon;
+                $usr->no_fax            = $request->no_fax;
+                $usr->save();
+            }else{
+                $this->userinfo->where([
+                    ['id_status_user', 2],
+                    ['id_user', $id_user]
+                ])->update([
+                    'alamat'            => $request->alamat,
+                    'id_kelurahan'      => $request->kelurahan,
+                    'id_kecamatan'      => $request->kecamatan,
+                    'id_kota'           => $request->kota,
+                    'id_provinsi'       => $request->provinsi,
+                    'kode_pos'          => $request->kode_pos,
+                    'no_telepon'        => $request->no_telepon,
+                    'no_fax'            => $request->no_fax
+                ]);
+            }
+            return back()->with('status','Data berhasil diupdate!');
+
+        }elseif($page == 'akuninfo'){
+
+            if($request->username != Auth::user()->name){
+                $request->validate([
+                    'username'      => ['required', 'string', 'max:255', 'alpha_dash', 'unique:users,name'],
+                ]);
+            }
+
+            if($request->email != Auth::user()->email){
+                $request->validate([
+                    'email'         => ['required', 'email', 'unique:users,email'],
+                ]);
+            }
+
+            $this->user->where('id', $id_user)
+            ->update([
+                'name'          => $request->username,
+                'email'         => $request->email
+            ]);
+
+            if($act == 'add'){
+                $usr                    = $this->userinfo;
+                $usr->no_ktp            = $request->no_ktp;
+                $usr->npwp              = $request->npwp;
+                $usr->nama_bank         = $request->nama_bank;
+                $usr->no_rekening       = $request->no_rekening;
+                $usr->cabang_bank       = $request->cabang_bank;
+                $usr->atas_nama_bank    = $request->atas_nama_bank;
+                $usr->save();
+            }else{
+                $this->userinfo->where([
+                    ['id_status_user', 2],
+                    ['id_user', $id_user]
+                ])->update([
+                    'no_ktp'            => $request->no_ktp,
+                    'npwp'              => $request->npwp,
+                    'nama_bank'         => $request->nama_bank,
+                    'no_rekening'       => $request->no_rekening,
+                    'cabang_bank'       => $request->cabang_bank,
+                    'atas_nama_bank'    => $request->atas_nama_bank
+                ]);
+            }
+
+            return redirect('/profile/'.$request->username.'/edit/'.$page)->with('status','Profile berhasil diupdate!');
+        }
+    }
+
+    public function changePassword(Request $request){
+    
+        $request->validate([
+            'password_lama'         => 'required',
+            'password_baru'         => 'required|min:8|alpha_num',
+            'password_baru_konfirm' => 'required|min:8|alpha_num',
+        ]);
+
+        if (!(Hash::check($request->password_lama, Auth::user()->password))) {
+            // The passwords matches
+            return redirect()->back()->with("gagal","Password lama yang anda masukkan salah!");
+        }
+            
+        if(strcmp($request->password_lama, $request->password_baru) == 0){
+            //Current password and new password are same
+            return redirect()->back()->with("gagal","Password Baru tidak boleh sama dengan Password Lama, silahkan masukan password lain!");
+        }
+        if(strcmp($request->password_baru, $request->password_baru_konfirm) !== 0){
+            //New password and confirm password are not same
+            return redirect()->back()->with("gagal","Konfirmasi Password tidak sama, pastikan Password Baru dan Konfirmasi Password harus sama!");
+        }
+        
+        //Change Password
+        $user = Auth::user();
+        $user->password = bcrypt($request->password_baru);
+        $user->save();
+            
+        return redirect()->back()->with("status","Password berhasil dirubah!");
     }
 
     /**
