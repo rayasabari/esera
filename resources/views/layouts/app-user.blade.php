@@ -83,8 +83,8 @@
 		<!-- begin:: Header Mobile -->
 		<div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed">
 			<div class="kt-header-mobile__logo">
-				<a href="index.html">
-					<img alt="Logo" src="assets/media/logos/sra-logo.gif" width="38px" />
+				<a href="index.html" class="kt-font-bold">
+					Esera
 				</a>
 			</div>
 			<div class="kt-header-mobile__toolbar">
